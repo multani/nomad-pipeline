@@ -21,11 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package info.multani.jenkins.plugins.nomad;
 
 //import static info.multani.jenkins.plugins.nomad.PodTemplateUtils.*;
-
 import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,22 +35,20 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import com.hashicorp.nomad.apimodel.Job;
+import com.hashicorp.nomad.apimodel.RestartPolicy;
+import com.hashicorp.nomad.apimodel.Task;
 import com.hashicorp.nomad.apimodel.TaskGroup;
-import com.sun.org.glassfish.external.probe.provider.annotations.Probe;
-import static info.multani.jenkins.plugins.nomad.NomadCloud.JNLP_NAME;
+import static hudson.Util.replaceMacro;
 import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
-import java.awt.Container;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import static java.util.stream.Stream.builder;
 import org.apache.commons.lang.StringUtils;
-
 
 /**
  * Helper class to build Pods from PodTemplates
- * 
+ *
  * @author Carlos Sanchez
  * @since
  *
@@ -81,6 +77,7 @@ public class NomadJobTemplateBuilder {
 
     /**
      * Create a Pod object from a PodTemplate
+     *
      * @param slave
      * @return
      */
@@ -89,7 +86,6 @@ public class NomadJobTemplateBuilder {
         // Build volumes and volume mounts.
 //        List<Volume> volumes = new ArrayList<>();
 //        Map<String, VolumeMount> volumeMounts = new HashMap();
-
 //        int i = 0;
 //        for (final PodVolume volume : template.getVolumes()) {
 //            final String volumeName = "volume-" + i;
@@ -101,24 +97,19 @@ public class NomadJobTemplateBuilder {
 //                i++;
 //            }
 //        }
-
 //        if (template.getWorkspaceVolume() != null) {
 //            volumes.add(template.getWorkspaceVolume().buildVolume(WORKSPACE_VOLUME_NAME));
 //        } else {
 //            // add an empty volume to share the workspace across the pod
 //            volumes.add(new VolumeBuilder().withName(WORKSPACE_VOLUME_NAME).withNewEmptyDir().endEmptyDir().build());
 //        }
+        ArrayList<TaskGroup> taskGroups = new ArrayList<>();
 
-        ArrayList<TaskGroup> taskGroups = new ArrayList<TaskGroup>();
-        
-         Map<String, Container> containers = new HashMap<>();
-
+//        Map<String, Container> containers = new HashMap<>();
         for (TaskGroupTemplate taskGroupTemplate : template.getContainers()) {
-            taskGroups.add(taskGroupTemplate.asTaskGroup());
-//            containers.put(taskGroupTemplate.getName(),
-//                    createContainer(slave, taskGroupTemplate,
-//                            template.getEnvVars(),
-//                            volumeMounts.values()));
+            taskGroups.add(
+                    createContainer(slave, taskGroupTemplate, template.getEnvVars())
+            );
         }
 
 //        if (!containers.containsKey(JNLP_NAME)) {
@@ -127,10 +118,8 @@ public class NomadJobTemplateBuilder {
 //            taskGroupTemplate.setArgs(DEFAULT_JNLP_ARGUMENTS);
 //            containers.put(JNLP_NAME, createContainer(slave, taskGroupTemplate, template.getEnvVars(), volumeMounts.values()));
 //        }
-
 //        List<LocalObjectReference> imagePullSecrets = template.getImagePullSecrets().stream()
 //                .map((x) -> x.toLocalObjectReference()).collect(Collectors.toList());
-
 //        PodFluent.SpecNested<PodBuilder> builder = new PodBuilder()
 //                .withNewMetadata()
 //                .withName(substituteEnv(slave.getNodeName()))
@@ -138,11 +127,9 @@ public class NomadJobTemplateBuilder {
 //                .withAnnotations(getAnnotationsMap(template.getAnnotations()))
 //                .endMetadata()
 //                .withNewSpec();
-
 //        if(template.getActiveDeadlineSeconds() > 0) {
 //            builder = builder.withActiveDeadlineSeconds(Long.valueOf(template.getActiveDeadlineSeconds()));
 //        }
-
 //        Pod pod = builder.withVolumes(volumes)
 //                .withServiceAccount(substituteEnv(template.getServiceAccount()))
 //                .withImagePullSecrets(imagePullSecrets)
@@ -151,73 +138,73 @@ public class NomadJobTemplateBuilder {
 //                .withRestartPolicy("Never")
 //                .endSpec()
 //                .build();
-
         Job job = new Job();
-        job.setTaskGroups(taskGroups);
+        job.setId(slave.getNodeName());
         job.setName(slave.getNodeName());
+        job.setRegion("global");
+        job.addDatacenters("dc1");
+        job.setType("batch");
+        job.setTaskGroups(taskGroups);
         
         return job;
 
     }
 
+    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate containerTemplate, Collection<TemplateEnvVar> globalEnvVars) {
+        // Last-write wins map of environment variable names to values
+        HashMap<String, String> env = new HashMap<>();
 
-//    private Container createContainer(NomadSlave slave, TaskGroupTemplate containerTemplate, Collection<TemplateEnvVar> globalEnvVars, Collection<VolumeMount> volumeMounts) {
-//        // Last-write wins map of environment variable names to values
-//        HashMap<String, String> env = new HashMap<>();
-//
-//        // Add some default env vars for Jenkins
-//        env.put("JENKINS_SECRET", slave.getComputer().getJnlpMac());
-//        env.put("JENKINS_NAME", slave.getComputer().getName());
-//
-//        NomadCloud cloud = slave.getKubernetesCloud();
-//
-//        String url = cloud.getJenkinsUrlOrDie();
-//
-//        env.put("JENKINS_URL", url);
-//        if (!StringUtils.isBlank(cloud.getJenkinsTunnel())) {
-//            env.put("JENKINS_TUNNEL", cloud.getJenkinsTunnel());
-//        }
-//
-//        // Running on OpenShift Enterprise, security concerns force use of arbitrary user ID
-//        // As a result, container is running without a home set for user, resulting into using `/` for some tools,
-//        // and `?` for java build tools. So we force HOME to a safe location.
-//        env.put("HOME", containerTemplate.getWorkingDir());
-//
-//        Map<String, EnvVar> envVarsMap = new HashMap<>();
-//
-//        env.entrySet().forEach(item ->
-//                envVarsMap.put(item.getKey(), new EnvVar(item.getKey(), item.getValue(), null))
-//        );
-//
+        // Add some default env vars for Jenkins
+        env.put("JENKINS_SECRET", slave.getComputer().getJnlpMac());
+        env.put("JENKINS_NAME", slave.getComputer().getName());
+        env.put("JNLP_PROTOCOL_OPTS", "");
+
+        NomadCloud cloud = slave.getNomadCloud();
+
+        String url = cloud.getJenkinsUrlOrDie();
+
+        env.put("JENKINS_URL", url);
+        if (!StringUtils.isBlank(cloud.getJenkinsTunnel())) {
+            env.put("JENKINS_TUNNEL", cloud.getJenkinsTunnel());
+        }
+
+        // Running on OpenShift Enterprise, security concerns force use of arbitrary user ID
+        // As a result, container is running without a home set for user, resulting into using `/` for some tools,
+        // and `?` for java build tools. So we force HOME to a safe location.
+        env.put("HOME", containerTemplate.getWorkingDir());
+
+        Map<String, String> envVars = new HashMap<>();
+
+        env.entrySet().forEach(item
+                -> envVars.put(item.getKey(), item.getValue())
+        );
+
 //        if (globalEnvVars != null) {
-//            globalEnvVars.forEach(item ->
-//                    envVarsMap.put(item.getKey(), item.buildEnvVar())
+//            globalEnvVars.forEach(item
+//                    -> envVarsMap.put(item.getKey(), item.getValue())
 //            );
 //        }
-//
+
 //        if (containerTemplate.getEnvVars() != null) {
-//            containerTemplate.getEnvVars().forEach(item ->
-//                    envVarsMap.put(item.getKey(), item.buildEnvVar())
+//            containerTemplate.getEnvVars().forEach(item
+//                    -> envVarsMap.put(item.getKey(), item.getValue())
 //            );
 //        }
-//
-//        EnvVar[] envVars = envVarsMap.values().stream().toArray(EnvVar[]::new);
-//
-//        List<String> arguments = Strings.isNullOrEmpty(containerTemplate.getArgs()) ? Collections.emptyList()
-//                : parseDockerCommand(containerTemplate.getArgs() //
-//                .replaceAll(JNLPMAC_REF, slave.getComputer().getJnlpMac()) //
-//                .replaceAll(NAME_REF, slave.getComputer().getName()));
-//
-//
+
+        //EnvVar[] envVars = envVarsMap.values().stream().toArray(EnvVar[]::new);
+
+        List<String> arguments = Strings.isNullOrEmpty(containerTemplate.getArgs()) ? Collections.emptyList()
+                : parseDockerCommand(containerTemplate.getArgs() //
+                        .replaceAll(JNLPMAC_REF, slave.getComputer().getJnlpMac()) //
+                        .replaceAll(NAME_REF, slave.getComputer().getName()));
+
 //        List<VolumeMount> containerMounts = new ArrayList<>(volumeMounts);
-//
 //        ContainerPort[] ports = containerTemplate.getPorts().stream().map(entry -> entry.toPort()).toArray(size -> new ContainerPort[size]);
-//
+
 //        if (!Strings.isNullOrEmpty(containerTemplate.getWorkingDir())
 //                && !PodVolume.volumeMountExists(containerTemplate.getWorkingDir(), volumeMounts)) {
 //            containerMounts.add(new VolumeMount(containerTemplate.getWorkingDir(), WORKSPACE_VOLUME_NAME, false, null));
 //        }
-//
 //        ContainerLivenessProbe clp = containerTemplate.getLivenessProbe();
 //        Probe livenessProbe = null;
 //        if (clp != null && parseLivenessProbe(clp.getExecArgs()) != null) {
@@ -230,10 +217,30 @@ public class NomadJobTemplateBuilder {
 //                    .withSuccessThreshold(clp.getSuccessThreshold())
 //                    .build();
 //        }
-//
+        TaskGroup taskGroup = new TaskGroup();
+        taskGroup.setName(substituteEnv(containerTemplate.getName()));
+        
+        RestartPolicy restartPolicy = new RestartPolicy();
+        restartPolicy.setMode("fail");
+        restartPolicy.setAttempts(0);
+        taskGroup.setRestartPolicy(restartPolicy);
+
+        Task task = new Task();
+        task.setName(substituteEnv(containerTemplate.getName()));
+        task.setDriver("docker");
+        task.addConfig("image", substituteEnv(containerTemplate.getImage()));
+        task.addConfig("command", parseDockerCommand(containerTemplate.getCommand()));
+        task.addConfig("args", arguments);
+        task.addConfig("network_mode", "host");
+        task.setEnv(envVars);
+        
+        taskGroup.addTasks(task);
+
+        return taskGroup;
+
 //        return new ContainerBuilder()
-//                .withName(substituteEnv(containerTemplate.getName()))
-//                .withImage(substituteEnv(containerTemplate.getImage()))
+//                .withName()
+//                .withImage()
 //                .withImagePullPolicy(containerTemplate.isAlwaysPullImage() ? "Always" : "IfNotPresent")
 //                .withNewSecurityContext()
 //                .withPrivileged(containerTemplate.isPrivileged())
@@ -242,8 +249,8 @@ public class NomadJobTemplateBuilder {
 //                .withVolumeMounts(containerMounts.toArray(new VolumeMount[containerMounts.size()]))
 //                .addToEnv(envVars)
 //                .addToPorts(ports)
-//                .withCommand(parseDockerCommand(containerTemplate.getCommand()))
-//                .withArgs(arguments)
+//                .withCommand(parseDockerCommand())
+//                .withArgs()
 //                .withLivenessProbe(livenessProbe)
 //                .withTty(containerTemplate.isTtyEnabled())
 //                .withNewResources()
@@ -251,7 +258,11 @@ public class NomadJobTemplateBuilder {
 //                .withLimits(getResourcesMap(containerTemplate.getResourceLimitMemory(), containerTemplate.getResourceLimitCpu()))
 //                .endResources()
 //                .build();
-//    }
+    }
+
+    public static String substituteEnv(String s) {
+        return replaceMacro(s, System.getenv());
+    }
 
     /**
      * Split a command in the parts that Docker need
@@ -267,10 +278,9 @@ public class NomadJobTemplateBuilder {
         // handle quoted arguments
         Matcher m = SPLIT_IN_SPACES.matcher(dockerCommand);
         List<String> commands = new ArrayList<String>();
-// TODO
-//        while (m.find()) {
-//            commands.add(substituteEnv(m.group(1).replace("\"", "")));
-//        }
+        while (m.find()) {
+            commands.add(m.group(1).replace("\"", ""));
+        }
 
         return commands;
     }

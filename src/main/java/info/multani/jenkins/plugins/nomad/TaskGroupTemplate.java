@@ -276,19 +276,4 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
     public void setShell(String shell) {
         this.shell = shell;
     }
-    
-    public TaskGroup asTaskGroup() {
-        TaskGroup taskGroup = new TaskGroup();
-        taskGroup.setName(name);
-        
-        Task task = new Task();
-        task.setDriver("docker");
-        task.addConfig("image", image);
-        task.addConfig("command", command);
-        task.addConfig("args", args);
-        
-        taskGroup.addTasks(task);
-        
-        return taskGroup;
-    }
 }

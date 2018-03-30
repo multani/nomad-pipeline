@@ -100,7 +100,7 @@ public class NomadLauncher extends JNLPLauncher {
 
             // We need the pod to be running and connected before returning
             // otherwise this method keeps being called multiple times
-            List<String> validStates = ImmutableList.of("Running");
+//            List<String> validStates = ImmutableList.of("Running");
 
             int i = 0;
             int j = 100; // wait 600 seconds

@@ -203,9 +203,8 @@ public class NomadSlave extends AbstractCloudSlave {
             LOGGER.log(Level.SEVERE, String.format("Unable to terminate agent %s. Cloud may have been removed. There may be leftover resources on the Kubernetes cluster.", name));
             return;
         }
-        NomadApiClient client;
         try {
-            client = cloud.connect();
+            cloud.connect();
         } catch (UnrecoverableKeyException | CertificateEncodingException | NoSuchAlgorithmException
                 | KeyStoreException e) {
             String msg = String.format("Failed to connect to cloud %s", getCloudName());

@@ -440,8 +440,8 @@ public class NomadCloud extends Cloud {
             return true;
         }
 
-        NomadApiClient c;
-        c = connect();
+//        NomadApiClient c;
+//        c = connect();
 //        String templateNamespace = template.getNamespace();
         // If template's namespace is not defined, take the
         // Kubernetes Namespace.

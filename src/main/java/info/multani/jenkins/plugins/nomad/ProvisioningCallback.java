@@ -33,8 +33,8 @@ import hudson.model.Label;
 import hudson.model.Node;
 
 /**
- * Callback for Kubernetes cloud provision
- * 
+ * Callback for Nomad cloud provision
+ *
  * @since 0.13
  */
 class ProvisioningCallback implements Callable<Node> {
@@ -57,6 +57,7 @@ class ProvisioningCallback implements Callable<Node> {
         this.t = t;
     }
 
+    @Override
     public Node call() throws Exception {
         return NomadSlave
                 .builder()

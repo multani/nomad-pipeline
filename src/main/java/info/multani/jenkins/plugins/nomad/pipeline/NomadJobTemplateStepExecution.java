@@ -76,7 +76,7 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
 //        newTemplate.setVolumes(step.getVolumes());
 //        newTemplate.setCustomWorkspaceVolumeEnabled(step.getWorkspaceVolume() != null);
 //        newTemplate.setWorkspaceVolume(step.getWorkspaceVolume());
-//        newTemplate.setContainers(step.getContainers());
+        newTemplate.setContainers(step.getContainers());
 //        newTemplate.setNodeSelector(step.getNodeSelector());
 //        newTemplate.setNodeUsageMode(step.getNodeUsageMode());
 //        newTemplate.setServiceAccount(step.getServiceAccount());
@@ -156,7 +156,7 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
                         new Object[]{cloud.name, jobTemplate.getName()});
                 NomadCloud nomadCloud = (NomadCloud) cloud;
                 nomadCloud.removeDynamicTemplate(jobTemplate);
-                NomadApiClient client = nomadCloud.connect();
+//                NomadApiClient client = nomadCloud.connect();
 //                Boolean deleted = client.jobs().withName(jobTemplate.getName()).delete();
                 boolean deleted = true; // TODO
                 if (!Boolean.TRUE.equals(deleted)) {

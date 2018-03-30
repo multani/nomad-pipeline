@@ -21,6 +21,7 @@ import hudson.model.Label;
 import hudson.model.Node;
 import hudson.model.labels.LabelAtom;
 import hudson.tools.ToolLocationNodeProperty;
+import static info.multani.jenkins.plugins.nomad.NomadJobTemplateBuilder.parseDockerCommand;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -565,7 +566,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
             containers = new ArrayList<>();
             TaskGroupTemplate containerTemplate = new TaskGroupTemplate(NomadCloud.JNLP_NAME, this.image);
             containerTemplate.setCommand(command);
-            containerTemplate.setArgs(Strings.isNullOrEmpty(args) ? FALLBACK_ARGUMENTS : args);
+            containerTemplate.setArgs(args);
 //            containerTemplate.setPrivileged(privileged);
 //            containerTemplate.setAlwaysPullImage(alwaysPullImage);
             containerTemplate.setEnvVars(envVars);

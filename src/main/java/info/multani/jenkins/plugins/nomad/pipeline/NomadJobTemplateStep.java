@@ -39,8 +39,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private String namespace;
     private List<TaskGroupTemplate> containers = new ArrayList<>();
     private List<TemplateEnvVar> envVars = new ArrayList<>();
-//    private List<PodVolume> volumes = new ArrayList<PodVolume>();
-//    private WorkspaceVolume workspaceVolume;
     private List<PodAnnotation> annotations = new ArrayList<>();
     private List<String> imagePullSecrets = new ArrayList<>();
 
