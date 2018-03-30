@@ -1,0 +1,69 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+
+    <f:entry title="${%Name}" field="name">
+      <f:textbox default="nomad" clazz="required"/>
+    </f:entry>
+
+    <f:entry title="${%Nomad URL}" field="serverUrl">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry title="${%Nomad server certificate key}" field="serverCertificate">
+      <f:textarea/>
+    </f:entry>
+
+    <f:entry title="${%Disable https certificate check}" field="skipTlsVerify">
+      <f:checkbox />
+    </f:entry>
+
+    <f:entry title="${%Nomad Namespace}" field="namespace">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry title="${%Credentials}" field="credentialsId">
+      <c:select/>
+    </f:entry>
+
+    <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="name,serverUrl,credentialsId,serverCertificate,skipTlsVerify,namespace" />
+
+    <f:entry title="${%Jenkins URL}" field="jenkinsUrl">
+      <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%Jenkins tunnel}" field="jenkinsTunnel">
+      <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%Connection Timeout (seconds)}" field="connectTimeout">
+        <f:textbox default="5"/>
+    </f:entry>
+
+    <f:entry title="${%Read Timeout (seconds)}" field="readTimeout">
+        <f:textbox default="15"/>
+    </f:entry>
+
+    <f:entry title="${%Container Cap}" field="containerCapStr">
+        <f:textbox default="10"/>
+    </f:entry>
+
+    <f:entry title="${%Max connections to Nomad API}" field="maxRequestsPerHostStr">
+        <f:textbox default="32"/>
+    </f:entry>
+
+    <f:advanced>
+      <f:entry title="${%Container Cleanup Timeout (minutes)}" field="retentionTimeout">
+        <f:textbox default="5"/>
+      </f:entry>
+    </f:advanced>
+
+    <f:entry title="${%Defaults Provider Template Name}" field="defaultsProviderTemplate">
+        <f:textbox default=""/>
+    </f:entry>
+
+    <f:entry title="${%Images}" description="${%List of Images to be launched as agents}">
+      <f:repeatableHeteroProperty field="templates" hasHeader="true" addCaption="Add Pod Template"
+                                  deleteCaption="Delete Template" />
+    </f:entry>
+
+</j:jelly>

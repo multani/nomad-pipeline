@@ -1,0 +1,77 @@
+
+<!--
+  Config page
+-->
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+  <f:entry field="name" title="${%Name}">
+    <f:textbox clazz="required"/>
+  </f:entry>
+
+  <f:entry field="image" title="${%Docker image}">
+    <f:textbox clazz="required"/>
+  </f:entry>
+
+  <f:entry field="alwaysPullImage" title="${%Always pull image}">
+    <f:checkbox/>
+  </f:entry>
+
+  <f:entry field="workingDir" title="${%Working directory}">
+    <f:textbox default="/home/jenkins"/>
+  </f:entry>
+
+  <f:entry field="command" title="${%Command to run}">
+    <f:textbox default="/bin/sh -c"/>
+  </f:entry>
+
+  <f:entry field="args" title="${%Arguments to pass to the command}">
+    <f:textbox default="cat"/>
+  </f:entry>
+
+  <f:entry field="ttyEnabled" title="${%Allocate pseudo-TTY}">
+    <f:checkbox default="true"/>
+  </f:entry>
+
+    <f:entry title="${%EnvVars}" description="${%List of environment variables to set in agent pod}">
+      <f:repeatableHeteroProperty field="envVars" hasHeader="true" addCaption="Add Environment Variable"
+                                  deleteCaption="Delete Environment Variable" />
+    </f:entry>
+
+  <f:advanced>
+    <f:entry field="privileged" title="${%Run in privileged mode}">
+      <f:checkbox/>
+    </f:entry>
+
+    <f:entry field="resourceRequestCpu" title="${%Request CPU}">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry field="resourceRequestMemory" title="${%Request Memory}">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry field="resourceLimitCpu" title="${%Limit CPU}">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry field="resourceLimitMemory" title="${%Limit Memory}">
+      <f:textbox/>
+    </f:entry>
+
+    <f:entry field="livenessProbe" title="${%Liveness Probe}">
+      <f:rowSet name="${field}">
+        <j:set var="descriptor" value="${attrs.propertyDescriptor ?: app.getDescriptorOrDie(descriptor.getPropertyTypeOrDie(instance,field).clazz)}" />
+        <j:set var="instance" value="${instance[field]}"/>
+        <st:include from="${descriptor}" page="${descriptor.configPage}" />
+      </f:rowSet>
+    </f:entry>
+    <f:entry title="${%PortMappings}" description="${%List of exposed ports}">
+      <f:repeatableHeteroProperty field="ports" hasHeader="true" addCaption="Add Port Mapping"
+                                    deleteCaption="Delete Port Mapping" />
+    </f:entry>
+
+  </f:advanced>
+
+</j:jelly>
