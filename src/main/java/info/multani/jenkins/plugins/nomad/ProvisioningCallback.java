@@ -60,7 +60,7 @@ class ProvisioningCallback implements Callable<Node> {
     public Node call() throws Exception {
         return NomadSlave
                 .builder()
-//                    .podTemplate(cloud.getUnwrappedTemplate(t))
+                    .podTemplate(t) //cloud.getUnwrappedTemplate(t))
                     .cloud(cloud)
                 .build();
     }

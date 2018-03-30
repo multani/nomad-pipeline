@@ -380,7 +380,7 @@ public class NomadSlave extends AbstractCloudSlave {
 
         @Override
         public String getDisplayName() {
-            return "Kubernetes Agent";
+            return "Nomad Agent";
         }
 
         @Override
