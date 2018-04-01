@@ -168,7 +168,7 @@ public class NomadSlave extends AbstractCloudSlave {
 
     @Override
     protected void _terminate(TaskListener listener) throws IOException, InterruptedException {
-        LOGGER.log(Level.INFO, "Terminating Kubernetes instance for agent {0}", name);
+        LOGGER.log(Level.INFO, "Terminating Nomad instance for agent {0}", name);
 
         Computer computer = toComputer();
         if (computer == null) {

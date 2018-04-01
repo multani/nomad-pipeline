@@ -229,7 +229,7 @@ public class NomadJobTemplateBuilder {
         task.setName(substituteEnv(containerTemplate.getName()));
         task.setDriver("docker");
         task.addConfig("image", substituteEnv(containerTemplate.getImage()));
-        task.addConfig("command", parseDockerCommand(containerTemplate.getCommand()));
+        task.addConfig("command", substituteEnv(containerTemplate.getCommand()));
         task.addConfig("args", arguments);
         task.addConfig("network_mode", "host");
         task.setEnv(envVars);

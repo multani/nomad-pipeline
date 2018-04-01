@@ -23,6 +23,7 @@
  */
 package info.multani.jenkins.plugins.nomad;
 
+import com.google.common.base.Throwables;
 import static java.util.logging.Level.*;
 
 import java.io.IOException;
@@ -32,14 +33,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
+import com.hashicorp.nomad.javasdk.ServerQueryResponse;
 
 import hudson.model.TaskListener;
 import hudson.slaves.JNLPLauncher;
 import hudson.slaves.SlaveComputer;
+import static org.kohsuke.stapler.HttpResponses.status;
 
 /**
  * Launches on Kubernetes the specified {@link NomadComputer} instance.
@@ -89,39 +91,46 @@ public class NomadLauncher extends JNLPLauncher {
             NomadApiClient client = cloud.connect();
             Job job = getPodTemplate(slave, unwrappedTemplate);
 
-            String jobID = job.getName();
+            String jobID = job.getId();
             String namespace = ""; //StringUtils.defaultIfBlank(slave.getNamespace(), client.getNamespace());
 
-            LOGGER.log(Level.FINE, "Creating Pod: {0} in namespace {1}", new Object[]{jobID, namespace});
+            LOGGER.log(Level.FINE, "Creating Nomad job: {0} in namespace {1}", new Object[]{jobID, namespace});
             client.getJobsApi().register(job);
-//                    .jobs().inNamespace(namespace).create(job);
-            LOGGER.log(INFO, "Created Pod: {0} in namespace {1}", new Object[]{jobID, namespace});
-            logger.printf("Created Pod: %s in namespace %s%n", jobID, namespace);
+            LOGGER.log(INFO, "Created Nomad job: {0} in namespace {1}", new Object[]{jobID, namespace});
+            logger.printf("Created Nomad job: %s in namespace %s%n", jobID, namespace);
 
             // We need the pod to be running and connected before returning
             // otherwise this method keeps being called multiple times
-//            List<String> validStates = ImmutableList.of("Running");
+            List<String> validStates = ImmutableList.of("Running");
 
             int i = 0;
             int j = 100; // wait 600 seconds
 
-            launched = true;
-            return;
-
             // TODO: wait for Pod to be running
 //            List<ContainerStatus> containerStatuses = null;
-//
-//            // wait for Pod to be running
-//            for (; i < j; i++) {
-//                LOGGER.log(INFO, "Waiting for Pod to be scheduled ({1}/{2}): {0}", new Object[]{jobID, i, j});
-//                logger.printf("Waiting for Pod to be scheduled (%2$s/%3$s): %1$s%n", jobID, i, j);
-//
-//                Thread.sleep(6000);
+            // wait for Pod to be running
+            for (; i < j; i++) {
+                LOGGER.log(INFO, "Waiting for job to be scheduled ({1}/{2}): {0}", new Object[]{jobID, i, j});
+                logger.printf("Waiting for job to be scheduled (%2$s/%3$s): %1$s%n", jobID, i, j);
+
+                Thread.sleep(6000);
+                ServerQueryResponse<Job> response = client.getJobsApi().info(jobID);
+
 //                job = client.pods().inNamespace(namespace).withName(jobID).get();
-//                if (job == null) {
-//                    throw new IllegalStateException("Pod no longer exists: " + jobID);
-//                }
-//
+                if (response == null) { // can exist?
+                    throw new IllegalStateException("Pod no longer exists: " + jobID);
+                }
+
+                Job jobFound = response.getValue();
+                if (jobFound.getStatus().equals("running")) {
+                    break;
+                }
+
+                LOGGER.log(INFO, "Container {0} is: {1}",
+                        new Object[]{jobID, jobFound.getStatus()});
+                logger.printf("Container %1$s is: %2$s%n",
+                        jobID, jobFound.getStatus());
+
 //                containerStatuses = job.getStatus().getContainerStatuses();
 //                List<ContainerStatus> terminatedContainers = new ArrayList<>();
 //                Boolean allContainersAreReady = true;
@@ -160,32 +169,34 @@ public class NomadLauncher extends JNLPLauncher {
 //                    break;
 //                }
 //            }
-//            String status = job.getStatus().getPhase();
 //            if (!validStates.contains(status)) {
 //                throw new IllegalStateException("Container is not running after " + j + " attempts, status: " + status);
 //            }
-//
-//            j = unwrappedTemplate.getSlaveConnectTimeout();
-//
-//            // now wait for agent to be online
-//            for (; i < j; i++) {
-//                if (slave.getComputer() == null) {
-//                    throw new IllegalStateException("Node was deleted, computer is null");
-//                }
-//                if (slave.getComputer().isOnline()) {
-//                    break;
-//                }
-//                LOGGER.log(INFO, "Waiting for agent to connect ({1}/{2}): {0}", new Object[]{jobID, i, j});
-//                logger.printf("Waiting for agent to connect (%2$s/%3$s): %1$s%n", jobID, i, j);
-//                Thread.sleep(1000);
-//            }
-//            if (!slave.getComputer().isOnline()) {
+            }
+
+            String status = job.getStatus();
+
+            j = unwrappedTemplate.getSlaveConnectTimeout();
+
+            // now wait for agent to be online
+            for (; i < j; i++) {
+                if (slave.getComputer() == null) {
+                    throw new IllegalStateException("Node was deleted, computer is null");
+                }
+                if (slave.getComputer().isOnline()) {
+                    break;
+                }
+                LOGGER.log(INFO, "Waiting for agent to connect ({1}/{2}): {0}", new Object[]{jobID, i, j});
+                logger.printf("Waiting for agent to connect (%2$s/%3$s): %1$s%n", jobID, i, j);
+                Thread.sleep(1000);
+            }
+            if (!slave.getComputer().isOnline()) {
 //                if (containerStatuses != null) {
 //                    logLastLines(containerStatuses, jobID, namespace, slave, null, client);
 //                }
-//                throw new IllegalStateException("Agent is not connected after " + j + " attempts, status: " + status);
-//            }
-//            computer.setAcceptingTasks(true);
+                throw new IllegalStateException("Agent is not connected after " + j + " attempts, status: " + status);
+            }
+            computer.setAcceptingTasks(true);
         } catch (Throwable ex) {
             LOGGER.log(Level.WARNING, String.format("Error in provisioning; agent=%s, template=%s", slave, unwrappedTemplate), ex);
             LOGGER.log(Level.FINER, "Removing Jenkins node: {0}", slave.getNodeName());
@@ -196,13 +207,15 @@ public class NomadLauncher extends JNLPLauncher {
             }
             throw Throwables.propagate(ex);
         }
-//        launched = true;
-//        try {
-//            // We need to persist the "launched" setting...
-//            slave.save();
-//        } catch (IOException e) {
-//            LOGGER.log(Level.WARNING, "Could not save() agent: " + e.getMessage(), e);
-//        }
+        launched = true;
+        try {
+            // We need to persist the "launched" setting...
+            slave.save();
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Could not save() agent: " + e.getMessage(), e);
+        } catch (Exception ex) {
+            Logger.getLogger(NomadLauncher.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private Job getPodTemplate(NomadSlave slave, NomadJobTemplate template) {
@@ -228,5 +241,4 @@ public class NomadLauncher extends JNLPLauncher {
 //            }
 //        }
 //    }
-
 }

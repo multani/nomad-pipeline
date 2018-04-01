@@ -13,6 +13,7 @@ import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 
 import com.google.common.base.Strings;
+import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 
 import hudson.AbortException;
@@ -156,9 +157,9 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
                         new Object[]{cloud.name, jobTemplate.getName()});
                 NomadCloud nomadCloud = (NomadCloud) cloud;
                 nomadCloud.removeDynamicTemplate(jobTemplate);
-//                NomadApiClient client = nomadCloud.connect();
-//                Boolean deleted = client.jobs().withName(jobTemplate.getName()).delete();
-                boolean deleted = true; // TODO
+                NomadApiClient client = nomadCloud.connect();
+                EvaluationResponse response = client.getJobsApi().deregister(jobTemplate.getName());
+                boolean deleted = response.getHttpResponse().getStatusLine().getStatusCode() == 200;
                 if (!Boolean.TRUE.equals(deleted)) {
                     LOGGER.log(Level.WARNING, "Failed to delete job {1}: not found",
                             new String[]{jobTemplate.getName()});
