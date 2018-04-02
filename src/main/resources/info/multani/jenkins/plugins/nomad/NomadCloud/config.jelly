@@ -17,15 +17,11 @@
       <f:checkbox />
     </f:entry>
 
-    <f:entry title="${%Nomad Namespace}" field="namespace">
-      <f:textbox/>
-    </f:entry>
-
     <f:entry title="${%Credentials}" field="credentialsId">
       <c:select/>
     </f:entry>
 
-    <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="name,serverUrl,credentialsId,serverCertificate,skipTlsVerify,namespace" />
+    <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="name,serverUrl,credentialsId,serverCertificate,skipTlsVerify" />
 
     <f:entry title="${%Jenkins URL}" field="jenkinsUrl">
       <f:textbox />

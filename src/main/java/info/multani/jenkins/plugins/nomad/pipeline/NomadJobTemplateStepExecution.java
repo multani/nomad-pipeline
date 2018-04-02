@@ -56,60 +56,34 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
 
         Run<?, ?> run = getContext().get(Run.class);
         PodTemplateAction podTemplateAction = run.getAction(PodTemplateAction.class);
-        NamespaceAction namespaceAction = run.getAction(NamespaceAction.class);
         String parentTemplates = podTemplateAction != null ? podTemplateAction.getParentTemplates() : null;
 
         //Let's generate a random name based on the user specified to make sure that we don't have
         //issues with concurrent builds, or messing with pre-existing configuration
         String randString = RandomStringUtils.random(5, "bcdfghjklmnpqrstvwxz0123456789");
         String name = String.format(NAME_FORMAT, step.getName(), randString);
-        String namespace = checkNamespace(nomadCloud, namespaceAction);
 
         newTemplate = new NomadJobTemplate();
         newTemplate.setName(name);
-        newTemplate.setNamespace(namespace);
 //        newTemplate.setInheritFrom(!Strings.isNullOrEmpty(parentTemplates) ? parentTemplates : step.getInheritFrom());
         newTemplate.setInstanceCap(step.getInstanceCap());
         newTemplate.setIdleMinutes(step.getIdleMinutes());
         newTemplate.setSlaveConnectTimeout(step.getSlaveConnectTimeout());
         newTemplate.setLabel(step.getLabel());
         newTemplate.setEnvVars(step.getEnvVars());
-//        newTemplate.setVolumes(step.getVolumes());
-//        newTemplate.setCustomWorkspaceVolumeEnabled(step.getWorkspaceVolume() != null);
-//        newTemplate.setWorkspaceVolume(step.getWorkspaceVolume());
         newTemplate.setContainers(step.getContainers());
-//        newTemplate.setNodeSelector(step.getNodeSelector());
 //        newTemplate.setNodeUsageMode(step.getNodeUsageMode());
-//        newTemplate.setAnnotations(step.getAnnotations());
-//        newTemplate.setImagePullSecrets(
-//                step.getImagePullSecrets().stream().map(x -> new PodImagePullSecret(x)).collect(toList()));
 
-//        if(step.getActiveDeadlineSeconds() != 0) {
-//            newTemplate.setActiveDeadlineSeconds(step.getActiveDeadlineSeconds());
-//        }
         nomadCloud.addDynamicTemplate(newTemplate);
         getContext().newBodyInvoker().withContext(step).withCallback(new PodTemplateCallback(newTemplate)).start();
 
         PodTemplateAction.push(run, name);
-        NamespaceAction.push(run, namespace);
         return false;
     }
 
     @Override
     public void stop(Throwable cause) throws Exception {
         new PodTemplateAction(getContext().get(Run.class)).pop();
-    }
-
-    private String checkNamespace(NomadCloud nomadCloud, @CheckForNull NamespaceAction namespaceAction) {
-        String namespace = null;
-        if (!Strings.isNullOrEmpty(step.getNamespace())) {
-            namespace = step.getNamespace();
-        } else if ((namespaceAction != null) && (!Strings.isNullOrEmpty(namespaceAction.getNamespace()))) {
-            namespace = namespaceAction.getNamespace();
-        } else {
-            namespace = nomadCloud.getNamespace();
-        }
-        return namespace;
     }
 
     /**

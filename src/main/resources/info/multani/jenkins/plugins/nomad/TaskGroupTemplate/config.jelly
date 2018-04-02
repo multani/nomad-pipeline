@@ -52,14 +52,6 @@
       <f:textbox/>
     </f:entry>
 
-    <f:entry field="resourceLimitCpu" title="${%Limit CPU}">
-      <f:textbox/>
-    </f:entry>
-
-    <f:entry field="resourceLimitMemory" title="${%Limit Memory}">
-      <f:textbox/>
-    </f:entry>
-
     <f:entry field="livenessProbe" title="${%Liveness Probe}">
       <f:rowSet name="${field}">
         <j:set var="descriptor" value="${attrs.propertyDescriptor ?: app.getDescriptorOrDie(descriptor.getPropertyTypeOrDie(instance,field).clazz)}" />

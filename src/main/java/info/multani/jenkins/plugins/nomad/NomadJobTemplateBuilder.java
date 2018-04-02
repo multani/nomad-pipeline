@@ -83,27 +83,6 @@ public class NomadJobTemplateBuilder {
      * @return
      */
     public Job build(NomadSlave slave) {
-
-        // Build volumes and volume mounts.
-//        List<Volume> volumes = new ArrayList<>();
-//        Map<String, VolumeMount> volumeMounts = new HashMap();
-//        int i = 0;
-//        for (final PodVolume volume : template.getVolumes()) {
-//            final String volumeName = "volume-" + i;
-//            //We need to normalize the path or we can end up in really hard to debug issues.
-//            final String mountPath = substituteEnv(Paths.get(volume.getMountPath()).normalize().toString());
-//            if (!volumeMounts.containsKey(mountPath)) {
-//                volumeMounts.put(mountPath, new VolumeMount(mountPath, volumeName, false, null));
-//                volumes.add(volume.buildVolume(volumeName));
-//                i++;
-//            }
-//        }
-//        if (template.getWorkspaceVolume() != null) {
-//            volumes.add(template.getWorkspaceVolume().buildVolume(WORKSPACE_VOLUME_NAME));
-//        } else {
-//            // add an empty volume to share the workspace across the pod
-//            volumes.add(new VolumeBuilder().withName(WORKSPACE_VOLUME_NAME).withNewEmptyDir().endEmptyDir().build());
-//        }
         ArrayList<TaskGroup> taskGroups = new ArrayList<>();
 
 //        Map<String, Container> containers = new HashMap<>();
@@ -119,26 +98,7 @@ public class NomadJobTemplateBuilder {
 //            taskGroupTemplate.setArgs(DEFAULT_JNLP_ARGUMENTS);
 //            containers.put(JNLP_NAME, createContainer(slave, taskGroupTemplate, template.getEnvVars(), volumeMounts.values()));
 //        }
-//        List<LocalObjectReference> imagePullSecrets = template.getImagePullSecrets().stream()
-//                .map((x) -> x.toLocalObjectReference()).collect(Collectors.toList());
-//        PodFluent.SpecNested<PodBuilder> builder = new PodBuilder()
-//                .withNewMetadata()
-//                .withName(substituteEnv(slave.getNodeName()))
-//                .withLabels(slave.getKubernetesCloud().getLabelsMap(template.getLabelSet()))
-//                .withAnnotations(getAnnotationsMap(template.getAnnotations()))
-//                .endMetadata()
-//                .withNewSpec();
-//        if(template.getActiveDeadlineSeconds() > 0) {
-//            builder = builder.withActiveDeadlineSeconds(Long.valueOf(template.getActiveDeadlineSeconds()));
-//        }
-//        Pod pod = builder.withVolumes(volumes)
-//                .withServiceAccount(substituteEnv(template.getServiceAccount()))
-//                .withImagePullSecrets(imagePullSecrets)
-//                .withContainers(containers.values().toArray(new Container[containers.size()]))
-//                .withNodeSelector(getNodeSelectorMap(template.getNodeSelector()))
-//                .withRestartPolicy("Never")
-//                .endSpec()
-//                .build();
+
         Job job = new Job();
         job.setId(slave.getNodeName());
         job.setName(slave.getNodeName());
@@ -253,7 +213,6 @@ public class NomadJobTemplateBuilder {
 //                .withPrivileged(containerTemplate.isPrivileged())
 //                .endSecurityContext()
 //                .withWorkingDir(substituteEnv(containerTemplate.getWorkingDir()))
-//                .withVolumeMounts(containerMounts.toArray(new VolumeMount[containerMounts.size()]))
 //                .addToEnv(envVars)
 //                .addToPorts(ports)
 //                .withCommand(parseDockerCommand())
@@ -262,7 +221,6 @@ public class NomadJobTemplateBuilder {
 //                .withTty(containerTemplate.isTtyEnabled())
 //                .withNewResources()
 //                .withRequests(getResourcesMap(containerTemplate.getResourcesMemory(), containerTemplate.getResourcesCPU()))
-//                .withLimits(getResourcesMap(containerTemplate.getResourceMemory(), containerTemplate.getResourceLimitCpu()))
 //                .endResources()
 //                .build();
     }
@@ -325,34 +283,5 @@ public class NomadJobTemplateBuilder {
 //            builder.put("cpu", cpuQuantity);
 //        }
 //        return builder.build();
-//    }
-//
-//    private Map<String, String> getAnnotationsMap(List<PodAnnotation> annotations) {
-//        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
-//        if (annotations != null) {
-//            for (PodAnnotation podAnnotation : annotations) {
-//                builder.put(podAnnotation.getKey(), substituteEnv(podAnnotation.getValue()));
-//            }
-//        }
-//        return builder.build();
-//    }
-//
-//    private Map<String, String> getNodeSelectorMap(String selectors) {
-//        if (Strings.isNullOrEmpty(selectors)) {
-//            return ImmutableMap.of();
-//        } else {
-//            ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
-//
-//            for (String selector : selectors.split(",")) {
-//                String[] parts = selector.split("=");
-//                if (parts.length == 2 && !parts[0].isEmpty() && !parts[1].isEmpty()) {
-//                    builder = builder.put(parts[0], substituteEnv(parts[1]));
-//                } else {
-//                    LOGGER.log(Level.WARNING, "Ignoring selector '" + selector
-//                            + "'. Selectors must be in the format 'label1=value1,label2=value2'.");
-//                }
-//            }
-//            return builder.build();
-//        }
 //    }
 }

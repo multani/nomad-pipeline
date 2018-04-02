@@ -96,7 +96,6 @@ public class NomadCloud extends Cloud {
 
     private boolean skipTlsVerify;
 
-    private String namespace;
     private String jenkinsUrl;
     @CheckForNull
     private String jenkinsTunnel;
@@ -131,7 +130,6 @@ public class NomadCloud extends Cloud {
         this.templates.addAll(source.templates);
         this.serverUrl = source.serverUrl;
         this.skipTlsVerify = source.skipTlsVerify;
-        this.namespace = source.namespace;
         this.jenkinsUrl = source.jenkinsUrl;
         this.jenkinsTunnel = source.jenkinsTunnel;
         this.credentialsId = source.credentialsId;
@@ -141,12 +139,11 @@ public class NomadCloud extends Cloud {
     }
 
     @Deprecated
-    public NomadCloud(String name, List<? extends NomadJobTemplate> templates, String serverUrl, String namespace,
+    public NomadCloud(String name, List<? extends NomadJobTemplate> templates, String serverUrl,
             String jenkinsUrl, String containerCapStr, int connectTimeout, int readTimeout, int retentionTimeout) {
         this(name);
 
         setServerUrl(serverUrl);
-        setNamespace(namespace);
         setJenkinsUrl(jenkinsUrl);
         if (templates != null) {
             this.templates.addAll(templates);
@@ -221,17 +218,6 @@ public class NomadCloud extends Cloud {
     @DataBoundSetter
     public void setSkipTlsVerify(boolean skipTlsVerify) {
         this.skipTlsVerify = skipTlsVerify;
-    }
-
-    @Nonnull
-    public String getNamespace() {
-        return namespace;
-    }
-
-    @DataBoundSetter
-    public void setNamespace(@Nonnull String namespace) {
-        Preconditions.checkArgument(!StringUtils.isBlank(namespace));
-        this.namespace = namespace;
     }
 
     @CheckForNull
@@ -362,8 +348,8 @@ public class NomadCloud extends Cloud {
     public NomadApiClient connect() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException,
             IOException, CertificateEncodingException {
 
-        LOGGER.log(Level.FINE, "Building connection to Nomad {0} URL {1} namespace {2}",
-                new String[]{getDisplayName(), serverUrl, namespace});
+        LOGGER.log(Level.FINE, "Building connection to Nomad {0} URL {1}",
+                new String[]{getDisplayName(), serverUrl});
         NomadApiConfiguration config = new NomadApiConfiguration.Builder()
                 .setAddress(serverUrl)
                 .build();
@@ -442,12 +428,6 @@ public class NomadCloud extends Cloud {
 
 //        NomadApiClient c;
 //        c = connect();
-//        String templateNamespace = template.getNamespace();
-        // If template's namespace is not defined, take the
-        // Kubernetes Namespace.
-//        if (Strings.isNullOrEmpty(templateNamespace)) {
-//            templateNamespace = client.getNamespace();
-//        }
         LOGGER.log(Level.SEVERE, "implement me");
 //        PodList slaveList = client.pods().inNamespace(templateNamespace).withLabels(getLabels()).list();
 //        List<Pod> slaveListItems = slaveList.getItems();
@@ -576,7 +556,6 @@ public class NomadCloud extends Cloud {
         public FormValidation doTestConnection(@QueryParameter String name, @QueryParameter String serverUrl, @QueryParameter String credentialsId,
                 @QueryParameter String serverCertificate,
                 @QueryParameter boolean skipTlsVerify,
-                @QueryParameter String namespace,
                 @QueryParameter int connectionTimeout,
                 @QueryParameter int readTimeout) throws Exception {
 

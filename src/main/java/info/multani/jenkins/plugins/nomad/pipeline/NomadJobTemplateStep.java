@@ -36,18 +36,13 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private final String label;
     private final String name;
 
-    private String namespace;
     private List<TaskGroupTemplate> containers = new ArrayList<>();
     private List<TemplateEnvVar> envVars = new ArrayList<>();
-    private List<PodAnnotation> annotations = new ArrayList<>();
-    private List<String> imagePullSecrets = new ArrayList<>();
 
     private int instanceCap = Integer.MAX_VALUE;
     private int idleMinutes;
     private int slaveConnectTimeout = NomadJobTemplate.DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
-    private int activeDeadlineSeconds;
 
-    private String nodeSelector;
     private Node.Mode nodeUsageMode;
     private String workingDir = TaskGroupTemplate.DEFAULT_WORKING_DIR;
 
@@ -63,15 +58,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
 
     public String getName() {
         return name;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    @DataBoundSetter
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
     }
 
     public String getCloud() {
@@ -113,24 +99,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
         }
     }
 
-//    public List<PodVolume> getVolumes() {
-//        return volumes;
-//    }
-//
-//    @DataBoundSetter
-//    public void setVolumes(List<PodVolume> volumes) {
-//        this.volumes = volumes;
-//    }
-//
-//    public WorkspaceVolume getWorkspaceVolume() {
-//        return workspaceVolume;
-//    }
-//
-//    @DataBoundSetter
-//    public void setWorkspaceVolume(WorkspaceVolume workspaceVolume) {
-//        this.workspaceVolume = workspaceVolume;
-//    }
-
     public int getInstanceCap() {
         return instanceCap;
     }
@@ -156,24 +124,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     @DataBoundSetter
     public void setSlaveConnectTimeout(int slaveConnectTimeout) {
         this.slaveConnectTimeout = slaveConnectTimeout;
-    }
-
-    public int getActiveDeadlineSeconds() {
-        return activeDeadlineSeconds;
-    }
-
-    @DataBoundSetter
-    public void setActiveDeadlineSeconds(int activeDeadlineSeconds) {
-        this.activeDeadlineSeconds = activeDeadlineSeconds;
-    }
-
-    public String getNodeSelector() {
-        return nodeSelector;
-    }
-
-    @DataBoundSetter
-    public void setNodeSelector(String nodeSelector) {
-        this.nodeSelector = nodeSelector;
     }
 
     public Node.Mode getNodeUsageMode() {
@@ -202,27 +152,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     @Override
     public StepExecution start(StepContext context) throws Exception {
         return new NomadJobTemplateStepExecution(this, context);
-    }
-
-    public List<PodAnnotation> getAnnotations() {
-        return annotations;
-    }
-
-    @DataBoundSetter
-    public void setAnnotations(List<PodAnnotation> annotations) {
-        this.annotations = annotations;
-    }
-
-    public List<String> getImagePullSecrets() {
-        return (List<String>) (imagePullSecrets == null ? Collections.emptyList() : imagePullSecrets);
-    }
-
-    @DataBoundSetter
-    public void setImagePullSecrets(List<String> imagePullSecrets) {
-        if (imagePullSecrets != null) {
-            this.imagePullSecrets.clear();
-            this.imagePullSecrets.addAll(imagePullSecrets);
-        }
     }
 
     @Extension

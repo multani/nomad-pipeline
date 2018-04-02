@@ -48,8 +48,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     private String name;
 
-    private String namespace;
-//
     private String image;
 //
 //    private boolean privileged;
@@ -67,33 +65,19 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     private int slaveConnectTimeout = DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
 //
     private int idleMinutes;
-//
-//    private int activeDeadlineSeconds;
-//
+
     private String label;
-//
-//
-//    private String nodeSelector;
-//
+
     private Node.Mode nodeUsageMode;
 
     private Integer resourcesCPU;
 
     private Integer resourcesMemory;
 
-//    private boolean customWorkspaceVolumeEnabled;
-////    private WorkspaceVolume workspaceVolume;
-//
-////    private final List<PodVolume> volumes = new ArrayList<PodVolume>();
-//
     private List<TaskGroupTemplate> taskGroups = new ArrayList<TaskGroupTemplate>();
-//
+
     private List<TemplateEnvVar> envVars = new ArrayList<>();
-//
-//    private List<PodAnnotation> annotations = new ArrayList<PodAnnotation>();
-//
-//    private List<PodImagePullSecret> imagePullSecrets = new ArrayList<PodImagePullSecret>();
-//
+
     private transient List<ToolLocationNodeProperty> nodeProperties;
 
     @DataBoundConstructor
@@ -101,43 +85,14 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     public NomadJobTemplate(NomadJobTemplate from) {
-//        this.setAnnotations(from.getAnnotations());
         this.setContainers(from.getContainers());
-//        this.setImagePullSecrets(from.getImagePullSecrets());
         this.setInstanceCap(from.getInstanceCap());
         this.setLabel(from.getLabel());
 //        this.setName(from.getName());
-        this.setNamespace(from.getNamespace());
 //        this.setInheritFrom(from.getInheritFrom());
-//        this.setNodeSelector(from.getNodeSelector());
         this.setNodeUsageMode(from.getNodeUsageMode());
         this.setSlaveConnectTimeout(from.getSlaveConnectTimeout());
-//        this.setActiveDeadlineSeconds(from.getActiveDeadlineSeconds());
-//        this.setVolumes(from.getVolumes());
-//        this.setWorkspaceVolume(from.getWorkspaceVolume());
     }
-
-//    @Deprecated
-//    public PodTemplate(String image, List<? extends PodVolume> volumes) {
-//        this(null, image, volumes);
-//    }
-//
-//    @Deprecated
-//    PodTemplate(String name, String image, List<? extends PodVolume> volumes) {
-//        this(name, volumes, Collections.emptyList());
-//        if (image != null) {
-//            getContainers().add(new ContainerTemplate(name, image));
-//        }
-//    }
-//
-//    @Restricted(NoExternalUse.class) // testing only
-//    PodTemplate(String name,
-////            List<? extends PodVolume> volumes,
-//            List<? extends ContainerTemplate> containers) {
-//        this.name = name;
-////        this.volumes.addAll(volumes);
-//        this.containers.addAll(containers);
-//    }
 
     private Optional<TaskGroupTemplate> getFirstContainer() {
         return Optional.ofNullable(getContainers().isEmpty() ? null : getContainers().get(0));
@@ -159,15 +114,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     public String getName() {
         return name;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    @DataBoundSetter
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
     }
 
     @Deprecated
@@ -278,15 +224,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     public int getIdleMinutes() {
         return idleMinutes;
     }
-//
-//    public void setActiveDeadlineSeconds(int i) {
-//        this.activeDeadlineSeconds = i;
-//    }
-//
-//    public int getActiveDeadlineSeconds() {
-//        return activeDeadlineSeconds;
-//    }
-//
+
     @DataBoundSetter
     public void setIdleMinutesStr(String idleMinutes) {
         if (StringUtils.isBlank(idleMinutes)) {
@@ -303,24 +241,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
             return String.valueOf(idleMinutes);
         }
     }
-//
-//    @DataBoundSetter
-//    public void setActiveDeadlineSecondsStr(String activeDeadlineSeconds) {
-//        if (StringUtils.isBlank(activeDeadlineSeconds)) {
-//            setActiveDeadlineSeconds(0);
-//        } else {
-//            setActiveDeadlineSeconds(Integer.parseInt(activeDeadlineSeconds));
-//        }
-//    }
-//
-//    public String getActiveDeadlineSecondsStr() {
-//        if (getActiveDeadlineSeconds() == 0) {
-//            return "";
-//        } else {
-//            return String.valueOf(activeDeadlineSeconds);
-//        }
-//    }
-//
+
     public Set<LabelAtom> getLabelSet() {
         return Label.parse(label);
     }
@@ -333,15 +254,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     public String getLabel() {
         return label;
     }
-//
-//    @DataBoundSetter
-//    public void setNodeSelector(String nodeSelector) {
-//        this.nodeSelector = nodeSelector;
-//    }
-//
-//    public String getNodeSelector() {
-//        return nodeSelector;
-//    }
 
     @DataBoundSetter
     public void setNodeUsageMode(Node.Mode nodeUsageMode) {
@@ -400,42 +312,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         }
     }
 
-//    public List<PodAnnotation> getAnnotations() {
-//        if (annotations == null) {
-//            return Collections.emptyList();
-//        }
-//        return annotations;
-//    }
-//
-//    public void addAnnotations(List<PodAnnotation> annotations) {
-//        this.annotations.addAll(annotations);
-//    }
-//
-//
-//    @DataBoundSetter
-//    public void setAnnotations(List<PodAnnotation> annotations) {
-//        if (annotations != null) {
-//            this.annotations = new ArrayList<PodAnnotation>();
-//            this.addAnnotations(annotations);
-//        }
-//    }
-//
-//    public List<PodImagePullSecret> getImagePullSecrets() {
-//        return imagePullSecrets == null ? Collections.emptyList() : imagePullSecrets;
-//    }
-//
-//    public void addImagePullSecrets(List<PodImagePullSecret> imagePullSecrets) {
-//        this.imagePullSecrets.addAll(imagePullSecrets);
-//    }
-//
-//    @DataBoundSetter
-//    public void setImagePullSecrets(List<PodImagePullSecret> imagePullSecrets) {
-//        if (imagePullSecrets != null) {
-//            this.imagePullSecrets.clear();
-//            this.addImagePullSecrets(imagePullSecrets);
-//        }
-//    }
-//
     @DataBoundSetter
     public void setNodeProperties(List<ToolLocationNodeProperty> nodeProperties){
         this.nodeProperties = nodeProperties;
@@ -448,84 +324,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         }
         return nodeProperties;
     }
-
-//    @Deprecated
-//    public String getResourceRequestMemory() {
-//        return getFirstContainer().map(ContainerTemplate::getResourceRequestMemory).orElse(null);
-//    }
-//
-//    @Deprecated
-//    @DataBoundSetter
-//    public void setResourceRequestMemory(String resourceRequestMemory) {
-//        getFirstContainer().ifPresent((i) -> i.setResourceRequestMemory(resourceRequestMemory));
-//    }
-//
-//    @Deprecated
-//    public String getResourcesCpu() {
-//        return getFirstContainer().map(ContainerTemplate::getResourcesCpu).orElse(null);
-//    }
-//
-//    @Deprecated
-//    @DataBoundSetter
-//    public void setResourcesCpu(String resourcesCpu) {
-//        getFirstContainer().ifPresent((i) -> i.setResourcestCpu(resourcesCpu));
-//    }
-//
-//    @Deprecated
-//    public String getResourceMemory() {
-//        return getFirstContainer().map(ContainerTemplate::getResourceMemory).orElse(null);
-//    }
-//
-//    @Deprecated
-//    @DataBoundSetter
-//    public void setResourceLimitMemory(String resourceLimitMemory) {
-//        getFirstContainer().ifPresent((i) -> i.setResourceLimitMemory(resourceLimitMemory));
-//    }
-//
-//    @Deprecated
-//    public String getResourceRequestCpu() {
-//        return getFirstContainer().map(ContainerTemplate::getResourceRequestCpu).orElse(null);
-//    }
-//
-//    @Deprecated
-//    @DataBoundSetter
-//    public void setResourceRequestCpu(String resourceRequestCpu) {
-//        getFirstContainer().ifPresent((i) -> i.setResourceRequestCpu(resourceRequestCpu));
-//    }
-
-//    @DataBoundSetter
-//    public void setVolumes(@Nonnull List<PodVolume> items) {
-//        synchronized (this.volumes) {
-//            this.volumes.clear();
-//            this.volumes.addAll(items);
-//        }
-//    }
-
-//    @Nonnull
-//    public List<PodVolume> getVolumes() {
-//        if (volumes == null) {
-//            return Collections.emptyList();
-//        }
-//        return volumes;
-//    }
-
-//    public boolean isCustomWorkspaceVolumeEnabled() {
-//        return customWorkspaceVolumeEnabled;
-//    }
-//
-//    @DataBoundSetter
-//    public void setCustomWorkspaceVolumeEnabled(boolean customWorkspaceVolumeEnabled) {
-//        this.customWorkspaceVolumeEnabled = customWorkspaceVolumeEnabled;
-//    }
-//
-//    public WorkspaceVolume getWorkspaceVolume() {
-//        return workspaceVolume;
-//    }
-//
-//    @DataBoundSetter
-//    public void setWorkspaceVolume(WorkspaceVolume workspaceVolume) {
-//        this.workspaceVolume = workspaceVolume;
-//    }
 
     @DataBoundSetter
     public void setContainers(@Nonnull List<TaskGroupTemplate> items) {
@@ -559,10 +357,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //            taskGroupTemplate.setWorkingDir(remoteFs);
             taskGroups.add(taskGroupTemplate);
         }
-//
-//        if (annotations == null) {
-//            annotations = new ArrayList<>();
-//        }
 
         return this;
     }
@@ -603,7 +397,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         return "NomadJobTemplate{" +
 //                (inheritFrom == null ? "" : "inheritFrom='" + inheritFrom + '\'') +
                 (name == null ? "" : ", name='" + name + '\'') +
-                (namespace == null ? "" : ", namespace='" + namespace + '\'') +
                 (image == null ? "" : ", image='" + image + '\'') +
 //                (!privileged ? "" : ", privileged=" + privileged) +
 //                (!alwaysPullImage ? "" : ", alwaysPullImage=" + alwaysPullImage) +
@@ -613,21 +406,12 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
                 (instanceCap == Integer.MAX_VALUE ? "" : ", instanceCap=" + instanceCap) +
                 (slaveConnectTimeout == DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT ? "" : ", slaveConnectTimeout=" + slaveConnectTimeout) +
                 (idleMinutes == 0 ? "" : ", idleMinutes=" + idleMinutes) +
-//                (activeDeadlineSeconds == 0 ? "" : ", activeDeadlineSeconds=" + activeDeadlineSeconds) +
                 (label == null ? "" : ", label='" + label + '\'') +
-//                (nodeSelector == null ? "" : ", nodeSelector='" + nodeSelector + '\'') +
                 (nodeUsageMode == null ? "" : ", nodeUsageMode=" + nodeUsageMode) +
                 (resourcesCPU == null ? "" : ", resourcesCpu='" + resourcesCPU + '\'') +
                 (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
-//                (resourceLimitCpu == null ? "" : ", resourceLimitCpu='" + resourceLimitCpu + '\'') +
-//                (resourceLimitMemory == null ? "" : ", resourceLimitMemory='" + resourceLimitMemory + '\'') +
-//                (!customWorkspaceVolumeEnabled ? "" : ", customWorkspaceVolumeEnabled=" + customWorkspaceVolumeEnabled) +
-//                (workspaceVolume == null ? "" : ", workspaceVolume=" + workspaceVolume) +
-                //(volumes == null || volumes.isEmpty() ? "" : ", volumes=" + volumes) +
 //                (containers == null || containers.isEmpty() ? "" : ", containers=" + containers) +
                 (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
-//                (annotations == null || annotations.isEmpty() ? "" : ", annotations=" + annotations) +
-//                (imagePullSecrets == null || imagePullSecrets.isEmpty() ? "" : ", imagePullSecrets=" + imagePullSecrets) +
                 (nodeProperties == null || nodeProperties.isEmpty() ? "" : ", nodeProperties=" + nodeProperties) +
                 '}';
     }

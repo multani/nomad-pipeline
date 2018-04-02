@@ -57,7 +57,6 @@ public class NomadSlave extends AbstractCloudSlave {
     private static final ResourceBundleHolder HOLDER = ResourceBundleHolder.get(Messages.class);
 
     private final String cloudName;
-    private final String namespace;
     private final NomadJobTemplate template;
 
     public NomadJobTemplate getTemplate() {
@@ -121,18 +120,12 @@ public class NomadSlave extends AbstractCloudSlave {
         );
 
         this.cloudName = cloudName;
-        this.namespace = Util.fixEmpty(template.getNamespace());
         this.template = template;
     }
 
     public String getCloudName() {
         return cloudName;
     }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
 
     /**
      * Returns the cloud instance which created this agent.
@@ -250,7 +243,6 @@ public class NomadSlave extends AbstractCloudSlave {
         NomadSlave that = (NomadSlave) o;
 
         if (cloudName != null ? !cloudName.equals(that.cloudName) : that.cloudName != null) return false;
-        if (namespace != null ? !namespace.equals(that.namespace) : that.namespace != null) return false;
         return template != null ? template.equals(that.template) : that.template == null;
     }
 
@@ -258,7 +250,6 @@ public class NomadSlave extends AbstractCloudSlave {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (cloudName != null ? cloudName.hashCode() : 0);
-        result = 31 * result + (namespace != null ? namespace.hashCode() : 0);
         result = 31 * result + (template != null ? template.hashCode() : 0);
         return result;
     }

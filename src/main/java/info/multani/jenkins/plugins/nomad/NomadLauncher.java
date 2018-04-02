@@ -92,12 +92,11 @@ public class NomadLauncher extends JNLPLauncher {
             Job job = getPodTemplate(slave, unwrappedTemplate);
 
             String jobID = job.getId();
-            String namespace = ""; //StringUtils.defaultIfBlank(slave.getNamespace(), client.getNamespace());
 
-            LOGGER.log(Level.FINE, "Creating Nomad job: {0} in namespace {1}", new Object[]{jobID, namespace});
+            LOGGER.log(Level.FINE, "Creating Nomad job: {0}", new Object[]{jobID});
             client.getJobsApi().register(job);
-            LOGGER.log(INFO, "Created Nomad job: {0} in namespace {1}", new Object[]{jobID, namespace});
-            logger.printf("Created Nomad job: %s in namespace %s%n", jobID, namespace);
+            LOGGER.log(INFO, "Created Nomad job: {0}", new Object[]{jobID});
+            logger.printf("Created Nomad job: %s%n", jobID);
 
             // We need the pod to be running and connected before returning
             // otherwise this method keeps being called multiple times
@@ -116,7 +115,6 @@ public class NomadLauncher extends JNLPLauncher {
                 Thread.sleep(6000);
                 ServerQueryResponse<Job> response = client.getJobsApi().info(jobID);
 
-//                job = client.pods().inNamespace(namespace).withName(jobID).get();
                 if (response == null) { // can exist?
                     throw new IllegalStateException("Pod no longer exists: " + jobID);
                 }
@@ -157,7 +155,7 @@ public class NomadLauncher extends JNLPLauncher {
 //                            .toMap(ContainerStatus::getName, (info) -> info.getState().getTerminated().getExitCode()));
 //
 //                    // Print the last lines of failed containers
-//                    logLastLines(terminatedContainers, jobID, namespace, slave, errors, client);
+//                    logLastLines(terminatedContainers, jobID, slave, errors, client);
 //                    throw new IllegalStateException("Containers are terminated with exit codes: " + errors);
 //                }
 //
@@ -192,7 +190,7 @@ public class NomadLauncher extends JNLPLauncher {
             }
             if (!slave.getComputer().isOnline()) {
 //                if (containerStatuses != null) {
-//                    logLastLines(containerStatuses, jobID, namespace, slave, null, client);
+//                    logLastLines(containerStatuses, jobID, slave, null, client);
 //                }
                 throw new IllegalStateException("Agent is not connected after " + j + " attempts, status: " + status);
             }
@@ -225,11 +223,11 @@ public class NomadLauncher extends JNLPLauncher {
     /**
      * Log the last lines of containers logs
      */
-//    private void logLastLines(List<ContainerStatus> containers, String podId, String namespace, KubernetesSlave slave,
+//    private void logLastLines(List<ContainerStatus> containers, String podId, KubernetesSlave slave,
 //            Map<String, Integer> errors, NomadClient client) {
 //        for (ContainerStatus containerStatus : containers) {
 //            String containerName = containerStatus.getName();
-//            PrettyLoggable<String, LogWatch> tailingLines = client.pods().inNamespace(namespace)
+//            PrettyLoggable<String, LogWatch> tailingLines = client.pods()
 //                    .withName(podId).inContainer(containerStatus.getName()).tailingLines(30);
 //            String log = tailingLines.getLog();
 //            if (!StringUtils.isBlank(log)) {
