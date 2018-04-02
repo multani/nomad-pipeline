@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.Symbol;
 
 /**
  * Nomad Job Template
@@ -593,6 +594,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     @Extension
+    @Symbol("nomadJobTemplate")
     public static class DescriptorImpl extends Descriptor<NomadJobTemplate> {
 
         @Override
