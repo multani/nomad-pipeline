@@ -80,7 +80,6 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         newTemplate.setContainers(step.getContainers());
 //        newTemplate.setNodeSelector(step.getNodeSelector());
 //        newTemplate.setNodeUsageMode(step.getNodeUsageMode());
-//        newTemplate.setServiceAccount(step.getServiceAccount());
 //        newTemplate.setAnnotations(step.getAnnotations());
 //        newTemplate.setImagePullSecrets(
 //                step.getImagePullSecrets().stream().map(x -> new PodImagePullSecret(x)).collect(toList()));

@@ -72,10 +72,6 @@
                                   deleteCaption="Delete Image Pull Secret" />
     </f:entry>
 
-    <f:entry field="serviceAccount" title="${%Service Account}">
-          <f:textbox/>
-     </f:entry>
-
 
     <f:entry field="nodeSelector" title="${%Node Selector}">
       <f:textbox/>

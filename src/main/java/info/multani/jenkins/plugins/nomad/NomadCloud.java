@@ -573,17 +573,6 @@ public class NomadCloud extends Cloud {
             return "Nomad";
         }
 
-//        @Initializer(before = InitMilestone.PLUGINS_STARTED)
-//        public static void addAliases() {
-//            Jenkins.XSTREAM2.addCompatibilityAlias(
-//                    "org.csanchez.jenkins.plugins.kubernetes.OpenShiftBearerTokenCredentialImpl",
-//                    org.jenkinsci.plugins.kubernetes.credentials.OpenShiftBearerTokenCredentialImpl.class);
-//            Jenkins.XSTREAM2.addCompatibilityAlias(
-//                    "org.csanchez.jenkins.plugins.kubernetes.OpenShiftTokenCredentialImpl",
-//                    StringCredentialsImpl.class);
-//            Jenkins.XSTREAM2.addCompatibilityAlias("org.csanchez.jenkins.plugins.kubernetes.ServiceAccountCredential",
-//                    org.jenkinsci.plugins.kubernetes.credentials.FileSystemServiceAccountCredential.class);
-//        }
         public FormValidation doTestConnection(@QueryParameter String name, @QueryParameter String serverUrl, @QueryParameter String credentialsId,
                 @QueryParameter String serverCertificate,
                 @QueryParameter boolean skipTlsVerify,

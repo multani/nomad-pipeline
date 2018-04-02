@@ -72,7 +72,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //
     private String label;
 //
-//    private String serviceAccount;
 //
 //    private String nodeSelector;
 //
@@ -112,7 +111,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //        this.setInheritFrom(from.getInheritFrom());
 //        this.setNodeSelector(from.getNodeSelector());
         this.setNodeUsageMode(from.getNodeUsageMode());
-//        this.setServiceAccount(from.getServiceAccount());
         this.setSlaveConnectTimeout(from.getSlaveConnectTimeout());
 //        this.setActiveDeadlineSeconds(from.getActiveDeadlineSeconds());
 //        this.setVolumes(from.getVolumes());
@@ -370,15 +368,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //        return getFirstContainer().map(ContainerTemplate::isPrivileged).orElse(false);
 //    }
 //
-//    public String getServiceAccount() {
-//        return serviceAccount;
-//    }
-//
-//    @DataBoundSetter
-//    public void setServiceAccount(String serviceAccount) {
-//        this.serviceAccount = Util.fixEmpty(serviceAccount);
-//    }
-//
 //    @Deprecated
 //    @DataBoundSetter
 //    public void setAlwaysPullImage(boolean alwaysPullImage) {
@@ -626,7 +615,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
                 (idleMinutes == 0 ? "" : ", idleMinutes=" + idleMinutes) +
 //                (activeDeadlineSeconds == 0 ? "" : ", activeDeadlineSeconds=" + activeDeadlineSeconds) +
                 (label == null ? "" : ", label='" + label + '\'') +
-//                (serviceAccount == null ? "" : ", serviceAccount='" + serviceAccount + '\'') +
 //                (nodeSelector == null ? "" : ", nodeSelector='" + nodeSelector + '\'') +
                 (nodeUsageMode == null ? "" : ", nodeUsageMode=" + nodeUsageMode) +
                 (resourcesCPU == null ? "" : ", resourcesCpu='" + resourcesCPU + '\'') +

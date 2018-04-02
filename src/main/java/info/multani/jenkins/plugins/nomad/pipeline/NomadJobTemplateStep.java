@@ -47,7 +47,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private int slaveConnectTimeout = NomadJobTemplate.DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
     private int activeDeadlineSeconds;
 
-    private String serviceAccount;
     private String nodeSelector;
     private Node.Mode nodeUsageMode;
     private String workingDir = TaskGroupTemplate.DEFAULT_WORKING_DIR;
@@ -166,13 +165,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     @DataBoundSetter
     public void setActiveDeadlineSeconds(int activeDeadlineSeconds) {
         this.activeDeadlineSeconds = activeDeadlineSeconds;
-    }
-
-    public String getServiceAccount() { return serviceAccount; }
-
-    @DataBoundSetter
-    public void setServiceAccount(String serviceAccount) {
-        this.serviceAccount = serviceAccount;
     }
 
     public String getNodeSelector() {
