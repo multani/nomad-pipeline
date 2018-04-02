@@ -1,6 +1,7 @@
 package info.multani.jenkins.plugins.nomad;
 
 import com.hashicorp.nomad.javasdk.NomadApiClient;
+import com.hashicorp.nomad.javasdk.NomadException;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -203,8 +204,9 @@ public class NomadSlave extends AbstractCloudSlave {
             LOGGER.log(Level.SEVERE, String.format("Unable to terminate agent %s. Cloud may have been removed. There may be leftover resources on the Kubernetes cluster.", name));
             return;
         }
+        NomadApiClient client;
         try {
-            cloud.connect();
+            client = cloud.connect();
         } catch (UnrecoverableKeyException | CertificateEncodingException | NoSuchAlgorithmException
                 | KeyStoreException e) {
             String msg = String.format("Failed to connect to cloud %s", getCloudName());
@@ -212,22 +214,21 @@ public class NomadSlave extends AbstractCloudSlave {
             return;
         }
 
-//        String actualNamespace = getNamespace() == null ? client.getNamespace() : getNamespace();
-//        try {
-//            Boolean deleted = client.pods().inNamespace(actualNamespace).withName(name).delete();
-//            if (!Boolean.TRUE.equals(deleted)) {
-//                String msg = String.format("Failed to delete pod for agent %s/%s: not found", actualNamespace, name);
-//                LOGGER.log(Level.WARNING, msg);
-//                listener.error(msg);
-//                return;
-//            }
-//        } catch (NomadException e) {
-//            String msg = String.format("Failed to delete pod for agent %s/%s: %s", actualNamespace, name,
-//                    e.getMessage());
-//            LOGGER.log(Level.WARNING, msg, e);
-//            listener.error(msg);
-//            return;
-//        }
+        try {
+            Boolean deleted = client.getJobsApi().deregister(name).getHttpResponse().getStatusLine().getStatusCode() == 200;
+            if (!Boolean.TRUE.equals(deleted)) {
+                String msg = String.format("Failed to delete job for agent %s: not found", name);
+                LOGGER.log(Level.WARNING, msg);
+                listener.error(msg);
+                return;
+            }
+        } catch (NomadException e) {
+            String msg = String.format("Failed to delete job for agent %s: %s", name,
+                    e.getMessage());
+            LOGGER.log(Level.WARNING, msg, e);
+            listener.error(msg);
+            return;
+        }
 
         String msg = String.format("Terminated Nomad job for agent %s", name);
         LOGGER.log(Level.INFO, msg);
