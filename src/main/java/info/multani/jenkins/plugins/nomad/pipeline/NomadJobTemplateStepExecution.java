@@ -72,7 +72,7 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         newTemplate.setLabel(step.getLabel());
         newTemplate.setEnvVars(step.getEnvVars());
         newTemplate.setContainers(step.getContainers());
-//        newTemplate.setNodeUsageMode(step.getNodeUsageMode());
+        newTemplate.setNodeUsageMode(step.getNodeUsageMode());
 
         nomadCloud.addDynamicTemplate(newTemplate);
         getContext().newBodyInvoker().withContext(step).withCallback(new PodTemplateCallback(newTemplate)).start();
