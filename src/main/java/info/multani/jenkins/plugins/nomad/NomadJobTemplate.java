@@ -49,21 +49,17 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     private String name;
 
     private String image;
-//
-//    private boolean privileged;
-//
-//    private boolean alwaysPullImage;
-//
+
     private String command;
-//
+
     private String args;
 //
 //    private String remoteFs;
 //
     private int instanceCap = Integer.MAX_VALUE;
-//
+
     private int slaveConnectTimeout = DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
-//
+
     private int idleMinutes;
 
     private String label;
@@ -268,29 +264,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     public Node.Mode getNodeUsageMode() {
         return nodeUsageMode;
     }
-//
-//    @Deprecated
-//    @DataBoundSetter
-//    public void setPrivileged(boolean privileged) {
-//        getFirstContainer().ifPresent((i) -> i.setPrivileged(privileged));
-//    }
-//
-//    @Deprecated
-//    public boolean isPrivileged() {
-//        return getFirstContainer().map(ContainerTemplate::isPrivileged).orElse(false);
-//    }
-//
-//    @Deprecated
-//    @DataBoundSetter
-//    public void setAlwaysPullImage(boolean alwaysPullImage) {
-//        getFirstContainer().ifPresent((i) -> i.setAlwaysPullImage(alwaysPullImage));
-//    }
-//
-//    @Deprecated
-//    public boolean isAlwaysPullImage() {
-//        return getFirstContainer().map(ContainerTemplate::isAlwaysPullImage).orElse(false);
-//    }
-//
+
     public List<TemplateEnvVar> getEnvVars() {
         if (envVars == null) {
             return Collections.emptyList();
@@ -344,13 +318,10 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     @SuppressWarnings("deprecation")
     protected Object readResolve() {
         if (taskGroups == null) {
-//            // upgrading from 0.8
             taskGroups = new ArrayList<>();
             TaskGroupTemplate taskGroupTemplate = new TaskGroupTemplate(NomadCloud.JNLP_NAME, this.image);
             taskGroupTemplate.setCommand(command);
             taskGroupTemplate.setArgs(args);
-//            taskGroupTemplate.setPrivileged(privileged);
-//            taskGroupTemplate.setAlwaysPullImage(alwaysPullImage);
             taskGroupTemplate.setEnvVars(envVars);
             taskGroupTemplate.setResourcesCPU(resourcesCPU);
             taskGroupTemplate.setResourcesMemory(resourcesMemory);
@@ -398,8 +369,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //                (inheritFrom == null ? "" : "inheritFrom='" + inheritFrom + '\'') +
                 (name == null ? "" : ", name='" + name + '\'') +
                 (image == null ? "" : ", image='" + image + '\'') +
-//                (!privileged ? "" : ", privileged=" + privileged) +
-//                (!alwaysPullImage ? "" : ", alwaysPullImage=" + alwaysPullImage) +
                 (command == null ? "" : ", command='" + command + '\'') +
                 (args == null ? "" : ", args='" + args + '\'') +
 //                (remoteFs == null ? "" : ", remoteFs='" + remoteFs + '\'') +

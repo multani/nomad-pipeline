@@ -14,10 +14,6 @@
     <f:textbox clazz="required"/>
   </f:entry>
 
-  <f:entry field="alwaysPullImage" title="${%Always pull image}">
-    <f:checkbox/>
-  </f:entry>
-
   <f:entry field="workingDir" title="${%Working directory}">
     <f:textbox default="/home/jenkins"/>
   </f:entry>
@@ -40,9 +36,6 @@
     </f:entry>
 
   <f:advanced>
-    <f:entry field="privileged" title="${%Run in privileged mode}">
-      <f:checkbox/>
-    </f:entry>
 
     <f:entry field="resourceRequestCpu" title="${%Request CPU}">
       <f:textbox/>

@@ -36,10 +36,6 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     private String image;
 
-    private boolean privileged;
-
-    private boolean alwaysPullImage;
-
     private String workingDir = DEFAULT_WORKING_DIR;
 
     private String command;
@@ -137,24 +133,6 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
         return workingDir;
     }
 
-    @DataBoundSetter
-    public void setPrivileged(boolean privileged) {
-        this.privileged = privileged;
-    }
-
-    public boolean isPrivileged() {
-        return privileged;
-    }
-
-    @DataBoundSetter
-    public void setAlwaysPullImage(boolean alwaysPullImage) {
-        this.alwaysPullImage = alwaysPullImage;
-    }
-
-    public boolean isAlwaysPullImage() {
-        return alwaysPullImage;
-    }
-
     public List<TemplateEnvVar> getEnvVars() {
         return envVars != null ? envVars : Collections.emptyList();
     }
@@ -232,8 +210,6 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
         return "TaskGroupTemplate{" +
                 (name == null ? "" : "name='" + name + '\'') +
                 (image == null ? "" : ", image='" + image + '\'') +
-                (!privileged ? "" : ", privileged=" + privileged) +
-                (!alwaysPullImage ? "" : ", alwaysPullImage=" + alwaysPullImage) +
                 (workingDir == null ? "" : ", workingDir='" + workingDir + '\'') +
                 (command == null ? "" : ", command='" + command + '\'') +
                 (args == null ? "" : ", args='" + args + '\'') +
