@@ -77,13 +77,9 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //
     private Node.Mode nodeUsageMode;
 
-    private String resourcesCPU;
+    private Integer resourcesCPU;
 
-    private String resourcesMemory;
-
-//    private String resourceLimitCpu;
-//
-//    private String resourceLimitMemory;
+    private Integer resourcesMemory;
 
 //    private boolean customWorkspaceVolumeEnabled;
 ////    private WorkspaceVolume workspaceVolume;

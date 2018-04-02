@@ -25,6 +25,7 @@ import hudson.model.Descriptor;
 import hudson.model.DescriptorVisibilityFilter;
 import jenkins.model.Jenkins;
 
+// TODO: actually, this defines a Nomad Task within a Task Group
 public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate> implements Serializable {
 
     private static final long serialVersionUID = 4212681620316294146L;
@@ -47,13 +48,10 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     private boolean ttyEnabled;
 
-    private String resourceRequestCpu;
+    private Integer resourcesCPU;
 
-    private String resourceRequestMemory;
+    private Integer resourcesMemory;
 
-    private String resourceLimitCpu;
-
-    private String resourceLimitMemory;
     private String shell;
 
     private final List<TemplateEnvVar> envVars = new ArrayList<>();
@@ -183,40 +181,22 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
         this.ports = ports;
     }
 
-    public String getResourceRequestMemory() {
-        return resourceRequestMemory;
+    public Integer getResourcesCPU() {
+        return resourcesCPU;
     }
 
     @DataBoundSetter
-    public void setResourceRequestMemory(String resourceRequestMemory) {
-        this.resourceRequestMemory = resourceRequestMemory;
+    public void setResourcesCPU(Integer resourceLimitCpu) {
+        this.resourcesCPU = resourceLimitCpu;
     }
 
-    public String getResourceLimitCpu() {
-        return resourceLimitCpu;
-    }
-
-    @DataBoundSetter
-    public void setResourcesCPU(String resourceLimitCpu) {
-        this.resourceLimitCpu = resourceLimitCpu;
-    }
-
-    public String getResourceLimitMemory() {
-        return resourceLimitMemory;
+    public Integer getResourceMemory() {
+        return resourcesMemory;
     }
 
     @DataBoundSetter
-    public void setResourcesMemory(String resourceLimitMemory) {
-        this.resourceLimitMemory = resourceLimitMemory;
-    }
-
-    public String getResourceRequestCpu() {
-        return resourceRequestCpu;
-    }
-
-    @DataBoundSetter
-    public void setResourceRequestCpu(String resourceRequestCpu) {
-        this.resourceRequestCpu = resourceRequestCpu;
+    public void setResourcesMemory(Integer resourcesMemory) {
+        this.resourcesMemory = resourcesMemory;
     }
 
     public Map<String,Object> getAsArgs() {
@@ -258,10 +238,8 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
                 (command == null ? "" : ", command='" + command + '\'') +
                 (args == null ? "" : ", args='" + args + '\'') +
                 (!ttyEnabled ? "" : ", ttyEnabled=" + ttyEnabled) +
-                (resourceRequestCpu == null ? "" : ", resourceRequestCpu='" + resourceRequestCpu + '\'') +
-                (resourceRequestMemory == null ? "" : ", resourceRequestMemory='" + resourceRequestMemory + '\'') +
-                (resourceLimitCpu == null ? "" : ", resourceLimitCpu='" + resourceLimitCpu + '\'') +
-                (resourceLimitMemory == null ? "" : ", resourceLimitMemory='" + resourceLimitMemory + '\'') +
+                (resourcesCPU == null ? "" : ", resourcesCPU='" + resourcesCPU + '\'') +
+                (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
                 (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
                 (ports == null || ports.isEmpty() ? "" : ", ports=" + ports) +
                 (livenessProbe == null ? "" : ", livenessProbe=" + livenessProbe) +

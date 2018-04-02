@@ -35,6 +35,7 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import com.hashicorp.nomad.apimodel.Job;
+import com.hashicorp.nomad.apimodel.Resources;
 import com.hashicorp.nomad.apimodel.RestartPolicy;
 import com.hashicorp.nomad.apimodel.Task;
 import com.hashicorp.nomad.apimodel.TaskGroup;
@@ -219,9 +220,10 @@ public class NomadJobTemplateBuilder {
         TaskGroup taskGroup = new TaskGroup();
         taskGroup.setName(substituteEnv(taskGroupTemplate.getName()));
         
-        RestartPolicy restartPolicy = new RestartPolicy();
-        restartPolicy.setMode("fail");
-        restartPolicy.setAttempts(0);
+
+        RestartPolicy restartPolicy = new RestartPolicy()
+                .setMode("fail")
+                .setAttempts(0);
         taskGroup.setRestartPolicy(restartPolicy);
 
         Task task = new Task();
@@ -231,8 +233,14 @@ public class NomadJobTemplateBuilder {
         task.addConfig("command", substituteEnv(taskGroupTemplate.getCommand()));
         task.addConfig("args", arguments);
         task.addConfig("network_mode", "host");
+
         task.setEnv(envVars);
-        
+
+        Resources resources = new Resources()
+                .setCpu(taskGroupTemplate.getResourcesCPU())
+                .setMemoryMb(taskGroupTemplate.getResourceMemory());
+        task.setResources(resources);
+
         taskGroup.addTasks(task);
 
         return taskGroup;
