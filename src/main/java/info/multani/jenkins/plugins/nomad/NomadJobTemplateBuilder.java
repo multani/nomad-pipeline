@@ -150,7 +150,7 @@ public class NomadJobTemplateBuilder {
 
     }
 
-    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate containerTemplate, Collection<TemplateEnvVar> globalEnvVars) {
+    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate taskGroupTemplate, Collection<TemplateEnvVar> globalEnvVars) {
         // Last-write wins map of environment variable names to values
         HashMap<String, String> env = new HashMap<>();
 
@@ -171,7 +171,7 @@ public class NomadJobTemplateBuilder {
         // Running on OpenShift Enterprise, security concerns force use of arbitrary user ID
         // As a result, container is running without a home set for user, resulting into using `/` for some tools,
         // and `?` for java build tools. So we force HOME to a safe location.
-        env.put("HOME", containerTemplate.getWorkingDir());
+        env.put("HOME", taskGroupTemplate.getWorkingDir());
 
         Map<String, String> envVars = new HashMap<>();
 
@@ -192,9 +192,8 @@ public class NomadJobTemplateBuilder {
 //        }
 
         //EnvVar[] envVars = envVarsMap.values().stream().toArray(EnvVar[]::new);
-
-        List<String> arguments = Strings.isNullOrEmpty(containerTemplate.getArgs()) ? Collections.emptyList()
-                : parseDockerCommand(containerTemplate.getArgs() //
+        List<String> arguments = Strings.isNullOrEmpty(taskGroupTemplate.getArgs()) ? Collections.emptyList()
+                : parseDockerCommand(taskGroupTemplate.getArgs() //
                         .replaceAll(JNLPMAC_REF, slave.getComputer().getJnlpMac()) //
                         .replaceAll(NAME_REF, slave.getComputer().getName()));
 
@@ -218,7 +217,7 @@ public class NomadJobTemplateBuilder {
 //                    .build();
 //        }
         TaskGroup taskGroup = new TaskGroup();
-        taskGroup.setName(substituteEnv(containerTemplate.getName()));
+        taskGroup.setName(substituteEnv(taskGroupTemplate.getName()));
         
         RestartPolicy restartPolicy = new RestartPolicy();
         restartPolicy.setMode("fail");
@@ -226,10 +225,10 @@ public class NomadJobTemplateBuilder {
         taskGroup.setRestartPolicy(restartPolicy);
 
         Task task = new Task();
-        task.setName(substituteEnv(containerTemplate.getName()));
+        task.setName(substituteEnv(taskGroupTemplate.getName()));
         task.setDriver("docker");
-        task.addConfig("image", substituteEnv(containerTemplate.getImage()));
-        task.addConfig("command", substituteEnv(containerTemplate.getCommand()));
+        task.addConfig("image", substituteEnv(taskGroupTemplate.getImage()));
+        task.addConfig("command", substituteEnv(taskGroupTemplate.getCommand()));
         task.addConfig("args", arguments);
         task.addConfig("network_mode", "host");
         task.setEnv(envVars);
@@ -255,7 +254,7 @@ public class NomadJobTemplateBuilder {
 //                .withTty(containerTemplate.isTtyEnabled())
 //                .withNewResources()
 //                .withRequests(getResourcesMap(containerTemplate.getResourcesMemory(), containerTemplate.getResourcesCPU()))
-//                .withLimits(getResourcesMap(containerTemplate.getResourceLimitMemory(), containerTemplate.getResourceLimitCpu()))
+//                .withLimits(getResourcesMap(containerTemplate.getResourceMemory(), containerTemplate.getResourceLimitCpu()))
 //                .endResources()
 //                .build();
     }

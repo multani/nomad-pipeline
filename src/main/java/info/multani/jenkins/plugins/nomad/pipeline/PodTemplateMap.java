@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 import info.multani.jenkins.plugins.nomad.NomadCloud;
 import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
-import info.multani.jenkins.plugins.nomad.PodTemplateSource;
+import info.multani.jenkins.plugins.nomad.NomadJobTemplateSource;
 
 import hudson.Extension;
 import hudson.ExtensionList;
@@ -64,7 +64,7 @@ public class PodTemplateMap {
     }
 
     @Extension
-    public static class PodTemplateSourceImpl extends PodTemplateSource {
+    public static class PodTemplateSourceImpl extends NomadJobTemplateSource {
 
         @Nonnull
         @Override

@@ -1,6 +1,5 @@
 package info.multani.jenkins.plugins.nomad;
 
-import com.google.common.base.Strings;
 import com.hashicorp.nomad.apimodel.Job;
 import java.io.Serializable;
 import java.util.List;
@@ -21,7 +20,6 @@ import hudson.model.Label;
 import hudson.model.Node;
 import hudson.model.labels.LabelAtom;
 import hudson.tools.ToolLocationNodeProperty;
-import static info.multani.jenkins.plugins.nomad.NomadJobTemplateBuilder.parseDockerCommand;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -92,7 +90,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //
 ////    private final List<PodVolume> volumes = new ArrayList<PodVolume>();
 //
-    private List<TaskGroupTemplate> containers = new ArrayList<TaskGroupTemplate>();
+    private List<TaskGroupTemplate> taskGroups = new ArrayList<TaskGroupTemplate>();
 //
     private List<TemplateEnvVar> envVars = new ArrayList<>();
 //
@@ -488,8 +486,8 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 //    }
 //
 //    @Deprecated
-//    public String getResourceLimitMemory() {
-//        return getFirstContainer().map(ContainerTemplate::getResourceLimitMemory).orElse(null);
+//    public String getResourceMemory() {
+//        return getFirstContainer().map(ContainerTemplate::getResourceMemory).orElse(null);
 //    }
 //
 //    @Deprecated
@@ -545,35 +543,35 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     @DataBoundSetter
     public void setContainers(@Nonnull List<TaskGroupTemplate> items) {
-        synchronized (this.containers) {
-            this.containers.clear();
-            this.containers.addAll(items);
+        synchronized (this.taskGroups) {
+            this.taskGroups.clear();
+            this.taskGroups.addAll(items);
         }
     }
 
     @Nonnull
     public List<TaskGroupTemplate> getContainers() {
-        if (containers == null) {
+        if (taskGroups == null) {
             return Collections.emptyList();
         }
-        return containers;
+        return taskGroups;
     }
 
     @SuppressWarnings("deprecation")
     protected Object readResolve() {
-        if (containers == null) {
+        if (taskGroups == null) {
 //            // upgrading from 0.8
-            containers = new ArrayList<>();
-            TaskGroupTemplate containerTemplate = new TaskGroupTemplate(NomadCloud.JNLP_NAME, this.image);
-            containerTemplate.setCommand(command);
-            containerTemplate.setArgs(args);
-//            containerTemplate.setPrivileged(privileged);
-//            containerTemplate.setAlwaysPullImage(alwaysPullImage);
-            containerTemplate.setEnvVars(envVars);
-            containerTemplate.setResourcesCPU(resourcesCPU);
-            containerTemplate.setResourcesMemory(resourcesMemory);
-//            containerTemplate.setWorkingDir(remoteFs);
-            containers.add(containerTemplate);
+            taskGroups = new ArrayList<>();
+            TaskGroupTemplate taskGroupTemplate = new TaskGroupTemplate(NomadCloud.JNLP_NAME, this.image);
+            taskGroupTemplate.setCommand(command);
+            taskGroupTemplate.setArgs(args);
+//            taskGroupTemplate.setPrivileged(privileged);
+//            taskGroupTemplate.setAlwaysPullImage(alwaysPullImage);
+            taskGroupTemplate.setEnvVars(envVars);
+            taskGroupTemplate.setResourcesCPU(resourcesCPU);
+            taskGroupTemplate.setResourcesMemory(resourcesMemory);
+//            taskGroupTemplate.setWorkingDir(remoteFs);
+            taskGroups.add(taskGroupTemplate);
         }
 //
 //        if (annotations == null) {
@@ -615,7 +613,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     @Override
     public String toString() {
-        return "PodTemplate{" +
+        return "NomadJobTemplate{" +
 //                (inheritFrom == null ? "" : "inheritFrom='" + inheritFrom + '\'') +
                 (name == null ? "" : ", name='" + name + '\'') +
                 (namespace == null ? "" : ", namespace='" + namespace + '\'') +

@@ -182,13 +182,13 @@ public class NomadCloud extends Cloud {
     }
 
     /**
-     * Returns all pod templates for this cloud including the dynamic ones.
+     * Returns all Nomad job templates for this cloud including the dynamic ones.
      *
-     * @return all pod templates for this cloud including the dynamic ones.
+     * @return all Nomad job templates for this cloud including the dynamic ones.
      */
     @Nonnull
     public List<NomadJobTemplate> getAllTemplates() {
-        return PodTemplateSource.getAll(this);
+        return NomadJobTemplateSource.getAll(this);
     }
 
     @DataBoundSetter
@@ -666,7 +666,7 @@ public class NomadCloud extends Cloud {
 //    }
 
     @Extension
-    public static class PodTemplateSourceImpl extends PodTemplateSource {
+    public static class PodTemplateSourceImpl extends NomadJobTemplateSource {
 
         @Nonnull
         @Override

@@ -44,7 +44,7 @@ import hudson.slaves.SlaveComputer;
 import static org.kohsuke.stapler.HttpResponses.status;
 
 /**
- * Launches on Kubernetes the specified {@link NomadComputer} instance.
+ * Launches on Nomad the specified {@link NomadComputer} instance.
  */
 public class NomadLauncher extends JNLPLauncher {
 

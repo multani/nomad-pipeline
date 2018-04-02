@@ -20,12 +20,12 @@ public class NomadComputer extends AbstractCloudComputer<NomadSlave> {
     @Override
     public void taskAccepted(Executor executor, Queue.Task task) {
         super.taskAccepted(executor, task);
-        LOGGER.fine(" Computer " + this + " taskAccepted");
+        LOGGER.fine("Computer " + this + " taskAccepted");
     }
 
     @Override
     public void taskCompleted(Executor executor, Queue.Task task, long durationMS) {
-        LOGGER.log(Level.FINE, " Computer " + this + " taskCompleted");
+        LOGGER.log(Level.FINE, "Computer " + this + " taskCompleted");
 
         // May take the agent offline and remove it, in which case getNode()
         // above would return null and we'd not find our DockerSlave anymore.
@@ -35,12 +35,12 @@ public class NomadComputer extends AbstractCloudComputer<NomadSlave> {
     @Override
     public void taskCompletedWithProblems(Executor executor, Queue.Task task, long durationMS, Throwable problems) {
         super.taskCompletedWithProblems(executor, task, durationMS, problems);
-        LOGGER.log(Level.FINE, " Computer " + this + " taskCompletedWithProblems");
+        LOGGER.log(Level.FINE, "Computer " + this + " taskCompletedWithProblems");
     }
 
     @Override
     public String toString() {
-        return String.format("KubernetesComputer name: %s slave: %s", getName(), getNode());
+        return String.format("NomadComputer name: %s slave: %s", getName(), getNode());
     }
 
 }

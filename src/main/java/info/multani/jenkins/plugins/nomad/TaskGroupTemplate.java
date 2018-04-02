@@ -232,12 +232,12 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
     }
 
     @Extension
-    @Symbol("containerTemplate")
+    @Symbol("taskGroupTemplate")
     public static class DescriptorImpl extends Descriptor<TaskGroupTemplate> {
 
         @Override
         public String getDisplayName() {
-            return "Container Template";
+            return "Task Group Template";
         }
 
         @SuppressWarnings("unused") // Used by jelly
@@ -249,7 +249,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     @Override
     public String toString() {
-        return "ContainerTemplate{" +
+        return "TaskGroupTemplate{" +
                 (name == null ? "" : "name='" + name + '\'') +
                 (image == null ? "" : ", image='" + image + '\'') +
                 (!privileged ? "" : ", privileged=" + privileged) +

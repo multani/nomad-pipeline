@@ -11,11 +11,11 @@ import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 
 /**
- * A source of pod templates.
+ * A source of Nomad job templates.
  */
-public abstract class PodTemplateSource implements ExtensionPoint {
+public abstract class NomadJobTemplateSource implements ExtensionPoint {
     public static List<NomadJobTemplate> getAll(@Nonnull NomadCloud cloud) {
-        return ExtensionList.lookup(PodTemplateSource.class)
+        return ExtensionList.lookup(NomadJobTemplateSource.class)
                 .stream()
                 .map(s -> s.getList(cloud))
                 .flatMap(Collection::stream)
