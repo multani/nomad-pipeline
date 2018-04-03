@@ -36,7 +36,7 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private final String label;
     private final String name;
 
-    private List<TaskGroupTemplate> containers = new ArrayList<>();
+    private List<TaskGroupTemplate> taskGroups = new ArrayList<>();
     private List<TemplateEnvVar> envVars = new ArrayList<>();
 
     private int instanceCap = Integer.MAX_VALUE;
@@ -78,13 +78,13 @@ public class NomadJobTemplateStep extends Step implements Serializable {
         this.inheritFrom = inheritFrom;
     }
 
-    public List<TaskGroupTemplate> getContainers() {
-        return containers;
+    public List<TaskGroupTemplate> getTaskGroups() {
+        return taskGroups;
     }
 
     @DataBoundSetter
-    public void setContainers(List<TaskGroupTemplate> containers) {
-        this.containers = containers;
+    public void setTaskGroups(List<TaskGroupTemplate> taskGroups) {
+        this.taskGroups = taskGroups;
     }
 
     public List<TemplateEnvVar> getEnvVars() {

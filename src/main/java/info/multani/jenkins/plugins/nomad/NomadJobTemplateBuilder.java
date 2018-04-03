@@ -85,18 +85,18 @@ public class NomadJobTemplateBuilder {
     public Job build(NomadSlave slave) {
         ArrayList<TaskGroup> taskGroups = new ArrayList<>();
 
-//        Map<String, Container> containers = new HashMap<>();
-        for (TaskGroupTemplate taskGroupTemplate : template.getContainers()) {
+//        Map<String, Container> taskGroups = new HashMap<>();
+        for (TaskGroupTemplate taskGroupTemplate : template.getTaskGroups()) {
             taskGroups.add(
                     createContainer(slave, taskGroupTemplate, template.getEnvVars())
             );
         }
 
-//        if (!containers.containsKey(JNLP_NAME)) {
+//        if (!taskGroups.containsKey(JNLP_NAME)) {
 //            TaskGroupTemplate taskGroupTemplate = new TaskGroupTemplate(DEFAULT_JNLP_IMAGE);
 //            taskGroupTemplate.setName(JNLP_NAME);
 //            taskGroupTemplate.setArgs(DEFAULT_JNLP_ARGUMENTS);
-//            containers.put(JNLP_NAME, createContainer(slave, taskGroupTemplate, template.getEnvVars(), volumeMounts.values()));
+//            taskGroups.put(JNLP_NAME, createContainer(slave, taskGroupTemplate, template.getEnvVars(), volumeMounts.values()));
 //        }
 
         Job job = new Job();

@@ -81,7 +81,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     public NomadJobTemplate(NomadJobTemplate from) {
-        this.setContainers(from.getContainers());
+        this.setTaskGroups(from.getTaskGroups());
         this.setInstanceCap(from.getInstanceCap());
         this.setLabel(from.getLabel());
 //        this.setName(from.getName());
@@ -91,7 +91,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     private Optional<TaskGroupTemplate> getFirstContainer() {
-        return Optional.ofNullable(getContainers().isEmpty() ? null : getContainers().get(0));
+        return Optional.ofNullable(getTaskGroups().isEmpty() ? null : getTaskGroups().get(0));
     }
 
 //    public String getInheritFrom() {
@@ -300,7 +300,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     @DataBoundSetter
-    public void setContainers(@Nonnull List<TaskGroupTemplate> items) {
+    public void setTaskGroups(@Nonnull List<TaskGroupTemplate> items) {
         synchronized (this.taskGroups) {
             this.taskGroups.clear();
             this.taskGroups.addAll(items);
@@ -308,7 +308,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     @Nonnull
-    public List<TaskGroupTemplate> getContainers() {
+    public List<TaskGroupTemplate> getTaskGroups() {
         if (taskGroups == null) {
             return Collections.emptyList();
         }
@@ -379,7 +379,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
                 (nodeUsageMode == null ? "" : ", nodeUsageMode=" + nodeUsageMode) +
                 (resourcesCPU == null ? "" : ", resourcesCpu='" + resourcesCPU + '\'') +
                 (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
-//                (containers == null || containers.isEmpty() ? "" : ", containers=" + containers) +
+                (taskGroups == null || taskGroups.isEmpty() ? "" : ", taskGroups=" + taskGroups) +
                 (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
                 (nodeProperties == null || nodeProperties.isEmpty() ? "" : ", nodeProperties=" + nodeProperties) +
                 '}';

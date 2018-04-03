@@ -71,7 +71,7 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         newTemplate.setSlaveConnectTimeout(step.getSlaveConnectTimeout());
         newTemplate.setLabel(step.getLabel());
         newTemplate.setEnvVars(step.getEnvVars());
-        newTemplate.setContainers(step.getContainers());
+        newTemplate.setTaskGroups(step.getTaskGroups());
         newTemplate.setNodeUsageMode(step.getNodeUsageMode());
 
         nomadCloud.addDynamicTemplate(newTemplate);
