@@ -55,11 +55,6 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     private ContainerLivenessProbe livenessProbe;
 
-    @Deprecated
-    public TaskGroupTemplate(String image) {
-        this(null, image);
-    }
-
     @DataBoundConstructor
     public TaskGroupTemplate(String name, String image) {
         Preconditions.checkArgument(!StringUtils.isBlank(image));

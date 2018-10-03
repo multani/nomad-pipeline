@@ -63,46 +63,6 @@ public class NomadSlave extends AbstractCloudSlave {
         return template;
     }
 
-    /**
-     * @deprecated Use {@link Builder} instead.
-     */
-    @Deprecated
-    public NomadSlave(NomadJobTemplate template, String nodeDescription, NomadCloud cloud, String labelStr)
-            throws Descriptor.FormException, IOException {
-
-        this(template, nodeDescription, cloud.name, labelStr, new OnceRetentionStrategy(cloud.getRetentionTimeout()));
-    }
-
-    /**
-     * @deprecated Use {@link Builder} instead.
-     */
-    @Deprecated
-    public NomadSlave(NomadJobTemplate template, String nodeDescription, NomadCloud cloud, Label label)
-            throws Descriptor.FormException, IOException {
-        this(template, nodeDescription, cloud.name, label.toString(), new OnceRetentionStrategy(cloud.getRetentionTimeout())) ;
-    }
-
-    /**
-     * @deprecated Use {@link Builder} instead.
-     */
-    @Deprecated
-    public NomadSlave(NomadJobTemplate template, String nodeDescription, NomadCloud cloud, String labelStr,
-                           RetentionStrategy rs)
-            throws Descriptor.FormException, IOException {
-        this(template, nodeDescription, cloud.name, labelStr, rs);
-    }
-
-    /**
-     * @deprecated Use {@link Builder} instead.
-     */
-    @Deprecated
-    @DataBoundConstructor // make stapler happy. Not actually used.
-    public NomadSlave(NomadJobTemplate template, String nodeDescription, String cloudName, String labelStr,
-                           RetentionStrategy rs)
-            throws Descriptor.FormException, IOException {
-        this(getSlaveName(template), template, nodeDescription, cloudName, labelStr, new NomadLauncher(), rs);
-    }
-
     protected NomadSlave(String name, NomadJobTemplate template, String nodeDescription, String cloudName, String labelStr,
                            ComputerLauncher computerLauncher, RetentionStrategy rs)
             throws Descriptor.FormException, IOException {

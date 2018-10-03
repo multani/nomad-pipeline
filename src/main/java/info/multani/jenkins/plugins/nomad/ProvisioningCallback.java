@@ -44,14 +44,6 @@ class ProvisioningCallback implements Callable<Node> {
     @Nonnull
     private final NomadJobTemplate t;
 
-    /**
-     * @deprecated Use {@link ProvisioningCallback#ProvisioningCallback(KubernetesCloud, PodTemplate)} instead.
-     */
-    @Deprecated
-    public ProvisioningCallback(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate t, @CheckForNull Label label) {
-        this(cloud, t);
-    }
-
     public ProvisioningCallback(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate t) {
         this.cloud = cloud;
         this.t = t;

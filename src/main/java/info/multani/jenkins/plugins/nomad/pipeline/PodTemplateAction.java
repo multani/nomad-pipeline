@@ -29,29 +29,6 @@ public class PodTemplateAction extends AbstractInvisibleRunAction2 implements Ru
     }
 
     @Deprecated
-    @SuppressFBWarnings("DLS_DEAD_LOCAL_STORE")
-    public void push(String template) throws IOException {
-        if (run == null) {
-            LOGGER.warning("run is null, cannot push");
-            return;
-        }
-        synchronized (run) {
-            BulkChange bc = new BulkChange(run);
-            try {
-                PodTemplateAction action = run.getAction(PodTemplateAction.class);
-                if (action == null) {
-                    action = new PodTemplateAction(run);
-                    run.addAction(action);
-                }
-                action.stack.push(template);
-                bc.commit();
-            } finally {
-                bc.abort();
-            }
-        }
-    }
-
-    @Deprecated
     public String pop() throws IOException {
         if (run == null) {
             LOGGER.warning("run is null, cannot pop");

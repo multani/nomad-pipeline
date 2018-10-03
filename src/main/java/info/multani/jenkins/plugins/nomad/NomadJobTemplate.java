@@ -112,42 +112,9 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         return name;
     }
 
-    @Deprecated
-    public String getImage() {
-        return getFirstContainer().map(TaskGroupTemplate::getImage).orElse(null);
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setCommand(String command) {
-        getFirstContainer().ifPresent((i) -> i.setCommand(command));
-    }
-
-    @Deprecated
-    public String getCommand() {
-        return getFirstContainer().map(TaskGroupTemplate::getCommand).orElse(null);
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setArgs(String args) {
-        getFirstContainer().ifPresent((i) -> i.setArgs(args));
-    }
-
-    @Deprecated
-    public String getArgs() {
-        return getFirstContainer().map(TaskGroupTemplate::getArgs).orElse(null);
-    }
-
     public String getDisplayName() {
         return "Nomad Job Template";
     }
-
-//    @DataBoundSetter
-//    @Deprecated
-//    public void setRemoteFs(String remoteFs) {
-//        getFirstContainer().ifPresent((i) -> i.setWorkingDir(remoteFs));
-//    }
 
     @Deprecated
     public String getRemoteFs() {

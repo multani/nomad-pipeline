@@ -75,11 +75,6 @@ public class NomadCloud extends Cloud {
     private static final String DEFAULT_ID = "jenkins/slave-default";
 
     public static final String JNLP_NAME = "jnlp";
-    /**
-     * label for all pods started by the plugin
-     */
-    @Deprecated
-    public static final Map<String, String> DEFAULT_POD_LABELS = ImmutableMap.of("jenkins", "slave");
 
     /**
      * Default timeout for idle workers that don't correctly indicate exit.
@@ -136,23 +131,6 @@ public class NomadCloud extends Cloud {
         this.containerCap = source.containerCap;
         this.retentionTimeout = source.retentionTimeout;
         this.connectTimeout = source.connectTimeout;
-    }
-
-    @Deprecated
-    public NomadCloud(String name, List<? extends NomadJobTemplate> templates, String serverUrl,
-            String jenkinsUrl, String containerCapStr, int connectTimeout, int readTimeout, int retentionTimeout) {
-        this(name);
-
-        setServerUrl(serverUrl);
-        setJenkinsUrl(jenkinsUrl);
-        if (templates != null) {
-            this.templates.addAll(templates);
-        }
-        setContainerCapStr(containerCapStr);
-        setRetentionTimeout(retentionTimeout);
-        setConnectTimeout(connectTimeout);
-        setReadTimeout(readTimeout);
-
     }
 
     public int getRetentionTimeout() {
@@ -490,18 +468,6 @@ public class NomadCloud extends Cloud {
      *
      * @param label label to look for in templates
      * @return list of matching templates
-     * @deprecated Use {@link #getTemplatesFor(Label)} instead.
-     */
-    @Deprecated
-    public ArrayList<NomadJobTemplate> getMatchingTemplates(@CheckForNull Label label) {
-        return new ArrayList<>(getTemplatesFor(label));
-    }
-
-    /**
-     * Gets all PodTemplates that have the matching {@link Label}.
-     *
-     * @param label label to look for in templates
-     * @return list of matching templates
      */
     public List<NomadJobTemplate> getTemplatesFor(@CheckForNull Label label) {
         return PodTemplateFilter.applyAll(this, getAllTemplates(), label);
@@ -616,22 +582,6 @@ public class NomadCloud extends Cloud {
     public String toString() {
         return String.format("NomadCloud name: %s serverUrl: %s", name, serverUrl);
     }
-
-//    private Object readResolve() {
-//        if ((serverCertificate != null) && !serverCertificate.trim().startsWith("-----BEGIN CERTIFICATE-----")) {
-//            serverCertificate = new String(Base64.decodeBase64(serverCertificate.getBytes(UTF_8)), UTF_8);
-//            LOGGER.log(Level.INFO, "Upgraded Nomad server certificate key: {0}",
-//                    serverCertificate.substring(0, 80));
-//        }
-//
-//        if (maxRequestsPerHost == 0) {
-//            maxRequestsPerHost = DEFAULT_MAX_REQUESTS_PER_HOST;
-//        }
-//        if (labels == null) {
-//            labels = DEFAULT_POD_LABELS;
-//        }
-//        return this;
-//    }
 
     @Extension
     public static class PodTemplateSourceImpl extends NomadJobTemplateSource {
