@@ -26,10 +26,8 @@ package info.multani.jenkins.plugins.nomad;
 
 import java.util.concurrent.Callable;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
-import hudson.model.Label;
 import hudson.model.Node;
 
 /**

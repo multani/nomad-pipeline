@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.BulkChange;
 import hudson.model.Run;
 import jenkins.model.RunAction2;

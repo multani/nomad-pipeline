@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import info.multani.jenkins.plugins.nomad.TaskGroupTemplate;
-import info.multani.jenkins.plugins.nomad.PodAnnotation;
 import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
 import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import org.jenkinsci.plugins.workflow.steps.Step;

@@ -16,8 +16,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
 import com.google.common.base.Preconditions;
-import com.hashicorp.nomad.apimodel.Task;
-import com.hashicorp.nomad.apimodel.TaskGroup;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -52,8 +50,6 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     private final List<TemplateEnvVar> envVars = new ArrayList<>();
     private List<PortMapping> ports = new ArrayList<PortMapping>();
-
-    private ContainerLivenessProbe livenessProbe;
 
     @DataBoundConstructor
     public TaskGroupTemplate(String name, String image) {
@@ -137,14 +133,6 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
         this.envVars.addAll(envVars);
     }
 
-
-    public ContainerLivenessProbe getLivenessProbe() { return livenessProbe; }
-
-    @DataBoundSetter
-    public void setLivenessProbe(ContainerLivenessProbe livenessProbe) {
-        this.livenessProbe = livenessProbe;
-    }
-
     public List<PortMapping> getPorts() {
         return ports != null ? ports : Collections.emptyList();
     }
@@ -213,7 +201,6 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
                 (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
                 (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
                 (ports == null || ports.isEmpty() ? "" : ", ports=" + ports) +
-                (livenessProbe == null ? "" : ", livenessProbe=" + livenessProbe) +
                 '}';
     }
 
