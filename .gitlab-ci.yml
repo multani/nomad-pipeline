@@ -1,0 +1,16 @@
+image: maven:3-jdk-8
+
+stages:
+  - build
+
+build:
+  stage: build
+  script: mvn --batch-mode package
+
+  cache:
+    paths:
+      - .m2
+
+  artifacts:
+    paths:
+      - target/jenkins-nomad-plugin.hpi
