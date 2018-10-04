@@ -28,12 +28,10 @@ import static java.util.logging.Level.*;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import com.google.common.collect.ImmutableList;
 import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 import com.hashicorp.nomad.javasdk.ServerQueryResponse;
@@ -41,7 +39,6 @@ import com.hashicorp.nomad.javasdk.ServerQueryResponse;
 import hudson.model.TaskListener;
 import hudson.slaves.JNLPLauncher;
 import hudson.slaves.SlaveComputer;
-import static org.kohsuke.stapler.HttpResponses.status;
 
 /**
  * Launches on Nomad the specified {@link NomadComputer} instance.
