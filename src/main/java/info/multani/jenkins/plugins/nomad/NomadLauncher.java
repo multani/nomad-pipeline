@@ -24,21 +24,18 @@
 package info.multani.jenkins.plugins.nomad;
 
 import com.google.common.base.Throwables;
-import static java.util.logging.Level.*;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 import com.hashicorp.nomad.javasdk.ServerQueryResponse;
-
 import hudson.model.TaskListener;
 import hudson.slaves.JNLPLauncher;
 import hudson.slaves.SlaveComputer;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.logging.Level;
+import static java.util.logging.Level.*;
+import java.util.logging.Logger;
+import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Launches on Nomad the specified {@link NomadComputer} instance.

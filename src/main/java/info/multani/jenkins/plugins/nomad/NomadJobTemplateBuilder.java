@@ -25,15 +25,6 @@ package info.multani.jenkins.plugins.nomad;
 
 //import static info.multani.jenkins.plugins.nomad.PodTemplateUtils.*;
 import com.google.common.base.Strings;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-
 import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.apimodel.Resources;
 import com.hashicorp.nomad.apimodel.RestartPolicy;
@@ -41,11 +32,19 @@ import com.hashicorp.nomad.apimodel.Task;
 import com.hashicorp.nomad.apimodel.TaskGroup;
 import static hudson.Util.replaceMacro;
 import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
+import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
  * Helper class to build Pods from PodTemplates

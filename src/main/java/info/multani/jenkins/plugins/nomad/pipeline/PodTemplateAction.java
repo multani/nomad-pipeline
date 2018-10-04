@@ -1,13 +1,12 @@
 package info.multani.jenkins.plugins.nomad.pipeline;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import hudson.BulkChange;
+import hudson.model.Run;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.BulkChange;
-import hudson.model.Run;
 import jenkins.model.RunAction2;
 
 public class PodTemplateAction extends AbstractInvisibleRunAction2 implements RunAction2 {

@@ -1,14 +1,11 @@
 package info.multani.jenkins.plugins.nomad;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
+import java.util.Collection;
+import java.util.List;
+import static java.util.stream.Collectors.toList;
+import javax.annotation.Nonnull;
 
 /**
  * A source of Nomad job templates.

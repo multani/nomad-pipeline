@@ -1,20 +1,17 @@
 package info.multani.jenkins.plugins.nomad.pipeline;
 
+import hudson.Extension;
+import hudson.ExtensionList;
+import hudson.util.CopyOnWriteMap;
+import info.multani.jenkins.plugins.nomad.NomadCloud;
+import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
+import info.multani.jenkins.plugins.nomad.NomadJobTemplateSource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
-
 import javax.annotation.Nonnull;
-
-import info.multani.jenkins.plugins.nomad.NomadCloud;
-import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
-import info.multani.jenkins.plugins.nomad.NomadJobTemplateSource;
-
-import hudson.Extension;
-import hudson.ExtensionList;
-import hudson.util.CopyOnWriteMap;
 
 /**
  * A map of {@link NomadCloud} -&gt; List of {@link NomadJobTemplate} instances.

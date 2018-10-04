@@ -1,27 +1,24 @@
 package info.multani.jenkins.plugins.nomad.pipeline;
 
+import com.google.common.collect.ImmutableSet;
+import hudson.Extension;
+import hudson.model.Node;
+import hudson.model.Run;
+import hudson.model.TaskListener;
+import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
+import info.multani.jenkins.plugins.nomad.TaskGroupTemplate;
+import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import info.multani.jenkins.plugins.nomad.TaskGroupTemplate;
-import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
-import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import com.google.common.collect.ImmutableSet;
-
-import hudson.Extension;
-import hudson.model.Node;
-import hudson.model.Run;
-import hudson.model.TaskListener;
 
 public class NomadJobTemplateStep extends Step implements Serializable {
 

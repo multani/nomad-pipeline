@@ -1,12 +1,12 @@
 package info.multani.jenkins.plugins.nomad;
 
-import static java.util.stream.Collectors.toSet;
-import java.util.Set;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.Label;
+import java.util.Set;
+import static java.util.stream.Collectors.toSet;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * Collects the Kubernetes agents currently in provisioning.

@@ -24,15 +24,14 @@
 
 package info.multani.jenkins.plugins.nomad.pipeline;
 
-import java.io.IOException;
-import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.BulkChange;
 import hudson.model.InvisibleAction;
 import hudson.model.Run;
+import java.io.IOException;
+import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jenkins.model.RunAction2;
 
 /**

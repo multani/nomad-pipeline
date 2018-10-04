@@ -1,14 +1,12 @@
 package info.multani.jenkins.plugins.nomad;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-
 import hudson.ExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.Label;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 /**
  * Filters a pod template according to criteria.

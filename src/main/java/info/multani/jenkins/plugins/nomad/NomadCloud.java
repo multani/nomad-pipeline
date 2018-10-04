@@ -1,8 +1,26 @@
 package info.multani.jenkins.plugins.nomad;
 
 
+import com.google.common.collect.ImmutableMap;
+import com.hashicorp.nomad.javasdk.NomadApiClient;
+import com.hashicorp.nomad.javasdk.NomadApiConfiguration;
+import com.hashicorp.nomad.javasdk.NomadException;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.Extension;
+import hudson.Util;
+import hudson.model.Descriptor;
+import hudson.model.Label;
+import hudson.model.Node;
+import hudson.model.labels.LabelAtom;
+import hudson.slaves.Cloud;
+import hudson.slaves.NodeProvisioner;
+import hudson.util.FormValidation;
+import info.multani.jenkins.plugins.nomad.pipeline.PodTemplateMap;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
@@ -15,47 +33,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
-
+import jenkins.model.JenkinsLocationConfiguration;
 import org.apache.commons.lang.StringUtils;
-//import org.jenkinsci.plugins.plaincredentials.StringCredentials;
-//import org.jenkinsci.plugins.plaincredentials.FileCredentials;
-//import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-
-//import com.cloudbees.plugins.credentials.CredentialsMatchers;
-//import com.cloudbees.plugins.credentials.CredentialsProvider;
-//import com.cloudbees.plugins.credentials.common.StandardCertificateCredentials;
-//import com.cloudbees.plugins.credentials.common.StandardCredentials;
-//import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-//import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
-//import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
-import com.google.common.collect.ImmutableMap;
-import com.hashicorp.nomad.javasdk.NomadApiClient;
-import com.hashicorp.nomad.javasdk.NomadApiConfiguration;
-import com.hashicorp.nomad.javasdk.NomadException;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import info.multani.jenkins.plugins.nomad.pipeline.PodTemplateMap;
-
-import hudson.Extension;
-import hudson.Util;
-import hudson.model.Descriptor;
-import hudson.model.Label;
-import hudson.model.Node;
-import hudson.model.labels.LabelAtom;
-import hudson.slaves.Cloud;
-import hudson.slaves.NodeProvisioner;
-import hudson.util.FormValidation;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import jenkins.model.JenkinsLocationConfiguration;
 
 /**
  * Nomad cloud provider.

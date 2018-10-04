@@ -1,23 +1,20 @@
 package info.multani.jenkins.plugins.nomad.pipeline;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.lang.RandomStringUtils;
-import info.multani.jenkins.plugins.nomad.NomadCloud;
-import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
-import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
-import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
-import org.jenkinsci.plugins.workflow.steps.StepContext;
-
 import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
-
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.AbortException;
 import hudson.model.Run;
 import hudson.slaves.Cloud;
+import info.multani.jenkins.plugins.nomad.NomadCloud;
+import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.RandomStringUtils;
+import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
+import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
+import org.jenkinsci.plugins.workflow.steps.StepContext;
 
 public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
 

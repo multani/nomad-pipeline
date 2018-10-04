@@ -24,11 +24,9 @@
 
 package info.multani.jenkins.plugins.nomad;
 
-import java.util.concurrent.Callable;
-
-import javax.annotation.Nonnull;
-
 import hudson.model.Node;
+import java.util.concurrent.Callable;
+import javax.annotation.Nonnull;
 
 /**
  * Callback for Nomad cloud provision

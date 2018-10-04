@@ -24,10 +24,9 @@
 
 package info.multani.jenkins.plugins.nomad.model;
 
-import java.io.Serializable;
-
 import hudson.ExtensionPoint;
 import hudson.model.AbstractDescribableImpl;
+import java.io.Serializable;
 
 /**
  * @since 0.13

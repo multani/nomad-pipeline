@@ -1,27 +1,24 @@
 package info.multani.jenkins.plugins.nomad;
 
+import com.google.common.base.Preconditions;
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+import hudson.model.DescriptorVisibilityFilter;
+import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
-import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import com.google.common.base.Preconditions;
-
-import hudson.Extension;
-import hudson.model.AbstractDescribableImpl;
-import hudson.model.Descriptor;
-import hudson.model.DescriptorVisibilityFilter;
-import jenkins.model.Jenkins;
 
 // TODO: actually, this defines a Nomad Task within a Task Group
 public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate> implements Serializable {
