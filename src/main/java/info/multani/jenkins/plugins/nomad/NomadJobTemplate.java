@@ -67,7 +67,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     private Integer resourcesMemory;
 
-    private List<TaskGroupTemplate> taskGroups = new ArrayList<TaskGroupTemplate>();
+    private List<TaskGroupTemplate> taskGroups = new ArrayList<>();
 
     private List<TemplateEnvVar> envVars = new ArrayList<>();
 

@@ -342,14 +342,14 @@ public class NomadCloud extends Cloud {
     public synchronized Collection<NodeProvisioner.PlannedNode> provision(@CheckForNull final Label label, final int excessWorkload) {
         try {
             Set<String> allInProvisioning = InProvisioning.getAllInProvisioning(label);
-            LOGGER.log(Level.FINE, "In provisioning : " + allInProvisioning);
+            LOGGER.log(Level.FINE, "In provisioning : {0}", allInProvisioning);
             int toBeProvisioned = Math.max(0, excessWorkload - allInProvisioning.size());
-            LOGGER.log(Level.INFO, "Excess workload after pending Nomad nodes: " + toBeProvisioned);
+            LOGGER.log(Level.INFO, "Excess workload after pending Nomad nodes: {0}", toBeProvisioned);
 
-            List<NodeProvisioner.PlannedNode> r = new ArrayList<NodeProvisioner.PlannedNode>();
+            List<NodeProvisioner.PlannedNode> r = new ArrayList<>();
 
             for (NomadJobTemplate t : getTemplatesFor(label)) {
-                LOGGER.log(Level.INFO, "Template: " + t.getDisplayName());
+                LOGGER.log(Level.INFO, "Template: {0}", t.getDisplayName());
                 for (int i = 1; i <= toBeProvisioned; i++) {
                     if (!addProvisionedSlave(t, label)) {
                         break;
