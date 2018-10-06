@@ -9,7 +9,7 @@
     </parent>
     <groupId>io.jenkins.plugins</groupId>
     <artifactId>jenkins-nomad-plugin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>hpi</packaging>
     <properties>
         <!-- Baseline Jenkins version you use to build the plugin. Users must have this version or newer to run. -->
@@ -39,6 +39,14 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
