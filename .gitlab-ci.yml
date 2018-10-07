@@ -5,7 +5,9 @@ stages:
 
 build:
   stage: build
-  script: mvn --batch-mode package
+  script:
+    - mvn --batch-mode package
+    - mvn --batch-mode verify
 
   cache:
     paths:

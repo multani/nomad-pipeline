@@ -191,8 +191,9 @@ public class NomadCloud extends Cloud {
      * Returns Jenkins URL to be used by agents launched by this cloud. Always
      * ends with a trailing slash.
      *
-     * Uses in order: * cloud configuration * environment variable
-     * <b>NOMAD_JENKINS_URL</b>
+     * Uses in order:
+     * * cloud configuration
+     * * environment variable <b>NOMAD_JENKINS_URL</b>
      * * Jenkins Location URL
      *
      * @return Jenkins URL to be used by agents launched by this cloud. Always
@@ -202,12 +203,11 @@ public class NomadCloud extends Cloud {
     @Nonnull
     public String getJenkinsUrlOrDie() {
         JenkinsLocationConfiguration locationConfiguration = JenkinsLocationConfiguration.get();
-        String locationConfigurationUrl = locationConfiguration != null ? locationConfiguration.getUrl() : null;
         String url = StringUtils.defaultIfBlank(
                 getJenkinsUrl(),
                 StringUtils.defaultIfBlank(
                         System.getProperty("NOMAD_JENKINS_URL", System.getenv("NOMAD_JENKINS_URL")),
-                        locationConfigurationUrl
+                        locationConfiguration.getUrl()
                 )
         );
         if (url == null) {
