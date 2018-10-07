@@ -148,8 +148,9 @@ public class NomadSlave extends AbstractCloudSlave {
         try {
             cloud = getNomadCloud();
         } catch (IllegalStateException e) {
-            e.printStackTrace(listener.fatalError("Unable to terminate agent. Cloud may have been removed. There may be leftover resources on the Kubernetes cluster."));
-            LOGGER.log(Level.SEVERE, String.format("Unable to terminate agent %s. Cloud may have been removed. There may be leftover resources on the Kubernetes cluster.", name));
+            String msg = String.format("Unable to terminate agent %s. Cloud may have been removed. There may be leftover resources on the Kubernetes cluster.", name);
+            e.printStackTrace(listener.fatalError(msg));
+            LOGGER.log(Level.SEVERE, String.format(msg));
             return;
         }
         NomadApiClient client;
