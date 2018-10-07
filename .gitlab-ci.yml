@@ -1,17 +1,20 @@
 image: maven:3-jdk-8
 
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
+cache:
+  paths:
+    - .m2/repository
+
 stages:
   - build
 
 build:
   stage: build
   script:
-    - mvn --batch-mode package
-    - mvn --batch-mode verify
-
-  cache:
-    paths:
-      - .m2
+    - mvn $MAVEN_CLI_OPTS verify
 
   artifacts:
     paths:
