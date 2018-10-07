@@ -70,7 +70,7 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         newTemplate.setNodeUsageMode(step.getNodeUsageMode());
 
         nomadCloud.addDynamicTemplate(newTemplate);
-        getContext().newBodyInvoker().withContext(step).withCallback(new PodTemplateCallback(newTemplate)).start();
+        getContext().newBodyInvoker().withContext(step).withCallback(new NomadJobTemplateCallback(newTemplate)).start();
 
         NomadJobTemplateAction.push(run, name);
         return false;
@@ -99,13 +99,13 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         nomadCloud.addDynamicTemplate(newTemplate);
     }
 
-    private class PodTemplateCallback extends BodyExecutionCallback.TailCall {
+    private class NomadJobTemplateCallback extends BodyExecutionCallback.TailCall {
 
         private static final long serialVersionUID = 6043919968776851324L;
 
         private final NomadJobTemplate jobTemplate;
 
-        private PodTemplateCallback(NomadJobTemplate podTemplate) {
+        private NomadJobTemplateCallback(NomadJobTemplate podTemplate) {
             this.jobTemplate = podTemplate;
         }
 

@@ -7,11 +7,12 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
 import info.multani.jenkins.plugins.nomad.TaskGroupTemplate;
-import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -33,7 +34,7 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private final String name;
 
     private List<TaskGroupTemplate> taskGroups = new ArrayList<>();
-    private List<TemplateEnvVar> envVars = new ArrayList<>();
+    private Map<String, String> envVars = new HashMap<>();
 
     private int instanceCap = Integer.MAX_VALUE;
     private int idleMinutes;
@@ -83,15 +84,15 @@ public class NomadJobTemplateStep extends Step implements Serializable {
         this.taskGroups = taskGroups;
     }
 
-    public List<TemplateEnvVar> getEnvVars() {
-        return (List<TemplateEnvVar>) (envVars == null ? Collections.emptyList() : envVars);
+    public Map<String, String> getEnvVars() {
+        return envVars == null ? Collections.emptyMap(): envVars;
     }
 
     @DataBoundSetter
-    public void setEnvVars(List<TemplateEnvVar> envVars) {
+    public void setEnvVars(Map<String, String> envVars) {
         if (envVars != null) {
             this.envVars.clear();
-            this.envVars.addAll(envVars);
+            this.envVars.putAll(envVars);
         }
     }
 

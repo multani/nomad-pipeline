@@ -31,10 +31,8 @@ import com.hashicorp.nomad.apimodel.RestartPolicy;
 import com.hashicorp.nomad.apimodel.Task;
 import com.hashicorp.nomad.apimodel.TaskGroup;
 import static hudson.Util.replaceMacro;
-import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -110,7 +108,7 @@ public class NomadJobTemplateBuilder {
 
     }
 
-    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate taskGroupTemplate, Collection<TemplateEnvVar> globalEnvVars) {
+    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate taskGroupTemplate, Map<String, String> globalEnvVars) {
         // Last-write wins map of environment variable names to values
         HashMap<String, String> env = new HashMap<>();
 
@@ -135,23 +133,11 @@ public class NomadJobTemplateBuilder {
 
         Map<String, String> envVars = new HashMap<>();
 
-        env.entrySet().forEach(item
-                -> envVars.put(item.getKey(), item.getValue())
-        );
+        // Merge in all the environment variables definition
+        envVars.putAll(env);
+        envVars.putAll(globalEnvVars);
+        envVars.putAll(taskGroupTemplate.getEnvVars());
 
-//        if (globalEnvVars != null) {
-//            globalEnvVars.forEach(item
-//                    -> envVarsMap.put(item.getKey(), item.getValue())
-//            );
-//        }
-
-//        if (containerTemplate.getEnvVars() != null) {
-//            containerTemplate.getEnvVars().forEach(item
-//                    -> envVarsMap.put(item.getKey(), item.getValue())
-//            );
-//        }
-
-        //EnvVar[] envVars = envVarsMap.values().stream().toArray(EnvVar[]::new);
         List<String> arguments = Strings.isNullOrEmpty(taskGroupTemplate.getArgs()) ? Collections.emptyList()
                 : parseDockerCommand(taskGroupTemplate.getArgs() //
                         .replaceAll(JNLPMAC_REF, slave.getComputer().getJnlpMac()) //
@@ -179,7 +165,6 @@ public class NomadJobTemplateBuilder {
         TaskGroup taskGroup = new TaskGroup();
         taskGroup.setName(substituteEnv(taskGroupTemplate.getName()));
         
-
         RestartPolicy restartPolicy = new RestartPolicy()
                 .setMode("fail")
                 .setAttempts(0);
@@ -192,7 +177,7 @@ public class NomadJobTemplateBuilder {
         task.addConfig("command", substituteEnv(taskGroupTemplate.getCommand()));
         task.addConfig("args", arguments);
         task.addConfig("network_mode", "host");
-
+        
         task.setEnv(envVars);
 
         Resources resources = new Resources()

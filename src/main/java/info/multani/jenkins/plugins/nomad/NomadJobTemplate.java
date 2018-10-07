@@ -9,16 +9,18 @@ import hudson.model.Label;
 import hudson.model.Node;
 import hudson.model.labels.LabelAtom;
 import hudson.tools.ToolLocationNodeProperty;
-import info.multani.jenkins.plugins.nomad.model.TemplateEnvVar;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
@@ -69,7 +71,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     private List<TaskGroupTemplate> taskGroups = new ArrayList<>();
 
-    private List<TemplateEnvVar> envVars = new ArrayList<>();
+    private Map<String, String> envVars = new HashMap<>();
 
     private transient List<ToolLocationNodeProperty> nodeProperties;
 
@@ -229,21 +231,22 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         return nodeUsageMode;
     }
 
-    public List<TemplateEnvVar> getEnvVars() {
+    @NotNull
+    public Map<String, String> getEnvVars() {
         if (envVars == null) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
         return envVars;
     }
 
-    public void addEnvVars(List<TemplateEnvVar> envVars) {
+    public void addEnvVars(Map<String, String> envVars) {
         if (envVars != null) {
-            this.envVars.addAll(envVars);
+            this.envVars.putAll(envVars);
         }
     }
 
     @DataBoundSetter
-    public void setEnvVars(List<TemplateEnvVar> envVars) {
+    public void setEnvVars(Map<String, String> envVars) {
         if (envVars != null) {
             this.envVars.clear();
             this.addEnvVars(envVars);
@@ -320,11 +323,11 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
             return "Nomad Job";
         }
 
-        @SuppressWarnings("unused") // Used by jelly
-        @Restricted(DoNotUse.class) // Used by jelly
-        public List<? extends Descriptor> getEnvVarsDescriptors() {
-            return DescriptorVisibilityFilter.apply(null, Jenkins.getInstance().getDescriptorList(TemplateEnvVar.class));
-        }
+//        @SuppressWarnings("unused") // Used by jelly
+//        @Restricted(DoNotUse.class) // Used by jelly
+//        public List<? extends Descriptor> getEnvVarsDescriptors() {
+//            return DescriptorVisibilityFilter.apply(null, Jenkins.getInstance().getDescriptorList(TemplateEnvVar.class));
+//        }
     }
 
     @Override
