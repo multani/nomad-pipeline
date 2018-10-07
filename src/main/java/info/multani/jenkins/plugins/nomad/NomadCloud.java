@@ -16,7 +16,7 @@ import hudson.model.labels.LabelAtom;
 import hudson.slaves.Cloud;
 import hudson.slaves.NodeProvisioner;
 import hudson.util.FormValidation;
-import info.multani.jenkins.plugins.nomad.pipeline.PodTemplateMap;
+import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateMap;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -454,7 +454,7 @@ public class NomadCloud extends Cloud {
      * @return list of matching templates
      */
     public List<NomadJobTemplate> getTemplatesFor(@CheckForNull Label label) {
-        return PodTemplateFilter.applyAll(this, getAllTemplates(), label);
+        return NomadJobTemplateFilter.applyAll(this, getAllTemplates(), label);
     }
 
     /**
@@ -483,7 +483,7 @@ public class NomadCloud extends Cloud {
      * @param t the template to add
      */
     public void addDynamicTemplate(NomadJobTemplate t) {
-        PodTemplateMap.get().addTemplate(this, t);
+        NomadJobTemplateMap.get().addTemplate(this, t);
     }
 
     /**
@@ -492,7 +492,7 @@ public class NomadCloud extends Cloud {
      * @param t the template to remove
      */
     public void removeDynamicTemplate(NomadJobTemplate t) {
-        PodTemplateMap.get().removeTemplate(this, t);
+        NomadJobTemplateMap.get().removeTemplate(this, t);
     }
 
     @Extension

@@ -11,13 +11,13 @@ import javax.annotation.Nonnull;
 /**
  * Filters a pod template according to criteria.
  */
-public abstract class PodTemplateFilter implements ExtensionPoint {
+public abstract class NomadJobTemplateFilter implements ExtensionPoint {
     /**
-     * Returns a list of all implementations of {@link PodTemplateFilter}.
-     * @return a list of all implementations of {@link PodTemplateFilter}.
+     * Returns a list of all implementations of {@link NomadJobTemplateFilter}.
+     * @return a list of all implementations of {@link NomadJobTemplateFilter}.
      */
-    public static ExtensionList<PodTemplateFilter> all() {
-        return ExtensionList.lookup(PodTemplateFilter.class);
+    public static ExtensionList<NomadJobTemplateFilter> all() {
+        return ExtensionList.lookup(NomadJobTemplateFilter.class);
     }
 
     /**
@@ -32,7 +32,7 @@ public abstract class PodTemplateFilter implements ExtensionPoint {
         List<NomadJobTemplate> result = new ArrayList<>();
         for (NomadJobTemplate t : podTemplates) {
             NomadJobTemplate output = null;
-            for (PodTemplateFilter f : all()) {
+            for (NomadJobTemplateFilter f : all()) {
                 output = f.transform(cloud, t, label);
                 if (output == null) {
                     break;

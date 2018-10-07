@@ -17,12 +17,11 @@ import javax.annotation.Nonnull;
  * A map of {@link NomadCloud} -&gt; List of {@link NomadJobTemplate} instances.
  */
 @Extension
-public class PodTemplateMap {
-    private static final Logger LOGGER = Logger.getLogger(PodTemplateMap.class.getName());
+public class NomadJobTemplateMap {
+    private static final Logger LOGGER = Logger.getLogger(NomadJobTemplateMap.class.getName());
 
-    public static PodTemplateMap get() {
-        // TODO Replace with lookupSingleton post 2.87
-        return ExtensionList.lookup(PodTemplateMap.class).get(PodTemplateMap.class);
+    public static NomadJobTemplateMap get() {
+        return ExtensionList.lookupSingleton(NomadJobTemplateMap.class);
     }
 
     /**
@@ -66,7 +65,7 @@ public class PodTemplateMap {
         @Nonnull
         @Override
         public List<NomadJobTemplate> getList(@Nonnull NomadCloud cloud) {
-            return PodTemplateMap.get().getTemplates(cloud);
+            return NomadJobTemplateMap.get().getTemplates(cloud);
         }
     }
 

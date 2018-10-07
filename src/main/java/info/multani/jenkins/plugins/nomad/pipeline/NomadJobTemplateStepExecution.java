@@ -50,8 +50,8 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         NomadCloud nomadCloud = (NomadCloud) cloud;
 
         Run<?, ?> run = getContext().get(Run.class);
-        PodTemplateAction podTemplateAction = run.getAction(PodTemplateAction.class);
-        String parentTemplates = podTemplateAction != null ? podTemplateAction.getParentTemplates() : null;
+        NomadJobTemplateAction jobTemplateAction = run.getAction(NomadJobTemplateAction.class);
+        String parentTemplates = jobTemplateAction != null ? jobTemplateAction.getParentTemplates() : null;
 
         //Let's generate a random name based on the user specified to make sure that we don't have
         //issues with concurrent builds, or messing with pre-existing configuration
@@ -72,13 +72,13 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         nomadCloud.addDynamicTemplate(newTemplate);
         getContext().newBodyInvoker().withContext(step).withCallback(new PodTemplateCallback(newTemplate)).start();
 
-        PodTemplateAction.push(run, name);
+        NomadJobTemplateAction.push(run, name);
         return false;
     }
 
     @Override
     public void stop(Throwable cause) throws Exception {
-        new PodTemplateAction(getContext().get(Run.class)).pop();
+        new NomadJobTemplateAction(getContext().get(Run.class)).pop();
     }
 
     /**
