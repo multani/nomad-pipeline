@@ -25,6 +25,7 @@ package info.multani.jenkins.plugins.nomad;
 
 import com.google.common.base.Throwables;
 import com.hashicorp.nomad.apimodel.Job;
+import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 import com.hashicorp.nomad.javasdk.ServerQueryResponse;
 import hudson.model.TaskListener;
@@ -87,10 +88,15 @@ public class NomadLauncher extends JNLPLauncher {
 
             String jobID = job.getId();
 
-            LOGGER.log(Level.FINE, "Creating Nomad job: {0}", new Object[]{jobID});
-            client.getJobsApi().register(job);
-            LOGGER.log(INFO, "Created Nomad job: {0}", new Object[]{jobID});
-            logger.printf("Created Nomad job: %s%n", jobID);
+            LOGGER.log(Level.FINE, "Creating Nomad job: {0}", jobID);
+            EvaluationResponse evaluation = client.getJobsApi().register(job);
+            String evaluationID = evaluation.getValue();
+            LOGGER.log(INFO, "Registered Nomad job {0} with evaluation ID: {1}",
+                    new Object[]{jobID, evaluationID});
+            LOGGER.log(FINE, "Created Nomad job: {0}", jobID);
+            
+            logger.printf("[Nomad] Registered Nomad job %s with evaluation ID %s%n",
+                    jobID, evaluationID);
 
             // We need the pod to be running and connected before returning
             // otherwise this method keeps being called multiple times

@@ -1,5 +1,6 @@
 package info.multani.jenkins.plugins.nomad;
 
+import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 import com.hashicorp.nomad.javasdk.NomadException;
 import hudson.Extension;
@@ -70,7 +71,7 @@ public class NomadSlave extends AbstractCloudSlave {
                 computerLauncher,
                 rs,
                 template.getNodeProperties()
-                
+
         );
 
         this.cloudName = cloudName;
@@ -162,9 +163,19 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         try {
-            Boolean deleted = client.getJobsApi().deregister(name).getHttpResponse().getStatusLine().getStatusCode() == 200;
-            if (!Boolean.TRUE.equals(deleted)) {
-                String msg = String.format("Failed to delete job for agent %s: not found", name);
+            LOGGER.log(Level.FINE, "Deregistering job {0} from cloud {0}",
+                    new Object[]{name, getCloudName()});
+
+            EvaluationResponse response = client.getJobsApi().deregister(name);
+
+            LOGGER.log(Level.FINE, "Deregistered {0} using evaluation ID {1}",
+                    new Object[]{name, response.getValue()});
+
+            boolean deleted = response.getHttpResponse().getStatusLine().getStatusCode() == 200;
+
+            if (!deleted) {
+                String msg = String.format("Failed to delete job for agent %s: HTTP %s",
+                        name, response.getHttpResponse().getStatusLine().getStatusCode());
                 LOGGER.log(Level.WARNING, msg);
                 listener.error(msg);
                 return;

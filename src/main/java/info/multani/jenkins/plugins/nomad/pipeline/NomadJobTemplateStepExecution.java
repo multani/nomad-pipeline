@@ -126,11 +126,18 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
                 NomadCloud nomadCloud = (NomadCloud) cloud;
                 nomadCloud.removeDynamicTemplate(jobTemplate);
                 NomadApiClient client = nomadCloud.connect();
+                
+                LOGGER.log(Level.FINE, "Deregistering job {0} from cloud {0}",
+                        new Object[]{jobTemplate.getName(), cloud.name});
                 EvaluationResponse response = client.getJobsApi().deregister(jobTemplate.getName());
+                LOGGER.log(Level.FINE, "Deregistered {0} using evaluation ID {1}",
+                        new Object[]{jobTemplate.getName(), response.getValue()});
+                
                 boolean deleted = response.getHttpResponse().getStatusLine().getStatusCode() == 200;
-                if (!Boolean.TRUE.equals(deleted)) {
-                    LOGGER.log(Level.WARNING, "Failed to delete job {1}: not found",
-                            new String[]{jobTemplate.getName()});
+                if (!deleted) {
+                    LOGGER.log(Level.WARNING, "Failed to deregister job {0}: HTTP {1}",
+                        new Object[]{jobTemplate.getName(),
+                            response.getHttpResponse().getStatusLine().getStatusCode()});
                     return;
                 }
             } else {
