@@ -150,18 +150,7 @@ public class NomadJobTemplateBuilder {
 //                && !PodVolume.volumeMountExists(containerTemplate.getWorkingDir(), volumeMounts)) {
 //            containerMounts.add(new VolumeMount(containerTemplate.getWorkingDir(), WORKSPACE_VOLUME_NAME, false, null));
 //        }
-//        ContainerLivenessProbe clp = containerTemplate.getLivenessProbe();
-//        Probe livenessProbe = null;
-//        if (clp != null && parseLivenessProbe(clp.getExecArgs()) != null) {
-//            livenessProbe = new ProbeBuilder()
-//                    .withExec(new ExecAction(parseLivenessProbe(clp.getExecArgs())))
-//                    .withInitialDelaySeconds(clp.getInitialDelaySeconds())
-//                    .withTimeoutSeconds(clp.getTimeoutSeconds())
-//                    .withFailureThreshold(clp.getFailureThreshold())
-//                    .withPeriodSeconds(clp.getPeriodSeconds())
-//                    .withSuccessThreshold(clp.getSuccessThreshold())
-//                    .build();
-//        }
+
         TaskGroup taskGroup = new TaskGroup();
         taskGroup.setName(substituteEnv(taskGroupTemplate.getName()));
         
@@ -199,7 +188,6 @@ public class NomadJobTemplateBuilder {
 //                .addToPorts(ports)
 //                .withCommand(parseDockerCommand())
 //                .withArgs()
-//                .withLivenessProbe(livenessProbe)
 //                .withTty(containerTemplate.isTtyEnabled())
 //                .withNewResources()
 //                .withRequests(getResourcesMap(containerTemplate.getResourcesMemory(), containerTemplate.getResourcesCPU()))
@@ -231,39 +219,4 @@ public class NomadJobTemplateBuilder {
 
         return commands;
     }
-
-    /**
-     * Split a command in the parts that LivenessProbe need
-     *
-     * @param livenessProbeExec
-     * @return
-     */
-//    @Restricted(NoExternalUse.class)
-//    static List<String> parseLivenessProbe(String livenessProbeExec) {
-//        if (StringUtils.isBlank(livenessProbeExec)) {
-//            return null;
-//        }
-//        // handle quoted arguments
-//        Matcher m = SPLIT_IN_SPACES.matcher(livenessProbeExec);
-//        List<String> commands = new ArrayList<String>();
-//        while (m.find()) {
-//            commands.add(substituteEnv(m.group(1).replace("\"", "").replace("?:\\\"", "")));
-//        }
-//        return commands;
-//    }
-//
-//    private Map<String, Quantity> getResourcesMap(String memory, String cpu) {
-//        ImmutableMap.Builder<String, Quantity> builder = ImmutableMap.<String, Quantity>builder();
-//        String actualMemory = substituteEnv(memory);
-//        String actualCpu = substituteEnv(cpu);
-//        if (StringUtils.isNotBlank(actualMemory)) {
-//            Quantity memoryQuantity = new Quantity(actualMemory);
-//            builder.put("memory", memoryQuantity);
-//        }
-//        if (StringUtils.isNotBlank(actualCpu)) {
-//            Quantity cpuQuantity = new Quantity(actualCpu);
-//            builder.put("cpu", cpuQuantity);
-//        }
-//        return builder.build();
-//    }
 }
