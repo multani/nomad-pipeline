@@ -63,15 +63,14 @@ public class NomadSlave extends AbstractCloudSlave {
             throws Descriptor.FormException, IOException {
         super(name,
                 nodeDescription,
-                template.getRemoteFs(),
+                null, // TODO: remoteFs
                 1,
 //                template.getNodeUsageMode() != null ? template.getNodeUsageMode() : TODO
-                        Node.Mode.NORMAL,
+                Node.Mode.NORMAL,
                 labelStr == null ? null : labelStr,
                 computerLauncher,
                 rs,
                 template.getNodeProperties()
-
         );
 
         this.cloudName = cloudName;

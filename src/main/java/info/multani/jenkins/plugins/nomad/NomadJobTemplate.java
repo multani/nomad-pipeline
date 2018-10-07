@@ -52,9 +52,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     private String command;
 
     private String args;
-//
-//    private String remoteFs;
-//
+
     private int instanceCap = Integer.MAX_VALUE;
 
     private int slaveConnectTimeout = DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
@@ -115,11 +113,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         return "Nomad Job Template";
     }
 
-    @Deprecated
-    public String getRemoteFs() {
-        return ""; // TODO getFirstContainer().map(ContainerTemplate::getWorkingDir).orElse(null);
-    }
-//
     public void setInstanceCap(int instanceCap) {
         if (instanceCap < 0) {
             this.instanceCap = Integer.MAX_VALUE;
@@ -292,7 +285,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
             taskGroupTemplate.setEnvVars(envVars);
             taskGroupTemplate.setResourcesCPU(resourcesCPU);
             taskGroupTemplate.setResourcesMemory(resourcesMemory);
-//            taskGroupTemplate.setWorkingDir(remoteFs);
             taskGroups.add(taskGroupTemplate);
         }
 
@@ -338,7 +330,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
                 (image == null ? "" : ", image='" + image + '\'') +
                 (command == null ? "" : ", command='" + command + '\'') +
                 (args == null ? "" : ", args='" + args + '\'') +
-//                (remoteFs == null ? "" : ", remoteFs='" + remoteFs + '\'') +
                 (instanceCap == Integer.MAX_VALUE ? "" : ", instanceCap=" + instanceCap) +
                 (slaveConnectTimeout == DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT ? "" : ", slaveConnectTimeout=" + slaveConnectTimeout) +
                 (idleMinutes == 0 ? "" : ", idleMinutes=" + idleMinutes) +
