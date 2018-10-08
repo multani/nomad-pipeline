@@ -25,9 +25,11 @@ package info.multani.jenkins.plugins.nomad;
 
 import com.google.common.base.Throwables;
 import com.hashicorp.nomad.apimodel.Job;
+import com.hashicorp.nomad.javasdk.ErrorResponseException;
 import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 import com.hashicorp.nomad.javasdk.ServerQueryResponse;
+import hudson.AbortException;
 import hudson.model.TaskListener;
 import hudson.slaves.JNLPLauncher;
 import hudson.slaves.SlaveComputer;
@@ -89,7 +91,17 @@ public class NomadLauncher extends JNLPLauncher {
             String jobID = job.getId();
 
             LOGGER.log(Level.FINE, "Creating Nomad job: {0}", jobID);
-            EvaluationResponse evaluation = client.getJobsApi().register(job);
+
+            EvaluationResponse evaluation;
+            try {
+                evaluation = client.getJobsApi().register(job);
+            }
+            catch (ErrorResponseException exc) {
+                String msg = String.format("Unable to evaluate Nomad job '%s': %s", jobID, exc.getServerErrorMessage());
+                LOGGER.log(Level.SEVERE, msg, exc);
+                throw new AbortException(msg); // TODO: we should probably abort the build here, but AbortException doesn't do it.
+            }
+
             String evaluationID = evaluation.getValue();
             LOGGER.log(INFO, "Registered Nomad job {0} with evaluation ID: {1}",
                     new Object[]{jobID, evaluationID});

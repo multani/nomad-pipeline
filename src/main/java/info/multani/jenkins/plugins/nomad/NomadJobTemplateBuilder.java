@@ -23,7 +23,7 @@
  */
 package info.multani.jenkins.plugins.nomad;
 
-//import static info.multani.jenkins.plugins.nomad.PodTemplateUtils.*;
+import static info.multani.jenkins.plugins.nomad.NomadCloud.*;
 import com.google.common.base.Strings;
 import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.apimodel.Resources;
@@ -59,10 +59,10 @@ public class NomadJobTemplateBuilder {
 
     private static final String WORKSPACE_VOLUME_NAME = "workspace-volume";
 
-    private static final String DEFAULT_JNLP_ARGUMENTS = "${computer.jnlpmac} ${computer.name}";
-
     private static final String DEFAULT_JNLP_IMAGE = System
             .getProperty(NomadJobTemplateStepExecution.class.getName() + ".defaultImage", "jenkins/jnlp-slave:alpine");
+
+    private static final String DEFAULT_JNLP_ARGUMENTS = "${computer.jnlpmac} ${computer.name}";
 
     private static final String JNLPMAC_REF = "\\$\\{computer.jnlpmac\\}";
     private static final String NAME_REF = "\\$\\{computer.name\\}";
@@ -82,25 +82,25 @@ public class NomadJobTemplateBuilder {
     public Job build(NomadSlave slave) {
         ArrayList<TaskGroup> taskGroups = new ArrayList<>();
 
-//        Map<String, Container> taskGroups = new HashMap<>();
         for (TaskGroupTemplate taskGroupTemplate : template.getTaskGroups()) {
             taskGroups.add(
                     createContainer(slave, taskGroupTemplate, template.getEnvVars())
             );
         }
 
-//        if (!taskGroups.containsKey(JNLP_NAME)) {
-//            TaskGroupTemplate taskGroupTemplate = new TaskGroupTemplate(DEFAULT_JNLP_IMAGE);
-//            taskGroupTemplate.setName(JNLP_NAME);
-//            taskGroupTemplate.setArgs(DEFAULT_JNLP_ARGUMENTS);
-//            taskGroups.put(JNLP_NAME, createContainer(slave, taskGroupTemplate, template.getEnvVars(), volumeMounts.values()));
-//        }
+        if (taskGroups.isEmpty()) {
+            TaskGroupTemplate taskGroupTemplate = new TaskGroupTemplate(JNLP_NAME, DEFAULT_JNLP_IMAGE);
+            taskGroupTemplate.setArgs(DEFAULT_JNLP_ARGUMENTS);
+            taskGroups.add(
+                    createContainer(slave, taskGroupTemplate, template.getEnvVars())
+            );
+        }
 
         Job job = new Job();
         job.setId(slave.getNodeName());
         job.setName(slave.getNodeName());
-        job.setRegion("global");
-        job.addDatacenters("dc1");
+        job.setRegion("global"); // TODO
+        job.addDatacenters("dc1"); // TODO
         job.setType("batch");
         job.setTaskGroups(taskGroups);
         
