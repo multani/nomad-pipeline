@@ -33,6 +33,7 @@ import com.hashicorp.nomad.apimodel.TaskGroup;
 import static hudson.Util.replaceMacro;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
@@ -62,7 +64,7 @@ public class NomadJobTemplateBuilder {
     private static final String DEFAULT_JNLP_IMAGE = System
             .getProperty(NomadJobTemplateStepExecution.class.getName() + ".defaultImage", "jenkins/jnlp-slave:alpine");
 
-    private static final String DEFAULT_JNLP_ARGUMENTS = "${computer.jnlpmac} ${computer.name}";
+    private static final List<String> DEFAULT_JNLP_ARGUMENTS = Arrays.asList("${computer.jnlpmac}", "${computer.name}");
 
     private static final String JNLPMAC_REF = "\\$\\{computer.jnlpmac\\}";
     private static final String NAME_REF = "\\$\\{computer.name\\}";
@@ -138,10 +140,12 @@ public class NomadJobTemplateBuilder {
         envVars.putAll(globalEnvVars);
         envVars.putAll(taskGroupTemplate.getEnvVars());
 
-        List<String> arguments = Strings.isNullOrEmpty(taskGroupTemplate.getArgs()) ? Collections.emptyList()
-                : parseDockerCommand(taskGroupTemplate.getArgs() //
-                        .replaceAll(JNLPMAC_REF, slave.getComputer().getJnlpMac()) //
-                        .replaceAll(NAME_REF, slave.getComputer().getName()));
+        List<String> arguments = taskGroupTemplate
+                .getArgs().stream()
+                .map(e -> e.replaceAll(JNLPMAC_REF, slave.getComputer().getJnlpMac())
+                        .replaceAll(NAME_REF, slave.getComputer().getName())
+                )
+                .collect(Collectors.toList());
 
 //        List<VolumeMount> containerMounts = new ArrayList<>(volumeMounts);
 //        ContainerPort[] ports = containerTemplate.getPorts().stream().map(entry -> entry.toPort()).toArray(size -> new ContainerPort[size]);
@@ -197,26 +201,5 @@ public class NomadJobTemplateBuilder {
 
     public static String substituteEnv(String s) {
         return replaceMacro(s, System.getenv());
-    }
-
-    /**
-     * Split a command in the parts that Docker need
-     *
-     * @param dockerCommand
-     * @return
-     */
-    @Restricted(NoExternalUse.class)
-    static List<String> parseDockerCommand(String dockerCommand) {
-        if (dockerCommand == null || dockerCommand.isEmpty()) {
-            return null;
-        }
-        // handle quoted arguments
-        Matcher m = SPLIT_IN_SPACES.matcher(dockerCommand);
-        List<String> commands = new ArrayList<String>();
-        while (m.find()) {
-            commands.add(m.group(1).replace("\"", ""));
-        }
-
-        return commands;
     }
 }

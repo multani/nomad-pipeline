@@ -32,7 +32,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     private String command;
 
-    private String args;
+    private List<String> args;
 
     private boolean ttyEnabled;
 
@@ -53,7 +53,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
         this.image = image;
     }
 
-    public TaskGroupTemplate(String name, String image, String command, String args) {
+    public TaskGroupTemplate(String name, String image, String command, List<String> args) {
         Preconditions.checkArgument(!StringUtils.isBlank(image));
         this.name = name;
         this.image = image;
@@ -89,11 +89,11 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
     }
 
     @DataBoundSetter
-    public void setArgs(String args) {
+    public void setArgs(List<String> args) {
         this.args = args;
     }
 
-    public String getArgs() {
+    public List<String> getArgs() {
         return args;
     }
 

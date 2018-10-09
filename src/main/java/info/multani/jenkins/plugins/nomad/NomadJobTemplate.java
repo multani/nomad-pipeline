@@ -47,7 +47,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     private String command;
 
-    private String args;
+    private List<String> args;
 
     private int instanceCap = Integer.MAX_VALUE;
 
