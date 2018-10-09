@@ -4,16 +4,19 @@ import com.google.common.base.Preconditions;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.DescriptorVisibilityFilter;
+import info.multani.jenkins.plugins.nomad.model.EnvVar;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.validation.constraints.NotNull;
+import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -42,7 +45,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     private String shell;
 
-    private final Map<String, String> envVars = new HashMap<>();
+    private final List<EnvVar> envVars = new ArrayList<>();
 
     private List<PortMapping> ports = new ArrayList<>();
 
@@ -119,14 +122,13 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
         return workingDir;
     }
 
-    @NotNull
-    public Map<String, String> getEnvVars() {
-        return envVars != null ? envVars : Collections.emptyMap();
+    public List<EnvVar> getEnvVars() {
+        return envVars != null ? envVars : Collections.emptyList();
     }
 
     @DataBoundSetter
-    public void setEnvVars(Map<String, String> envVars) {
-        this.envVars.putAll(envVars);
+    public void setEnvVars(List<EnvVar> envVars) {
+        this.envVars.addAll(envVars);
     }
 
     public List<PortMapping> getPorts() {
@@ -177,11 +179,11 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
             return "Task Group Template";
         }
 
-//        @SuppressWarnings("unused") // Used by jelly
-//        @Restricted(DoNotUse.class) // Used by jelly
-//        public List<? extends Descriptor> getEnvVarsDescriptors() {
-//            return DescriptorVisibilityFilter.apply(null, Jenkins.getInstance().getDescriptorList(TemplateEnvVar.class));
-//        }
+        @SuppressWarnings("unused") // Used by jelly
+        @Restricted(DoNotUse.class) // Used by jelly
+        public List<? extends Descriptor> getEnvVarsDescriptors() {
+            return DescriptorVisibilityFilter.apply(null, Jenkins.getInstance().getDescriptorList(EnvVar.class));
+        }
     }
 
     @Override

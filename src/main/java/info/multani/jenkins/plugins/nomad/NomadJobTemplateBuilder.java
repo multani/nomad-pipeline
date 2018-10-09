@@ -31,9 +31,11 @@ import com.hashicorp.nomad.apimodel.Task;
 import com.hashicorp.nomad.apimodel.TaskArtifact;
 import com.hashicorp.nomad.apimodel.TaskGroup;
 import static hudson.Util.replaceMacro;
+import info.multani.jenkins.plugins.nomad.model.EnvVar;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +108,7 @@ public class NomadJobTemplateBuilder {
 
     }
 
-    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate taskGroupTemplate, Map<String, String> globalEnvVars) {
+    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate taskGroupTemplate, Collection<EnvVar> globalEnvVars) {
         // Last-write wins map of environment variable names to values
         HashMap<String, String> env = new HashMap<>();
         NomadCloud cloud = slave.getNomadCloud();
@@ -127,10 +129,21 @@ public class NomadJobTemplateBuilder {
 
         Map<String, String> envVars = new HashMap<>();
 
-        // Merge in all the environment variables definition
-        envVars.putAll(env);
-        envVars.putAll(globalEnvVars);
-        envVars.putAll(taskGroupTemplate.getEnvVars());
+        env.entrySet().forEach(item
+                -> envVars.put(item.getKey(), item.getValue())
+        );
+
+        if (globalEnvVars != null) {
+            globalEnvVars.forEach(item
+                    -> envVars.put(item.getKey(), item.getValue())
+            );
+        }
+
+        if (taskGroupTemplate.getEnvVars() != null) {
+            taskGroupTemplate.getEnvVars().forEach(item
+                    -> envVars.put(item.getKey(), item.getValue())
+            );
+        }
 
         List<String> arguments = taskGroupTemplate
                 .getArgs().stream()
