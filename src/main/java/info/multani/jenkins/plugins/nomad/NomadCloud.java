@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
+import jenkins.model.Jenkins;
 import jenkins.model.JenkinsLocationConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -185,6 +186,11 @@ public class NomadCloud extends Cloud {
     @CheckForNull
     public String getJenkinsUrl() {
         return jenkinsUrl;
+    }
+    
+    @CheckForNull
+    public String getSlaveUrl() {
+        return Jenkins.getInstance().getRootUrl() + "jnlpJars/slave.jar";
     }
 
     /**
@@ -545,7 +551,7 @@ public class NomadCloud extends Cloud {
 //                                    CredentialsMatchers.instanceOf(StandardCertificateCredentials.class),
 //                                    CredentialsMatchers.instanceOf(StringCredentials.class)), //
 //                            CredentialsProvider.lookupCredentials(StandardCredentials.class, //
-//                                    Jenkins.getInstance(), //
+//                                    getInstance, //
 //                                    ACL.SYSTEM, //
 //                                    serverUrl != null ? URIRequirementBuilder.fromUri(serverUrl).build()
 //                                            : Collections.EMPTY_LIST //

@@ -29,6 +29,7 @@ import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.apimodel.Resources;
 import com.hashicorp.nomad.apimodel.RestartPolicy;
 import com.hashicorp.nomad.apimodel.Task;
+import com.hashicorp.nomad.apimodel.TaskArtifact;
 import com.hashicorp.nomad.apimodel.TaskGroup;
 import static hudson.Util.replaceMacro;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
@@ -113,15 +114,14 @@ public class NomadJobTemplateBuilder {
     private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate taskGroupTemplate, Map<String, String> globalEnvVars) {
         // Last-write wins map of environment variable names to values
         HashMap<String, String> env = new HashMap<>();
-
+        NomadCloud cloud = slave.getNomadCloud();
+        String url = cloud.getJenkinsUrlOrDie();
+        
         // Add some default env vars for Jenkins
         env.put("JENKINS_SECRET", slave.getComputer().getJnlpMac());
         env.put("JENKINS_NAME", slave.getComputer().getName());
         env.put("JNLP_PROTOCOL_OPTS", "");
-
-        NomadCloud cloud = slave.getNomadCloud();
-
-        String url = cloud.getJenkinsUrlOrDie();
+        env.put("JENKINS_JNLP_URL", url + "/computer/" + slave.getNodeName() + "/slave-agent.jnlp");
 
         env.put("JENKINS_URL", url);
         if (!StringUtils.isBlank(cloud.getJenkinsTunnel())) {
@@ -170,7 +170,15 @@ public class NomadJobTemplateBuilder {
         task.addConfig("command", substituteEnv(taskGroupTemplate.getCommand()));
         task.addConfig("args", arguments);
         task.addConfig("network_mode", "host");
-        
+ 
+        // TODO: download the artifact only if needed
+        task.addArtifacts(
+                new TaskArtifact()
+                        .setGetterSource(cloud.getSlaveUrl())
+                        .setGetterOptions(null)
+                        .setRelativeDest("/local/")
+        );
+
         task.setEnv(envVars);
 
         Resources resources = new Resources()
