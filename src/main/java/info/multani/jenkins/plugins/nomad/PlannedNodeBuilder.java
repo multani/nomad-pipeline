@@ -4,7 +4,7 @@ import hudson.model.Label;
 import hudson.slaves.NodeProvisioner;
 
 /**
- * A builder of {@link hudson.slaves.NodeProvisioner.PlannedNode} implementations for Kubernetes.
+ * A builder of {@link hudson.slaves.NodeProvisioner.PlannedNode} implementations for Nomad.
  * Can be subclassed to provide alternative implementations of {@link hudson.slaves.NodeProvisioner.PlannedNode}.
  */
 public abstract class PlannedNodeBuilder {

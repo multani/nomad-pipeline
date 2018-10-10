@@ -68,11 +68,11 @@ public class NomadLauncher extends JNLPLauncher {
         PrintStream logger = listener.getLogger();
 
         if (!(computer instanceof NomadComputer)) {
-            throw new IllegalArgumentException("This Launcher can be used only with KubernetesComputer");
+            throw new IllegalArgumentException("This Launcher can be used only with NomadComputer");
         }
-        NomadComputer kubernetesComputer = (NomadComputer) computer;
+        NomadComputer nomadComputer = (NomadComputer) computer;
         computer.setAcceptingTasks(false);
-        NomadSlave slave = kubernetesComputer.getNode();
+        NomadSlave slave = nomadComputer.getNode();
         if (slave == null) {
             throw new IllegalStateException("Node has been removed, cannot launch " + computer.getName());
         }
@@ -106,7 +106,7 @@ public class NomadLauncher extends JNLPLauncher {
             LOGGER.log(INFO, "Registered Nomad job {0} with evaluation ID: {1}",
                     new Object[]{jobID, evaluationID});
             LOGGER.log(FINE, "Created Nomad job: {0}", jobID);
-            
+
             logger.printf("[Nomad] Registered Nomad job %s with evaluation ID %s%n",
                     jobID, evaluationID);
 
