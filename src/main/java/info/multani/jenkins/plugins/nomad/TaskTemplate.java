@@ -20,8 +20,7 @@ import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-// TODO: actually, this defines a Nomad Task within a Task Group
-public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate> implements Serializable {
+public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implements Serializable {
 
     private static final long serialVersionUID = 4212681620316294146L;
 
@@ -50,13 +49,13 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
     private List<PortMapping> ports = new ArrayList<>();
 
     @DataBoundConstructor
-    public TaskGroupTemplate(String name, String image) {
+    public TaskTemplate(String name, String image) {
         Preconditions.checkArgument(!StringUtils.isBlank(image));
         this.name = name;
         this.image = image;
     }
 
-    public TaskGroupTemplate(String name, String image, String command, List<String> args) {
+    public TaskTemplate(String name, String image, String command, List<String> args) {
         Preconditions.checkArgument(!StringUtils.isBlank(image));
         this.name = name;
         this.image = image;
@@ -110,7 +109,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
     }
 
     public String getDisplayName() {
-        return "Task Group Template";
+        return "Task Template";
     }
 
     @DataBoundSetter
@@ -171,12 +170,12 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
     }
 
     @Extension
-    @Symbol("taskGroupTemplate")
-    public static class DescriptorImpl extends Descriptor<TaskGroupTemplate> {
+    @Symbol("taskTemplate")
+    public static class DescriptorImpl extends Descriptor<TaskTemplate> {
 
         @Override
         public String getDisplayName() {
-            return "Task Group Template";
+            return "Task Template";
         }
 
         @SuppressWarnings("unused") // Used by jelly
@@ -188,7 +187,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     @Override
     public String toString() {
-        return "TaskGroupTemplate{" +
+        return "TaskTemplate{" +
                 (name == null ? "" : "name='" + name + '\'') +
                 (image == null ? "" : ", image='" + image + '\'') +
                 (workingDir == null ? "" : ", workingDir='" + workingDir + '\'') +

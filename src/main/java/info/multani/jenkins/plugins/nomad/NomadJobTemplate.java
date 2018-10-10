@@ -65,7 +65,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     private Integer resourcesMemory;
 
-    private List<TaskGroupTemplate> taskGroups = new ArrayList<>();
+    private List<TaskTemplate> taskGroups = new ArrayList<>();
 
     private List<EnvVar> envVars = new ArrayList<>();
 
@@ -85,7 +85,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         this.setSlaveConnectTimeout(from.getSlaveConnectTimeout());
     }
 
-    private Optional<TaskGroupTemplate> getFirstContainer() {
+    private Optional<TaskTemplate> getFirstContainer() {
         return Optional.ofNullable(getTaskGroups().isEmpty() ? null : getTaskGroups().get(0));
     }
 
@@ -257,7 +257,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     @DataBoundSetter
-    public void setTaskGroups(@Nonnull List<TaskGroupTemplate> items) {
+    public void setTaskGroups(@Nonnull List<TaskTemplate> items) {
         synchronized (this.taskGroups) {
             this.taskGroups.clear();
             this.taskGroups.addAll(items);
@@ -265,7 +265,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     @Nonnull
-    public List<TaskGroupTemplate> getTaskGroups() {
+    public List<TaskTemplate> getTaskGroups() {
         if (taskGroups == null) {
             return Collections.emptyList();
         }
@@ -276,7 +276,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     protected Object readResolve() {
         if (taskGroups == null) {
             taskGroups = new ArrayList<>();
-            TaskGroupTemplate taskGroupTemplate = new TaskGroupTemplate(NomadCloud.JNLP_NAME, this.image);
+            TaskTemplate taskGroupTemplate = new TaskTemplate(NomadCloud.JNLP_NAME, this.image);
             taskGroupTemplate.setCommand(command);
             taskGroupTemplate.setArgs(args);
             taskGroupTemplate.setEnvVars(envVars);

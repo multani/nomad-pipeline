@@ -82,14 +82,14 @@ public class NomadJobTemplateBuilder {
     public Job build(NomadSlave slave) {
         ArrayList<TaskGroup> taskGroups = new ArrayList<>();
 
-        for (TaskGroupTemplate taskGroupTemplate : template.getTaskGroups()) {
+        for (TaskTemplate taskGroupTemplate : template.getTaskGroups()) {
             taskGroups.add(
                     createContainer(slave, taskGroupTemplate, template.getEnvVars())
             );
         }
 
         if (taskGroups.isEmpty()) {
-            TaskGroupTemplate taskGroupTemplate = new TaskGroupTemplate(JNLP_NAME, DEFAULT_JNLP_IMAGE);
+            TaskTemplate taskGroupTemplate = new TaskTemplate(JNLP_NAME, DEFAULT_JNLP_IMAGE);
             taskGroupTemplate.setArgs(DEFAULT_JNLP_ARGUMENTS);
             taskGroups.add(
                     createContainer(slave, taskGroupTemplate, template.getEnvVars())
@@ -108,7 +108,7 @@ public class NomadJobTemplateBuilder {
 
     }
 
-    private TaskGroup createContainer(NomadSlave slave, TaskGroupTemplate taskGroupTemplate, Collection<EnvVar> globalEnvVars) {
+    private TaskGroup createContainer(NomadSlave slave, TaskTemplate taskGroupTemplate, Collection<EnvVar> globalEnvVars) {
         // Last-write wins map of environment variable names to values
         HashMap<String, String> env = new HashMap<>();
         NomadCloud cloud = slave.getNomadCloud();

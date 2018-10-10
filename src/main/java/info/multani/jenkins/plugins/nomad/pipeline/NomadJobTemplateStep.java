@@ -6,7 +6,7 @@ import hudson.model.Node;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
-import info.multani.jenkins.plugins.nomad.TaskGroupTemplate;
+import info.multani.jenkins.plugins.nomad.TaskTemplate;
 import info.multani.jenkins.plugins.nomad.model.EnvVar;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private final String label;
     private final String name;
 
-    private List<TaskGroupTemplate> taskGroups = new ArrayList<>();
+    private List<TaskTemplate> taskGroups = new ArrayList<>();
     private List<EnvVar> envVars = new ArrayList<>();
 
     private int instanceCap = Integer.MAX_VALUE;
@@ -40,7 +40,7 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private int slaveConnectTimeout = NomadJobTemplate.DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
 
     private Node.Mode nodeUsageMode;
-    private String workingDir = TaskGroupTemplate.DEFAULT_WORKING_DIR;
+    private String workingDir = TaskTemplate.DEFAULT_WORKING_DIR;
 
     @DataBoundConstructor
     public NomadJobTemplateStep(String label, String name) {
@@ -74,12 +74,12 @@ public class NomadJobTemplateStep extends Step implements Serializable {
         this.inheritFrom = inheritFrom;
     }
 
-    public List<TaskGroupTemplate> getTaskGroups() {
+    public List<TaskTemplate> getTaskGroups() {
         return taskGroups;
     }
 
     @DataBoundSetter
-    public void setTaskGroups(List<TaskGroupTemplate> taskGroups) {
+    public void setTaskGroups(List<TaskTemplate> taskGroups) {
         this.taskGroups = taskGroups;
     }
 
