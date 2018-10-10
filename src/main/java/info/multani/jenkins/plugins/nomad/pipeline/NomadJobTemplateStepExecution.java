@@ -105,8 +105,8 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
 
         private final NomadJobTemplate jobTemplate;
 
-        private NomadJobTemplateCallback(NomadJobTemplate podTemplate) {
-            this.jobTemplate = podTemplate;
+        private NomadJobTemplateCallback(NomadJobTemplate jobTemplate) {
+            this.jobTemplate = jobTemplate;
         }
 
         @Override

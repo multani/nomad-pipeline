@@ -86,7 +86,7 @@ public class NomadLauncher extends JNLPLauncher {
         final NomadJobTemplate unwrappedTemplate = slave.getTemplate();
         try {
             NomadApiClient client = cloud.connect();
-            Job job = getPodTemplate(slave, unwrappedTemplate);
+            Job job = getJobTemplate(slave, unwrappedTemplate);
 
             String jobID = job.getId();
 
@@ -110,16 +110,16 @@ public class NomadLauncher extends JNLPLauncher {
             logger.printf("[Nomad] Registered Nomad job %s with evaluation ID %s%n",
                     jobID, evaluationID);
 
-            // We need the pod to be running and connected before returning
+            // We need the job to be running and connected before returning
             // otherwise this method keeps being called multiple times
 //            List<String> validStates = ImmutableList.of("Running");
 
             int i = 0;
             int j = 100; // wait 600 seconds
 
-            // TODO: wait for Pod to be running
+            // TODO: wait for Job to be running
 //            List<ContainerStatus> containerStatuses = null;
-            // wait for Pod to be running
+            // wait for Job to be running
             for (; i < j; i++) {
                 LOGGER.log(INFO, "Waiting for job to be scheduled ({1}/{2}): {0}", new Object[]{jobID, i, j});
                 logger.printf("Waiting for job to be scheduled (%2$s/%3$s): %1$s%n", jobID, i, j);
@@ -128,7 +128,7 @@ public class NomadLauncher extends JNLPLauncher {
                 ServerQueryResponse<Job> response = client.getJobsApi().info(jobID);
 
                 if (response == null) { // can exist?
-                    throw new IllegalStateException("Pod no longer exists: " + jobID);
+                    throw new IllegalStateException("Job no longer exists: " + jobID);
                 }
 
                 Job jobFound = response.getValue();
@@ -147,7 +147,7 @@ public class NomadLauncher extends JNLPLauncher {
 //                for (ContainerStatus info : containerStatuses) {
 //                    if (info != null) {
 //                        if (info.getState().getWaiting() != null) {
-//                            // Pod is waiting for some reason
+//                            // Job is waiting for some reason
 //                            LOGGER.log(INFO, "Container is waiting {0} [{2}]: {1}",
 //                                    new Object[]{jobID, info.getState().getWaiting(), info.getName()});
 //                            logger.printf("Container is waiting %1$s [%3$s]: %2$s%n",
@@ -160,15 +160,6 @@ public class NomadLauncher extends JNLPLauncher {
 //                            allContainersAreReady = false;
 //                        }
 //                    }
-//                }
-//
-//                if (!terminatedContainers.isEmpty()) {
-//                    Map<String, Integer> errors = terminatedContainers.stream().collect(Collectors
-//                            .toMap(ContainerStatus::getName, (info) -> info.getState().getTerminated().getExitCode()));
-//
-//                    // Print the last lines of failed containers
-//                    logLastLines(terminatedContainers, jobID, slave, errors, client);
-//                    throw new IllegalStateException("Containers are terminated with exit codes: " + errors);
 //                }
 //
 //                if (!allContainersAreReady) {
@@ -201,9 +192,6 @@ public class NomadLauncher extends JNLPLauncher {
                 Thread.sleep(1000);
             }
             if (!slave.getComputer().isOnline()) {
-//                if (containerStatuses != null) {
-//                    logLastLines(containerStatuses, jobID, slave, null, client);
-//                }
                 throw new IllegalStateException("Agent is not connected after " + j + " attempts, status: " + status);
             }
             computer.setAcceptingTasks(true);
@@ -228,27 +216,7 @@ public class NomadLauncher extends JNLPLauncher {
         }
     }
 
-    private Job getPodTemplate(NomadSlave slave, NomadJobTemplate template) {
+    private Job getJobTemplate(NomadSlave slave, NomadJobTemplate template) {
         return template == null ? null : template.build(slave);
     }
-
-    /**
-     * Log the last lines of containers logs
-     */
-//    private void logLastLines(List<ContainerStatus> containers, String podId, KubernetesSlave slave,
-//            Map<String, Integer> errors, NomadClient client) {
-//        for (ContainerStatus containerStatus : containers) {
-//            String containerName = containerStatus.getName();
-//            PrettyLoggable<String, LogWatch> tailingLines = client.pods()
-//                    .withName(podId).inContainer(containerStatus.getName()).tailingLines(30);
-//            String log = tailingLines.getLog();
-//            if (!StringUtils.isBlank(log)) {
-//                String msg = errors != null ? String.format(" exited with error %s", errors.get(containerName))
-//                        : "";
-//                LOGGER.log(Level.SEVERE,
-//                        "Error in provisioning; agent={0}, template={1}. Container {2}{3}. Logs: {4}",
-//                        new Object[]{slave, slave.getTemplate(), containerName, msg, tailingLines.getLog()});
-//            }
-//        }
-//    }
 }

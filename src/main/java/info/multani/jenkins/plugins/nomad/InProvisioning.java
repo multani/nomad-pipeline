@@ -9,7 +9,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 /**
- * Collects the Kubernetes agents currently in provisioning.
+ * Collects the Nomad agents currently in provisioning.
  */
 public abstract class InProvisioning implements ExtensionPoint {
     /**

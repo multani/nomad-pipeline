@@ -288,13 +288,13 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     /**
-     * Build a Pod object from a PodTemplate
+     * Build a Job object from a JobTemplate
      * 
      * @param slave
      */
 
     /**
-     * Build a Pod object from a PodTemplate
+     * Build a Job object from a JobTemplate
      * @param slave
      * @return
      */

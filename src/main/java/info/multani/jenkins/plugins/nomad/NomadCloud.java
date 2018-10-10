@@ -280,7 +280,7 @@ public class NomadCloud extends Cloud {
     }
 
     /**
-     * Labels for all pods started by the plugin
+     * Labels for all jobs started by the plugin
      */
     public Map<String, String> getLabels() {
         return (Map<String, String>) (labels == null ? Collections.emptyMap() : labels);
@@ -434,7 +434,6 @@ public class NomadCloud extends Cloud {
      * @return the template
      */
     public NomadJobTemplate getTemplate(@CheckForNull Label label) {
-        //return PodTemplateUtils.getTemplateByLabel(label, getAllTemplates());
         for (NomadJobTemplate t : templates) {
             if ((label == null && t.getNodeUsageMode() == Node.Mode.NORMAL) || (label != null && label.matches(t.getLabelSet()))) {
                 return t;
@@ -444,17 +443,7 @@ public class NomadCloud extends Cloud {
     }
 
     /**
-     * Unwraps the given pod template.
-     *
-     * @param podTemplate the pod template to unwrap.
-     * @return the unwrapped pod template
-     */
-//    public NomadJobTemplate getUnwrappedTemplate(NomadJobTemplate podTemplate) {
-//        return PodTemplateUtils.unwrap(podTemplate, getDefaultsProviderTemplate(), getAllTemplates());
-//    }
-
-    /**
-     * Gets all PodTemplates that have the matching {@link Label}.
+     * Gets all JobTemplates that have the matching {@link Label}.
      *
      * @param label label to look for in templates
      * @return list of matching templates
@@ -483,7 +472,7 @@ public class NomadCloud extends Cloud {
     }
 
     /**
-     * Add a dynamic pod template. Won't be displayed in UI, and persisted
+     * Add a dynamic job template. Won't be displayed in UI, and persisted
      * separately from the cloud instance.
      *
      * @param t the template to add
@@ -493,7 +482,7 @@ public class NomadCloud extends Cloud {
     }
 
     /**
-     * Remove a dynamic pod template.
+     * Remove a dynamic job template.
      *
      * @param t the template to remove
      */
@@ -525,7 +514,7 @@ public class NomadCloud extends Cloud {
                         .build();
                 NomadApiClient client = new NomadApiClient(config);
 
-                // test listing pods
+                // test listing jobs
                 client.getJobsApi().list();
                 return FormValidation.ok("Connection test successful");
             } catch (NomadException e) {
@@ -574,7 +563,7 @@ public class NomadCloud extends Cloud {
     }
 
     @Extension
-    public static class PodTemplateSourceImpl extends NomadJobTemplateSource {
+    public static class JobTemplateSourceImpl extends NomadJobTemplateSource {
 
         @Nonnull
         @Override

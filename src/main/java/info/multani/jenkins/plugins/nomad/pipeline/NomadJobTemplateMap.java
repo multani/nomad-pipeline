@@ -25,7 +25,7 @@ public class NomadJobTemplateMap {
     }
 
     /**
-     * List of Pod Templates indexed by cloud name
+     * List of Job Templates indexed by cloud name
      */
     private Map<String, List<NomadJobTemplate>> map = new CopyOnWriteMap.Hash<>();
 
@@ -40,27 +40,27 @@ public class NomadJobTemplateMap {
     }
 
     private List<NomadJobTemplate> getOrCreateTemplateList(@Nonnull NomadCloud cloud) {
-        List<NomadJobTemplate> podTemplates = map.get(cloud.name);
-        return podTemplates == null ? new CopyOnWriteArrayList<>() : podTemplates;
+        List<NomadJobTemplate> jobTemplates = map.get(cloud.name);
+        return jobTemplates == null ? new CopyOnWriteArrayList<>() : jobTemplates;
     }
 
     /**
      * Adds a template for the corresponding cloud instance.
      * @param cloud The cloud instance.
-     * @param podTemplate The pod template to add.
+     * @param jobTemplate The job template to add.
      */
-    public void addTemplate(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate podTemplate) {
+    public void addTemplate(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate jobTemplate) {
         List<NomadJobTemplate> list = getOrCreateTemplateList(cloud);
-        list.add(podTemplate);
+        list.add(jobTemplate);
         map.put(cloud.name, list);
     }
 
-    public void removeTemplate(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate podTemplate) {
-        getOrCreateTemplateList(cloud).remove(podTemplate);
+    public void removeTemplate(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate jobTemplate) {
+        getOrCreateTemplateList(cloud).remove(jobTemplate);
     }
 
     @Extension
-    public static class PodTemplateSourceImpl extends NomadJobTemplateSource {
+    public static class JobTemplateSourceImpl extends NomadJobTemplateSource {
 
         @Nonnull
         @Override

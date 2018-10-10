@@ -9,7 +9,7 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 /**
- * Filters a pod template according to criteria.
+ * Filters a job template according to criteria.
  */
 public abstract class NomadJobTemplateFilter implements ExtensionPoint {
     /**
@@ -21,16 +21,16 @@ public abstract class NomadJobTemplateFilter implements ExtensionPoint {
     }
 
     /**
-     * Pass the given pod templates list into all filters implementations.
+     * Pass the given job templates list into all filters implementations.
      *
-     * @param cloud The cloud instance the pod templates are getting considered for
-     * @param podTemplates The initial list of pod templates
+     * @param cloud The cloud instance the job templates are getting considered for
+     * @param jobTemplates The initial list of job templates
      * @param label The label that was requested for provisioning
-     * @return The pod template list after filtering
+     * @return The job template list after filtering
      */
-    public static List<NomadJobTemplate> applyAll(@Nonnull NomadCloud cloud, @Nonnull List<NomadJobTemplate> podTemplates, @CheckForNull Label label) {
+    public static List<NomadJobTemplate> applyAll(@Nonnull NomadCloud cloud, @Nonnull List<NomadJobTemplate> jobTemplates, @CheckForNull Label label) {
         List<NomadJobTemplate> result = new ArrayList<>();
-        for (NomadJobTemplate t : podTemplates) {
+        for (NomadJobTemplate t : jobTemplates) {
             NomadJobTemplate output = null;
             for (NomadJobTemplateFilter f : all()) {
                 output = f.transform(cloud, t, label);
@@ -46,13 +46,13 @@ public abstract class NomadJobTemplateFilter implements ExtensionPoint {
     }
 
     /**
-     * Transforms a pod template definition.
+     * Transforms a job template definition.
      *
      * @param cloud The {@link NomadCloud} instance the {@link NomadJobTemplate} instances will be scheduled into.
-     * @param podTemplate The input pod template to process.
+     * @param jobTemplate The input job template to process.
      * @param label The label that was requested for provisioning
-     * @return A new pod template after transformation. It can be null if the filter denies access to the given pod template.
+     * @return A new job template after transformation. It can be null if the filter denies access to the given job template.
      */
     @CheckForNull
-    protected abstract NomadJobTemplate transform(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate podTemplate, @CheckForNull Label label);
+    protected abstract NomadJobTemplate transform(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate jobTemplate, @CheckForNull Label label);
 }

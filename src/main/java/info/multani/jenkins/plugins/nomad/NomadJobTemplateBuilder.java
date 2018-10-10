@@ -24,7 +24,6 @@
 package info.multani.jenkins.plugins.nomad;
 
 import static info.multani.jenkins.plugins.nomad.NomadCloud.*;
-import com.google.common.base.Strings;
 import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.apimodel.Resources;
 import com.hashicorp.nomad.apimodel.RestartPolicy;
@@ -35,20 +34,16 @@ import static hudson.Util.replaceMacro;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 /**
- * Helper class to build Pods from PodTemplates
+ * Helper class to build Jobs from JobTemplates
  *
  * @author Carlos Sanchez
  * @since
@@ -77,7 +72,7 @@ public class NomadJobTemplateBuilder {
     }
 
     /**
-     * Create a Pod object from a PodTemplate
+     * Create a Job object from a JobTemplate
      *
      * @param slave
      * @return
@@ -128,9 +123,6 @@ public class NomadJobTemplateBuilder {
             env.put("JENKINS_TUNNEL", cloud.getJenkinsTunnel());
         }
 
-        // Running on OpenShift Enterprise, security concerns force use of arbitrary user ID
-        // As a result, container is running without a home set for user, resulting into using `/` for some tools,
-        // and `?` for java build tools. So we force HOME to a safe location.
         env.put("HOME", taskGroupTemplate.getWorkingDir());
 
         Map<String, String> envVars = new HashMap<>();
@@ -146,14 +138,6 @@ public class NomadJobTemplateBuilder {
                         .replaceAll(NAME_REF, slave.getComputer().getName())
                 )
                 .collect(Collectors.toList());
-
-//        List<VolumeMount> containerMounts = new ArrayList<>(volumeMounts);
-//        ContainerPort[] ports = containerTemplate.getPorts().stream().map(entry -> entry.toPort()).toArray(size -> new ContainerPort[size]);
-
-//        if (!Strings.isNullOrEmpty(containerTemplate.getWorkingDir())
-//                && !PodVolume.volumeMountExists(containerTemplate.getWorkingDir(), volumeMounts)) {
-//            containerMounts.add(new VolumeMount(containerTemplate.getWorkingDir(), WORKSPACE_VOLUME_NAME, false, null));
-//        }
 
         TaskGroup taskGroup = new TaskGroup();
         taskGroup.setName(substituteEnv(taskGroupTemplate.getName()));
@@ -189,22 +173,6 @@ public class NomadJobTemplateBuilder {
         taskGroup.addTasks(task);
 
         return taskGroup;
-
-//        return new ContainerBuilder()
-//                .withName()
-//                .withImage()
-//                .withNewSecurityContext()
-//                .endSecurityContext()
-//                .withWorkingDir(substituteEnv(containerTemplate.getWorkingDir()))
-//                .addToEnv(envVars)
-//                .addToPorts(ports)
-//                .withCommand(parseDockerCommand())
-//                .withArgs()
-//                .withTty(containerTemplate.isTtyEnabled())
-//                .withNewResources()
-//                .withRequests(getResourcesMap(containerTemplate.getResourcesMemory(), containerTemplate.getResourcesCPU()))
-//                .endResources()
-//                .build();
     }
 
     public static String substituteEnv(String s) {

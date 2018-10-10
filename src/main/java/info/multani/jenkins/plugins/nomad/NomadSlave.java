@@ -233,7 +233,7 @@ public class NomadSlave extends AbstractCloudSlave {
     public static class Builder {
         private String name;
         private String nodeDescription;
-        private NomadJobTemplate podTemplate;
+        private NomadJobTemplate jobTemplate;
         private NomadCloud cloud;
         private String label;
         private ComputerLauncher computerLauncher;
@@ -258,11 +258,11 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         /**
-         * @param podTemplate The pod template the future {@link NomadSlave} has been created from
+         * @param jobTemplate The job template the future {@link NomadSlave} has been created from
          * @return the current instance for method chaining
          */
-        public Builder podTemplate(NomadJobTemplate podTemplate) {
-            this.podTemplate = podTemplate;
+        public Builder jobTemplate(NomadJobTemplate jobTemplate) {
+            this.jobTemplate = jobTemplate;
             return this;
         }
 
@@ -303,10 +303,10 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         private RetentionStrategy determineRetentionStrategy() {
-            if (podTemplate.getIdleMinutes() == 0) {
+            if (jobTemplate.getIdleMinutes() == 0) {
                 return new OnceRetentionStrategy(cloud.getRetentionTimeout());
             } else {
-                return new CloudRetentionStrategy(podTemplate.getIdleMinutes());
+                return new CloudRetentionStrategy(jobTemplate.getIdleMinutes());
             }
         }
 
@@ -317,14 +317,14 @@ public class NomadSlave extends AbstractCloudSlave {
          * @throws Descriptor.FormException
          */
         public NomadSlave build() throws IOException, Descriptor.FormException {
-            Validate.notNull(podTemplate);
+            Validate.notNull(jobTemplate);
             Validate.notNull(cloud);
             return new NomadSlave(
-                    name == null ? getSlaveName(podTemplate) : name,
-                    podTemplate,
-                    nodeDescription == null ? podTemplate.getName() : nodeDescription,
+                    name == null ? getSlaveName(jobTemplate) : name,
+                    jobTemplate,
+                    nodeDescription == null ? jobTemplate.getName() : nodeDescription,
                     cloud.name,
-                    label == null ? podTemplate.getLabel() : label,
+                    label == null ? jobTemplate.getLabel() : label,
                     computerLauncher == null ? new NomadLauncher() : computerLauncher,
                     retentionStrategy == null ? determineRetentionStrategy() : retentionStrategy);
         }

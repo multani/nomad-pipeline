@@ -44,7 +44,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
 
     private final Map<String, String> envVars = new HashMap<>();
 
-    private List<PortMapping> ports = new ArrayList<PortMapping>();
+    private List<PortMapping> ports = new ArrayList<>();
 
     @DataBoundConstructor
     public TaskGroupTemplate(String name, String image) {
@@ -107,7 +107,7 @@ public class TaskGroupTemplate extends AbstractDescribableImpl<TaskGroupTemplate
     }
 
     public String getDisplayName() {
-        return "Container Pod Template";
+        return "Task Group Template";
     }
 
     @DataBoundSetter
