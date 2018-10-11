@@ -1,17 +1,23 @@
 package info.multani.jenkins.plugins.nomad;
 
 import com.google.common.base.Preconditions;
+import com.hashicorp.nomad.apimodel.Resources;
+import com.hashicorp.nomad.apimodel.Task;
+import com.hashicorp.nomad.apimodel.TaskArtifact;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.DescriptorVisibilityFilter;
+import static info.multani.jenkins.plugins.nomad.NomadJobTemplateBuilder.substituteEnv;
 import info.multani.jenkins.plugins.nomad.model.EnvVar;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
@@ -47,6 +53,10 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
     private final List<EnvVar> envVars = new ArrayList<>();
 
     private List<PortMapping> ports = new ArrayList<>();
+    
+    private static final String JNLPMAC_REF = "\\$\\{computer.jnlpmac\\}";
+
+    private static final String NAME_REF = "\\$\\{computer.name\\}";
 
     @DataBoundConstructor
     public TaskTemplate(String name, String image) {
@@ -167,6 +177,52 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         }
 
         return argMap;
+    }
+
+    public Task build(NomadSlave slave, Map<String, String> globalEnvVars) {
+        Map<String, String> envVars = new HashMap<>();
+        NomadCloud cloud = slave.getNomadCloud();
+
+        List<String> arguments = this.getArgs().stream()
+                .map(e -> e.replaceAll(JNLPMAC_REF, slave.getComputer().getJnlpMac())
+                .replaceAll(NAME_REF, slave.getComputer().getName())
+                )
+                .collect(Collectors.toList());
+
+        envVars.putAll(globalEnvVars);
+
+        envVars.put("HOME", this.getWorkingDir());
+
+        if (this.getEnvVars() != null) {
+            this.getEnvVars().forEach(item
+                    -> envVars.put(item.getKey(), item.getValue())
+            );
+        }
+
+        Task task = new Task();
+        task.setName(substituteEnv(this.getName()));
+        task.setDriver("docker");
+        task.addConfig("image", substituteEnv(getImage()));
+        task.addConfig("command", substituteEnv(this.getCommand()));
+        task.addConfig("args", arguments);
+        task.addConfig("network_mode", "host");
+
+        // TODO: download the artifact only if needed
+        task.addArtifacts(
+                new TaskArtifact()
+                        .setGetterSource(cloud.getSlaveUrl())
+                        .setGetterOptions(null)
+                        .setRelativeDest("/local/")
+        );
+
+        task.setEnv(envVars);
+
+        Resources resources = new Resources()
+                .setCpu(this.getResourcesCPU())
+                .setMemoryMb(this.getResourceMemory());
+        task.setResources(resources);
+
+        return task;
     }
 
     @Extension
