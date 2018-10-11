@@ -48,8 +48,6 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
 
     private final List<EnvVar> envVars = new ArrayList<>();
 
-    private List<PortMapping> ports = new ArrayList<>();
-    
     private static final String JNLPMAC_REF = "\\$\\{computer.jnlpmac\\}";
 
     private static final String NAME_REF = "\\$\\{computer.name\\}";
@@ -125,15 +123,6 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
     @DataBoundSetter
     public void setEnvVars(List<EnvVar> envVars) {
         this.envVars.addAll(envVars);
-    }
-
-    public List<PortMapping> getPorts() {
-        return ports != null ? ports : Collections.emptyList();
-    }
-
-    @DataBoundSetter
-    public void setPorts(List<PortMapping> ports) {
-        this.ports = ports;
     }
 
     public Integer getResourcesCPU() {
@@ -233,7 +222,6 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
                 (resourcesCPU == null ? "" : ", resourcesCPU='" + resourcesCPU + '\'') +
                 (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
                 (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
-                (ports == null || ports.isEmpty() ? "" : ", ports=" + ports) +
                 '}';
     }
 }
