@@ -42,13 +42,9 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
 
     private List<String> args;
 
-    private boolean ttyEnabled;
-
     private Integer resourcesCPU;
 
     private Integer resourcesMemory;
-
-    private String shell;
 
     private final List<EnvVar> envVars = new ArrayList<>();
 
@@ -109,15 +105,6 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         return args;
     }
 
-    @DataBoundSetter
-    public void setTtyEnabled(boolean ttyEnabled) {
-        this.ttyEnabled = ttyEnabled;
-    }
-
-    public boolean isTtyEnabled() {
-        return ttyEnabled;
-    }
-
     public String getDisplayName() {
         return "Task Template";
     }
@@ -169,13 +156,7 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
 
     public Map<String,Object> getAsArgs() {
         Map<String,Object> argMap = new TreeMap<>();
-
         argMap.put("name", name);
-
-        if (!StringUtils.isEmpty(shell)) {
-            argMap.put("shell", shell);
-        }
-
         return argMap;
     }
 
@@ -249,20 +230,10 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
                 (workingDir == null ? "" : ", workingDir='" + workingDir + '\'') +
                 (command == null ? "" : ", command='" + command + '\'') +
                 (args == null ? "" : ", args='" + args + '\'') +
-                (!ttyEnabled ? "" : ", ttyEnabled=" + ttyEnabled) +
                 (resourcesCPU == null ? "" : ", resourcesCPU='" + resourcesCPU + '\'') +
                 (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
                 (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
                 (ports == null || ports.isEmpty() ? "" : ", ports=" + ports) +
                 '}';
-    }
-
-    public String getShell() {
-        return shell;
-    }
-
-    @DataBoundSetter
-    public void setShell(String shell) {
-        this.shell = shell;
     }
 }
