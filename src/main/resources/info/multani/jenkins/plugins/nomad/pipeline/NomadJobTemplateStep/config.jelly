@@ -5,9 +5,7 @@
     <f:entry field="cloud" title="The cloud to use">
       <f:textbox default="kubernetes"/>
     </f:entry>
-    <f:entry field="inheritFrom" title="The name of the pod template to inherit from">
-      <f:textbox/>
-    </f:entry>
+
 	<f:entry field="name" title="The name of the template">
 	  <f:textbox/>
 	</f:entry>
@@ -16,7 +14,7 @@
     </f:entry>
 
   <f:entry title="${%Containers}" description="${%List of container in the agent pod}">
-      <f:repeatableHeteroProperty field="containers" hasHeader="true" addCaption="Add Container"
+      <f:repeatableHeteroProperty field="taskGroups" hasHeader="true" addCaption="Add Container"
                                     deleteCaption="Delete Container" />
   </f:entry>
 

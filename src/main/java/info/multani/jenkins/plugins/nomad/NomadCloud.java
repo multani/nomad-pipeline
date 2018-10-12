@@ -26,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import javax.servlet.ServletException;
@@ -66,29 +68,22 @@ public class NomadCloud extends Cloud {
      */
     private static final int DEFAULT_RETENTION_TIMEOUT_MINUTES = 5;
 
-    private String defaultsProviderTemplate;
-
     @Nonnull
     private List<NomadJobTemplate> templates = new ArrayList<>();
     private String serverUrl;
-    @CheckForNull
-    private String serverCertificate;
 
-    private boolean skipTlsVerify;
 
     private String jenkinsUrl;
+
     @CheckForNull
     private String jenkinsTunnel;
-    @CheckForNull
-    private String credentialsId;
+
     private int containerCap = Integer.MAX_VALUE;
     private int retentionTimeout = DEFAULT_RETENTION_TIMEOUT_MINUTES;
     private int connectTimeout;
     private int readTimeout;
-    private Map<String, String> labels;
 
     private transient NomadApiClient client;
-    private int maxRequestsPerHost;
 
     @DataBoundConstructor
     public NomadCloud(String name) {
@@ -106,13 +101,10 @@ public class NomadCloud extends Cloud {
      */
     public NomadCloud(@NonNull String name, @NonNull NomadCloud source) {
         super(name);
-        this.defaultsProviderTemplate = source.defaultsProviderTemplate;
         this.templates.addAll(source.templates);
         this.serverUrl = source.serverUrl;
-        this.skipTlsVerify = source.skipTlsVerify;
         this.jenkinsUrl = source.jenkinsUrl;
         this.jenkinsTunnel = source.jenkinsTunnel;
-        this.credentialsId = source.credentialsId;
         this.containerCap = source.containerCap;
         this.retentionTimeout = source.retentionTimeout;
         this.connectTimeout = source.connectTimeout;
@@ -125,15 +117,6 @@ public class NomadCloud extends Cloud {
     @DataBoundSetter
     public void setRetentionTimeout(int retentionTimeout) {
         this.retentionTimeout = retentionTimeout;
-    }
-
-    public String getDefaultsProviderTemplate() {
-        return defaultsProviderTemplate;
-    }
-
-    @DataBoundSetter
-    public void setDefaultsProviderTemplate(String defaultsProviderTemplate) {
-        this.defaultsProviderTemplate = defaultsProviderTemplate;
     }
 
     @Nonnull
@@ -165,29 +148,11 @@ public class NomadCloud extends Cloud {
         this.serverUrl = serverUrl;
     }
 
-    public String getServerCertificate() {
-        return serverCertificate;
-    }
-
-    @DataBoundSetter
-    public void setServerCertificate(String serverCertificate) {
-        this.serverCertificate = Util.fixEmpty(serverCertificate);
-    }
-
-    public boolean isSkipTlsVerify() {
-        return skipTlsVerify;
-    }
-
-    @DataBoundSetter
-    public void setSkipTlsVerify(boolean skipTlsVerify) {
-        this.skipTlsVerify = skipTlsVerify;
-    }
-
     @CheckForNull
     public String getJenkinsUrl() {
         return jenkinsUrl;
     }
-    
+
     @CheckForNull
     public String getSlaveUrl() {
         return Jenkins.getInstance().getRootUrl() + "jnlpJars/slave.jar";
@@ -237,15 +202,6 @@ public class NomadCloud extends Cloud {
         this.jenkinsTunnel = Util.fixEmpty(jenkinsTunnel);
     }
 
-    public String getCredentialsId() {
-        return credentialsId;
-    }
-
-    @DataBoundSetter
-    public void setCredentialsId(String credentialsId) {
-        this.credentialsId = Util.fixEmpty(credentialsId);
-    }
-
     public int getContainerCap() {
         return containerCap;
     }
@@ -279,30 +235,6 @@ public class NomadCloud extends Cloud {
         return connectTimeout;
     }
 
-    /**
-     * Labels for all jobs started by the plugin
-     */
-    public Map<String, String> getLabels() {
-        return (Map<String, String>) (labels == null ? Collections.emptyMap() : labels);
-    }
-
-    public void setLabels(Map<String, String> labels) {
-        this.labels = labels;
-    }
-
-    @DataBoundSetter
-    public void setMaxRequestsPerHostStr(String maxRequestsPerHostStr) {
-        try {
-            this.maxRequestsPerHost = Integer.parseInt(maxRequestsPerHostStr);
-        } catch (NumberFormatException e) {
-            maxRequestsPerHost = DEFAULT_MAX_REQUESTS_PER_HOST;
-        }
-    }
-
-    public String getMaxRequestsPerHostStr() {
-        return String.valueOf(maxRequestsPerHost);
-    }
-
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
@@ -333,16 +265,15 @@ public class NomadCloud extends Cloud {
         return "jenkins/" + label.getName();
     }
 
-    Map<String, String> getLabelsMap(Set<LabelAtom> labelSet) {
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
-        builder.putAll(getLabels());
-        if (!labelSet.isEmpty()) {
-            for (LabelAtom label : labelSet) {
-                builder.put(getIdForLabel(label), "true");
-            }
-        }
-        return builder.build();
-    }
+//    Map<String, String> getLabelsMap(Set<LabelAtom> labelSet) {
+//        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
+//        if (!labelSet.isEmpty()) {
+//            for (LabelAtom label : labelSet) {
+//                builder.put(getIdForLabel(label), "true");
+//            }
+//        }
+//        return builder.build();
+//    }
 
     @Override
     public synchronized Collection<NodeProvisioner.PlannedNode> provision(@CheckForNull final Label label, final int excessWorkload) {
