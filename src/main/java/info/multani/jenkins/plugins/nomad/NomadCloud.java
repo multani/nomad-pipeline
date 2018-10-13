@@ -36,7 +36,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
 import jenkins.model.JenkinsLocationConfiguration;
 import org.apache.commons.lang.StringUtils;
@@ -460,9 +459,8 @@ public class NomadCloud extends Cloud {
             return "Nomad";
         }
 
-        public FormValidation doTestConnection(@QueryParameter String name, @QueryParameter String serverUrl, @QueryParameter String credentialsId,
-                @QueryParameter String serverCertificate,
-                @QueryParameter boolean skipTlsVerify,
+        public FormValidation doTestConnection(@QueryParameter String name,
+                @QueryParameter String serverUrl,
                 @QueryParameter int connectionTimeout,
                 @QueryParameter int readTimeout) throws Exception {
 
@@ -487,34 +485,6 @@ public class NomadCloud extends Cloud {
             } catch (Exception e) {
                 LOGGER.log(Level.FINE, String.format("Error testing connection %s", serverUrl), e);
                 return FormValidation.error("Error testing connection %s: %s", serverUrl, e.getMessage());
-            }
-        }
-
-//        public ListBoxModel doFillCredentialsIdItems(@QueryParameter String serverUrl) {
-//            return new StandardListBoxModel().withEmptySelection() //
-//                    .withMatching( //
-//                            CredentialsMatchers.anyOf(
-//                                    CredentialsMatchers.instanceOf(StandardUsernamePasswordCredentials.class),
-//                                    CredentialsMatchers.instanceOf(FileCredentials.class),
-//                                    CredentialsMatchers.instanceOf(TokenProducer.class),
-//                                    CredentialsMatchers.instanceOf(
-//                                            org.jenkinsci.plugins.kubernetes.credentials.TokenProducer.class),
-//                                    CredentialsMatchers.instanceOf(StandardCertificateCredentials.class),
-//                                    CredentialsMatchers.instanceOf(StringCredentials.class)), //
-//                            CredentialsProvider.lookupCredentials(StandardCredentials.class, //
-//                                    getInstance, //
-//                                    ACL.SYSTEM, //
-//                                    serverUrl != null ? URIRequirementBuilder.fromUri(serverUrl).build()
-//                                            : Collections.EMPTY_LIST //
-//                            ));
-//
-//        }
-        public FormValidation doCheckMaxRequestsPerHostStr(@QueryParameter String value) throws IOException, ServletException {
-            try {
-                Integer.parseInt(value);
-                return FormValidation.ok();
-            } catch (NumberFormatException e) {
-                return FormValidation.error("Please supply an integer");
             }
         }
     }
