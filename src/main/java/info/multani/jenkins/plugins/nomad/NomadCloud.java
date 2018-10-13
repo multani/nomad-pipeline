@@ -162,10 +162,11 @@ public class NomadCloud extends Cloud {
         this.region = region;
     }
 
-    public List<String> getDatacenters() {
-        if (datacenters == null) {
-            return new ArrayList<>();
-        }
+    public String getDatacenters() {
+        return String.join(", ", getDatacentersList());
+    }
+
+    public List<String> getDatacentersList() {
         return datacenters;
     }
 

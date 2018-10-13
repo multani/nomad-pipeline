@@ -104,7 +104,7 @@ public class NomadJobTemplateBuilder {
     private String[] getDatacenters(NomadCloud cloud) {
         List<String> dc = template.getDatacenters();
         if (dc.isEmpty()) {
-            dc = cloud.getDatacenters();
+            dc = cloud.getDatacentersList();
         }
 
         return dc.toArray(new String[0]);
