@@ -42,10 +42,6 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Helper class to build Job from JobTemplate
- *
- * @author Carlos Sanchez
- * @since
- *
  */
 public class NomadJobTemplateBuilder {
 

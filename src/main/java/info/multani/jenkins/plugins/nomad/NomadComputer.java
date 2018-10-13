@@ -6,9 +6,6 @@ import hudson.slaves.AbstractCloudComputer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * @author Carlos Sanchez carlos@apache.org
- */
 public class NomadComputer extends AbstractCloudComputer<NomadSlave> {
     private static final Logger LOGGER = Logger.getLogger(NomadComputer.class.getName());
 

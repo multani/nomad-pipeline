@@ -34,11 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.model.RunAction2;
 
-/**
- * @author Carlos Sanchez
- * @since 1.1.1
- *
- */
 public abstract class AbstractInvisibleRunAction2 extends InvisibleAction implements RunAction2 {
 
     private static final Logger LOGGER = Logger.getLogger(AbstractInvisibleRunAction2.class.getName());

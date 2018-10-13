@@ -33,9 +33,6 @@ import org.jenkinsci.plugins.durabletask.executors.OnceRetentionStrategy;
 import org.jvnet.localizer.Localizable;
 import org.jvnet.localizer.ResourceBundleHolder;
 
-/**
- * @author Carlos Sanchez carlos@apache.org
- */
 public class NomadSlave extends AbstractCloudSlave {
 
     private static final Logger LOGGER = Logger.getLogger(NomadSlave.class.getName());

@@ -48,8 +48,6 @@ import org.kohsuke.stapler.QueryParameter;
  *
  * Starts Jenkins agents in a Nomad cluster using defined Docker templates for each
  * label.
- *
- * @author Carlos Sanchez carlos@apache.org
  */
 public class NomadCloud extends Cloud {
 
@@ -59,7 +57,7 @@ public class NomadCloud extends Cloud {
 
     public static final String JNLP_NAME = "jnlp";
 
-    /** label for all pods started by the plugin */
+    /** label for all jobs started by the plugin */
     public static final Map<String, String> DEFAULT_JOB_LABELS = ImmutableMap.of("jenkins", "slave");
 
     /**

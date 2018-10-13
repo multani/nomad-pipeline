@@ -1,6 +1,8 @@
-Kubernetes Resources Limit of CPU
-This value can be set to control the CPU resource limit passed when creating the Jenkins agent Docker container in
-Kubernetes. Unlike a resource request, this is the upper limit of resources used by your Jenkins Agent container.
-When left blank, the defaults of your Kubernetes cluster will be used. For more info, see the
-<a href="http://kubernetes.io/docs/user-guide/compute-resources/">Kubernetes docs.</a>
-e.g. `500m`.
+Nomad Resources Limit of CPU
+This value can be set to control the CPU resource limit in Mhz passed when
+creating the Jenkins agent Docker container in Nomad.
+
+When left blank, the default value for a Nomad job will be used. For more info, see the
+<a href="https://www.nomadproject.io/docs/job-specification/resources.html">Nomad docs.</a>
+
+e.g. `500`.
