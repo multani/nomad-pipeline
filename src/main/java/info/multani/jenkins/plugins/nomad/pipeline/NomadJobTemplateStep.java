@@ -31,6 +31,8 @@ public class NomadJobTemplateStep extends Step implements Serializable {
 
     private final String label;
     private final String name;
+    private String region;
+    private List<String> datacenters;
 
     private List<TaskTemplate> taskGroups = new ArrayList<>();
     private List<EnvVar> envVars = new ArrayList<>();
@@ -46,6 +48,27 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     public NomadJobTemplateStep(String label, String name) {
         this.label = label;
         this.name = name == null ? "jenkins-slave" : name;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    @DataBoundSetter
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public List<String> getDatacenters() {
+        if (datacenters == null) {
+            return new ArrayList<>();
+        }
+        return datacenters;
+    }
+
+    @DataBoundSetter
+    public void setDatacenters(List<String> datacenters) {
+        this.datacenters = datacenters;
     }
 
     public String getLabel() {

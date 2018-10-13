@@ -78,15 +78,30 @@ public class NomadJobTemplateBuilder {
             );
         }
 
+        NomadCloud cloud = slave.getNomadCloud();
+
         Job job = new Job();
         job.setId(slave.getNodeName());
         job.setName(slave.getNodeName());
-        job.setRegion("global"); // TODO
-        job.addDatacenters("dc1"); // TODO
+        job.setRegion(getRegion(cloud));
+        job.addDatacenters(getDatacenters(cloud));
         job.setType("batch");
         job.setTaskGroups(taskGroups);
 
         return job;
+    }
+
+    private String getRegion(NomadCloud cloud) {
+        return template.getRegion() == null ? cloud.getRegion() : template.getRegion();
+    }
+
+    private String[] getDatacenters(NomadCloud cloud) {
+        List<String> dc = template.getDatacenters();
+        if (dc.isEmpty()) {
+            dc = cloud.getDatacenters();
+        }
+
+        return dc.toArray(new String[0]);
     }
 
     private TaskGroup createTaskGroup(NomadSlave slave, TaskTemplate taskTemplate, Collection<EnvVar> globalEnvVars) {

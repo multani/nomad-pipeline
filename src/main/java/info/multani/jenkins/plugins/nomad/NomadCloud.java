@@ -72,6 +72,9 @@ public class NomadCloud extends Cloud {
     private List<NomadJobTemplate> templates = new ArrayList<>();
     private String serverUrl;
 
+    private String region;
+
+    private List<String> datacenters = new ArrayList<>();
 
     private String jenkinsUrl;
 
@@ -146,6 +149,33 @@ public class NomadCloud extends Cloud {
     @DataBoundSetter
     public void setServerUrl(@Nonnull String serverUrl) {
         this.serverUrl = serverUrl;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    @DataBoundSetter
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public List<String> getDatacenters() {
+        if (datacenters == null) {
+            return new ArrayList<>();
+        }
+        return datacenters;
+    }
+
+    public void setDatacenters(List<String> datacenters) {
+        this.datacenters = datacenters;
+    }
+
+    @DataBoundSetter
+    public void setDatacenters(String datacenters) {
+        this.datacenters = Arrays.stream(datacenters.split(","))
+                .map(e -> e.trim())
+                .collect(Collectors.toList());
     }
 
     @CheckForNull

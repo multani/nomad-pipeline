@@ -43,6 +43,10 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
 //    private String inheritFrom;
 
+    private String region;
+
+    private List<String> datacenters;
+
     private String name;
 
     private String image;
@@ -109,6 +113,27 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     public String getDisplayName() {
         return "Nomad Job Template";
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    @DataBoundSetter
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public List<String> getDatacenters() {
+        if (datacenters == null) {
+            return new ArrayList<>();
+        }
+        return datacenters;
+    }
+
+    @DataBoundSetter
+    public void setDatacenters(List<String> datacenters) {
+        this.datacenters = datacenters;
     }
 
     public void setInstanceCap(int instanceCap) {
