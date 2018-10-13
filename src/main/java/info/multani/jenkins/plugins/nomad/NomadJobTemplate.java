@@ -1,5 +1,6 @@
 package info.multani.jenkins.plugins.nomad;
 
+import com.google.common.collect.ImmutableMap;
 import com.hashicorp.nomad.apimodel.Job;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -36,6 +38,8 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     private static final long serialVersionUID = 1L;
 
     private static final String FALLBACK_ARGUMENTS = "${computer.jnlpmac} ${computer.name}";
+
+    private static final String DEFAULT_ID = "jenkins/slave-default";
 
     private static final Logger LOGGER = Logger.getLogger(NomadJobTemplate.class.getName());
 
@@ -210,6 +214,17 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     public Set<LabelAtom> getLabelSet() {
         return Label.parse(label);
+    }
+
+    public Map<String, String> getLabelsMap() {
+        Set<LabelAtom> labelSet = getLabelSet();
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String> builder();
+        if (!labelSet.isEmpty()) {
+            labelSet.forEach((label) -> {
+                builder.put(label == null ? DEFAULT_ID : "jenkins/" + label.getName(), "true");
+            });
+        }
+        return builder.build();
     }
 
     @DataBoundSetter

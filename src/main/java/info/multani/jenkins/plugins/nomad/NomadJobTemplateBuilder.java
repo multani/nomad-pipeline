@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 
@@ -80,7 +81,12 @@ public class NomadJobTemplateBuilder {
 
         NomadCloud cloud = slave.getNomadCloud();
 
+        Map<String, String> meta = new HashMap<>();
+        meta.putAll(cloud.getLabels());
+        meta.putAll(template.getLabelsMap());
+
         Job job = new Job();
+        job.setMeta(meta);
         job.setId(slave.getNodeName());
         job.setName(slave.getNodeName());
         job.setRegion(getRegion(cloud));

@@ -12,7 +12,6 @@ import hudson.Util;
 import hudson.model.Descriptor;
 import hudson.model.Label;
 import hudson.model.Node;
-import hudson.model.labels.LabelAtom;
 import hudson.slaves.Cloud;
 import hudson.slaves.NodeProvisioner;
 import hudson.util.FormValidation;
@@ -59,9 +58,10 @@ public class NomadCloud extends Cloud {
 
     private static final Logger LOGGER = Logger.getLogger(NomadCloud.class.getName());
 
-    private static final String DEFAULT_ID = "jenkins/slave-default";
-
     public static final String JNLP_NAME = "jnlp";
+
+    /** label for all pods started by the plugin */
+    public static final Map<String, String> DEFAULT_JOB_LABELS = ImmutableMap.of("jenkins", "slave");
 
     /**
      * Default timeout for idle workers that don't correctly indicate exit.
@@ -85,6 +85,8 @@ public class NomadCloud extends Cloud {
     private int retentionTimeout = DEFAULT_RETENTION_TIMEOUT_MINUTES;
     private int connectTimeout;
     private int readTimeout;
+
+    private Map<String, String> labels;
 
     private transient NomadApiClient client;
 
@@ -261,6 +263,17 @@ public class NomadCloud extends Cloud {
         this.readTimeout = readTimeout;
     }
 
+    /**
+     * Labels for all jobs started by the plugin
+     */
+     public Map<String, String> getLabels() {
+         return labels == null || labels.isEmpty() ? DEFAULT_JOB_LABELS : labels;
+    }
+
+    public void setLabels(Map<String, String> labels) {
+        this.labels = labels;
+    }
+
     public int getConnectTimeout() {
         return connectTimeout;
     }
@@ -287,23 +300,6 @@ public class NomadCloud extends Cloud {
         LOGGER.log(Level.FINE, "Connected to Nomad {0} URL {1}", new String[]{getDisplayName(), serverUrl});
         return client;
     }
-
-    private String getIdForLabel(Label label) {
-        if (label == null) {
-            return DEFAULT_ID;
-        }
-        return "jenkins/" + label.getName();
-    }
-
-//    Map<String, String> getLabelsMap(Set<LabelAtom> labelSet) {
-//        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
-//        if (!labelSet.isEmpty()) {
-//            for (LabelAtom label : labelSet) {
-//                builder.put(getIdForLabel(label), "true");
-//            }
-//        }
-//        return builder.build();
-//    }
 
     @Override
     public synchronized Collection<NodeProvisioner.PlannedNode> provision(@CheckForNull final Label label, final int excessWorkload) {
@@ -354,15 +350,26 @@ public class NomadCloud extends Cloud {
         if (containerCap == 0) {
             return true;
         }
-
-//        NomadApiClient c;
-//        c = connect();
-        LOGGER.log(Level.SEVERE, "implement me");
-//        PodList slaveList = client.pods().inNamespace(templateNamespace).withLabels(getLabels()).list();
+        // TODO: implement me
+//        NomadApiClient client;
+//        client = connect();
+//
+//        // Get the list of of Jenkins jobs running, filter them based on the
+//        // labels configured and return false if we have too much running.
+//        ServerQueryResponse response = client
+//                .getJobsApi()
+//                .list()
+//                .getValue()
+//                .stream()
+//                .filter(job -> job)
+//
+//        List<Job> jobs = null;
+//
+//        PodList slaveList = client.pods().withLabels(getLabels()).list();
 //        List<Pod> slaveListItems = slaveList.getItems();
 //
-//        Map<String, String> labelsMap = getLabelsMap(template.getLabelSet());
-//        PodList namedList = client.pods().inNamespace(templateNamespace).withLabels(labelsMap).list();
+//        Map<String, String> labelsMap = template.getLabelsMap();
+//        PodList namedList = client.pods().withLabels(labelsMap).list();
 //        List<Pod> namedListItems = namedList.getItems();
 //
 //        if (slaveListItems != null && containerCap <= slaveListItems.size()) {
@@ -371,14 +378,7 @@ public class NomadCloud extends Cloud {
 //                    new Object[]{containerCap, slaveListItems.size(), client.getNamespace(), getLabels()});
 //            return false;
 //        }
-//
-//        if (namedListItems != null && slaveListItems != null && template.getInstanceCap() <= namedListItems.size()) {
-//            LOGGER.log(Level.INFO,
-//                    "Template instance cap of {0} reached for template {1}, not provisioning: {2} running or errored in namespace {3} with label \"{4}\" and Kubernetes labels {5}",
-//                    new Object[]{template.getInstanceCap(), template.getName(), slaveListItems.size(),
-//                        client.getNamespace(), label == null ? "" : label.toString(), labelsMap});
-//            return false; // maxed out
-//        }
+
         return true;
     }
 
