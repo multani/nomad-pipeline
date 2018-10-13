@@ -60,7 +60,6 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
 
         newTemplate = new NomadJobTemplate();
         newTemplate.setName(name);
-//        newTemplate.setInheritFrom(!Strings.isNullOrEmpty(parentTemplates) ? parentTemplates : step.getInheritFrom());
         newTemplate.setRegion(step.getRegion());
         newTemplate.setDatacenters(step.getDatacenters());
         newTemplate.setInstanceCap(step.getInstanceCap());

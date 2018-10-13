@@ -27,7 +27,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     private static final String DEFAULT_CLOUD = "nomad";
 
     private String cloud = DEFAULT_CLOUD;
-    private String inheritFrom;
 
     private final String label;
     private final String name;
@@ -86,15 +85,6 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     @DataBoundSetter
     public void setCloud(String cloud) {
         this.cloud = cloud;
-    }
-
-    public String getInheritFrom() {
-        return inheritFrom;
-    }
-
-    @DataBoundSetter
-    public void setInheritFrom(String inheritFrom) {
-        this.inheritFrom = inheritFrom;
     }
 
     public List<TaskTemplate> getTaskGroups() {

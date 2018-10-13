@@ -41,8 +41,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     public static final int DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT = 100;
 
-//    private String inheritFrom;
-
     private String region;
 
     private List<String> datacenters;
@@ -83,8 +81,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         this.setTaskGroups(from.getTaskGroups());
         this.setInstanceCap(from.getInstanceCap());
         this.setLabel(from.getLabel());
-//        this.setName(from.getName());
-//        this.setInheritFrom(from.getInheritFrom());
+        this.setName(from.getName());
         this.setNodeUsageMode(from.getNodeUsageMode());
         this.setSlaveConnectTimeout(from.getSlaveConnectTimeout());
     }
@@ -93,15 +90,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         return Optional.ofNullable(getTaskGroups().isEmpty() ? null : getTaskGroups().get(0));
     }
 
-//    public String getInheritFrom() {
-//        return inheritFrom;
-//    }
-//
-//    @DataBoundSetter
-//    public void setInheritFrom(String inheritFrom) {
-//        this.inheritFrom = inheritFrom;
-//    }
-//
     @DataBoundSetter
     public void setName(String name) {
         this.name = name;
@@ -347,7 +335,6 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     @Override
     public String toString() {
         return "NomadJobTemplate{" +
-//                (inheritFrom == null ? "" : "inheritFrom='" + inheritFrom + '\'') +
                 (name == null ? "" : ", name='" + name + '\'') +
                 (image == null ? "" : ", image='" + image + '\'') +
                 (command == null ? "" : ", command='" + command + '\'') +
