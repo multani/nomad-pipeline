@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
@@ -99,8 +100,9 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         this.args = args;
     }
 
+    @Nonnull
     public List<String> getArgs() {
-        return args;
+        return args == null ? Collections.emptyList() : args;
     }
 
     public String getDisplayName() {
