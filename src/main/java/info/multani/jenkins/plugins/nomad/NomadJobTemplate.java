@@ -67,9 +67,9 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     private Node.Mode nodeUsageMode;
 
-    private Integer resourcesCPU;
+    private Integer resourcesCPU = 100; // Mhz
 
-    private Integer resourcesMemory;
+    private Integer resourcesMemory = 300; // MB
 
     private List<TaskTemplate> taskGroups = new ArrayList<>();
 
@@ -318,17 +318,47 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     /**
      * Build a Job object from a JobTemplate
-     * 
-     * @param slave
-     */
-
-    /**
-     * Build a Job object from a JobTemplate
      * @param slave
      * @return
      */
     public Job build(NomadSlave slave) {
         return new NomadJobTemplateBuilder(this).build(slave);
+    }
+
+    public String getDescriptionForLogging() {
+        return String.format("Agent specification [%s] (%s): %n%s",
+                getDisplayName(),
+                getLabel(),
+                getTasksDescriptionForLogging());
+    }
+
+    private String getTasksDescriptionForLogging() {
+        List<TaskTemplate> tasks = getTaskGroups();
+        StringBuilder sb = new StringBuilder();
+        List<StringBuilder> output = new ArrayList<>();
+        for (TaskTemplate t : tasks) {
+            sb.append("  * Task [")
+                    .append(t.getName())
+                    .append("] ")
+                    .append(t.getImage()).append(" ");
+            StringBuilder optional = new StringBuilder();
+            optionalField(optional, "CPU", t.getResourcesCPU().toString(), "Mhz");
+            optionalField(optional, "Memory", t.getResourceMemory().toString(), "MB");
+            if (optional.length() > 0) {
+                sb.append("(").append(optional).append(")");
+            }
+            output.add(sb);
+        }
+        return String.join("\n", output);
+    }
+
+    private void optionalField(StringBuilder builder, String label, String value, String unit) {
+        if (value != null) {
+            if (builder.length() > 0) {
+                builder.append(", ");
+            }
+            builder.append(label).append(": ").append(value).append(" ").append(unit);
+        }
     }
 
     @Extension

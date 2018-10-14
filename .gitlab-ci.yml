@@ -14,7 +14,7 @@ stages:
 build:
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS verify
+    - mvn $MAVEN_CLI_OPTS compile verify
 
   artifacts:
     paths:

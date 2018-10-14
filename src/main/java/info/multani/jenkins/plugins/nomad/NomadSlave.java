@@ -4,9 +4,13 @@ import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 import com.hashicorp.nomad.javasdk.NomadException;
 import hudson.Extension;
+import hudson.Launcher;
+import hudson.console.ModelHyperlinkNote;
 import hudson.model.Computer;
 import hudson.model.Descriptor;
+import hudson.model.Executor;
 import hudson.model.Node;
+import hudson.model.Queue;
 import hudson.model.TaskListener;
 import hudson.slaves.AbstractCloudSlave;
 import hudson.slaves.Cloud;
@@ -19,6 +23,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateEncodingException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -28,7 +34,6 @@ import jenkins.model.Jenkins;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jenkinsci.plugins.durabletask.executors.Messages;
 import org.jenkinsci.plugins.durabletask.executors.OnceRetentionStrategy;
 import org.jvnet.localizer.Localizable;
 import org.jvnet.localizer.ResourceBundleHolder;
@@ -50,6 +55,7 @@ public class NomadSlave extends AbstractCloudSlave {
 
     private final String cloudName;
     private final NomadJobTemplate template;
+    private transient Set<Queue.Executable> executables = new HashSet<>();
 
     public NomadJobTemplate getTemplate() {
         return template;
@@ -109,6 +115,30 @@ public class NomadSlave extends AbstractCloudSlave {
     @Override
     public NomadComputer createComputer() {
         return new NomadComputer(this);
+    }
+
+    @Override
+    public Launcher createLauncher(TaskListener listener) {
+        if (template != null) {
+            Executor executor = Executor.currentExecutor();
+            if (executor != null) {
+                Queue.Executable currentExecutable = executor.getCurrentExecutable();
+                if (currentExecutable != null && executables.add(currentExecutable)) {
+                    listener.getLogger().println(Messages.NomadSlave_AgentIsProvisionedFromTemplate(
+                            ModelHyperlinkNote.encodeTo("/computer/" + getNodeName(), getNodeName()),
+                            getTemplate().getDisplayName())
+                    );
+                    listener.getLogger().println(getTemplate().getDescriptionForLogging());
+                }
+            }
+        }
+
+        return super.createLauncher(listener);
+    }
+
+    protected Object readResolve() {
+        this.executables = new HashSet<>();
+        return this;
     }
 
     @Override
