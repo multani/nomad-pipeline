@@ -6,3 +6,9 @@ run:
 test:
 	mvn clean test jacoco:report
 	@echo "Open target/site/jacoco/index.html"
+
+release:
+	mvn release:clean release:prepare
+
+clean:
+	mvn clean release:clean
