@@ -17,7 +17,7 @@ Sample job:
 // Guarantee the node will use this template
 def label = "job-${UUID.randomUUID().toString()}"
 
-NomadJobTemplate(label: label) {
+nomadJobTemplate(label: label) {
     node(label) {
         stage("Run shell command") {
             echo "Hello world!"
@@ -81,7 +81,7 @@ You can set a more complex configuration, as shown below:
 // Guarantee the node will use this template
 def label = "job-${UUID.randomUUID().toString()}"
 
-NomadJobTemplate(
+nomadJobTemplate(
     label: label,
     taskGroups: [
       taskTemplate(
@@ -137,7 +137,7 @@ plugin with a few adjustements:
 
 ```groovy
 def label = "job-${UUID.randomUUID().toString()}"
-NomadJobTemplate(
+nomadJobTemplate(
     label: label,
     taskGroups: [
       taskTemplate(

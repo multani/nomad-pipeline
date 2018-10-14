@@ -3,7 +3,7 @@
 def label = "my-job-${UUID.randomUUID().toString()}"
 echo "Using label ${label}"
 
-NomadJobTemplate(
+nomadJobTemplate(
     label: label,
     taskGroups: [
       taskTemplate(

@@ -168,7 +168,7 @@ public class NomadJobTemplateStep extends Step implements Serializable {
 
         @Override
         public String getFunctionName() {
-            return "NomadJobTemplate";
+            return "nomadJobTemplate";
         }
 
         @Override
