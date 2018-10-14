@@ -148,6 +148,10 @@
         <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     </scm>
     -->
+    <scm>
+        <tag>HEAD</tag>
+        <developerConnection>scm:git:git@gitlab.com:multani/jenkins-nomad-plugin.git</developerConnection>
+    </scm>
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
