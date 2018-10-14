@@ -114,7 +114,7 @@ public class NomadJobTemplateBuilder {
 
         // Default common environment variables for all the containers.
         env.put("JENKINS_SECRET", slave.getComputer().getJnlpMac());
-        env.put("JENKINS_NAME", slave.getComputer().getName());
+        env.put("JENKINS_AGENT_NAME", slave.getComputer().getName());
         env.put("JNLP_PROTOCOL_OPTS", "");
         env.put("JENKINS_JNLP_URL", url + "/computer/" + slave.getNodeName() + "/slave-agent.jnlp");
 
