@@ -27,7 +27,7 @@
         <f:textbox />
     </f:entry>
 
-    <f:entry title="${%Connection Timeout (seconds)}" field="connectTimeout">
+<!--    <f:entry title="${%Connection Timeout (seconds)}" field="connectTimeout">
         <f:textbox default="5"/>
     </f:entry>
 
@@ -43,5 +43,5 @@
         <f:entry title="${%Container Cleanup Timeout (minutes)}" field="retentionTimeout">
             <f:textbox default="5"/>
         </f:entry>
-    </f:advanced>
+    </f:advanced>-->
 </j:jelly>
