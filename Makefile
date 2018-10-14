@@ -8,7 +8,7 @@ test:
 	@echo "Open target/site/jacoco/index.html"
 
 release:
-	mvn release:clean release:prepare
+	mvn --batch-mode release:clean release:prepare
 
 clean:
 	mvn clean release:clean
