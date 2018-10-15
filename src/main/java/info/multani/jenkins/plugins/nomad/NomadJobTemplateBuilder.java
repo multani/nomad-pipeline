@@ -23,16 +23,13 @@
  */
 package info.multani.jenkins.plugins.nomad;
 
-import static info.multani.jenkins.plugins.nomad.NomadCloud.*;
 import com.hashicorp.nomad.apimodel.Job;
 import com.hashicorp.nomad.apimodel.RestartPolicy;
 import com.hashicorp.nomad.apimodel.Task;
 import com.hashicorp.nomad.apimodel.TaskGroup;
 import static hudson.Util.replaceMacro;
 import info.multani.jenkins.plugins.nomad.model.EnvVar;
-import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -46,11 +43,6 @@ import org.apache.commons.lang.StringUtils;
 public class NomadJobTemplateBuilder {
 
     private static final Logger LOGGER = Logger.getLogger(NomadJobTemplateBuilder.class.getName());
-
-    private static final String DEFAULT_JNLP_IMAGE = System
-            .getProperty(NomadJobTemplateStepExecution.class.getName() + ".defaultImage", "jenkins/jnlp-slave:alpine");
-
-    private static final List<String> DEFAULT_JNLP_ARGUMENTS = Arrays.asList("${computer.jnlpmac}", "${computer.name}");
 
     private final NomadJobTemplate template;
 
@@ -68,10 +60,9 @@ public class NomadJobTemplateBuilder {
         });
 
         if (taskGroups.isEmpty()) {
-            TaskTemplate taskGroupTemplate = new TaskTemplate(JNLP_NAME, DEFAULT_JNLP_IMAGE);
-            taskGroupTemplate.setArgs(DEFAULT_JNLP_ARGUMENTS);
+            TaskTemplate task = TaskTemplate.defaultTask();
             taskGroups.add(
-                    createTaskGroup(slave, taskGroupTemplate, template.getEnvVars())
+                    createTaskGroup(slave, task, template.getEnvVars())
             );
         }
 

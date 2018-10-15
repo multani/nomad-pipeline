@@ -8,10 +8,13 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.DescriptorVisibilityFilter;
+import static info.multani.jenkins.plugins.nomad.NomadCloud.JNLP_NAME;
 import static info.multani.jenkins.plugins.nomad.NomadJobTemplateBuilder.substituteEnv;
 import info.multani.jenkins.plugins.nomad.model.EnvVar;
+import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +52,13 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
 
     private final List<EnvVar> envVars = new ArrayList<>();
 
+    private boolean downloadAgentJar = false;
+
+    private static final String DEFAULT_JNLP_IMAGE = System
+            .getProperty(NomadJobTemplateStepExecution.class.getName() + ".defaultImage", "jenkins/jnlp-slave:alpine");
+
+    private static final List<String> DEFAULT_JNLP_ARGUMENTS = Arrays.asList("${computer.jnlpmac}", "${computer.name}");
+
     private static final String JNLPMAC_REF = "\\$\\{computer.jnlpmac\\}";
 
     private static final String NAME_REF = "\\$\\{computer.name\\}";
@@ -66,6 +76,12 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         this.image = image;
         this.command = command;
         this.args = args;
+    }
+
+    public static TaskTemplate defaultTask() {
+        TaskTemplate task = new TaskTemplate(JNLP_NAME, DEFAULT_JNLP_IMAGE);
+        task.setArgs(DEFAULT_JNLP_ARGUMENTS);
+        return task;
     }
 
     @DataBoundSetter
@@ -151,6 +167,15 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         return argMap;
     }
 
+    public boolean shouldDownloadAgentJar() {
+        return downloadAgentJar;
+    }
+
+    @DataBoundSetter
+    public void setDownloadAgentJar(boolean downloadAgentJar) {
+        this.downloadAgentJar = downloadAgentJar;
+    }
+
     public Task build(NomadSlave slave, Map<String, String> globalEnvVars) {
         Map<String, String> envVars = new HashMap<>();
         NomadCloud cloud = slave.getNomadCloud();
@@ -179,13 +204,12 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         task.addConfig("args", arguments);
         task.addConfig("network_mode", "host");
 
-        // TODO: download the artifact only if needed
-        task.addArtifacts(
-                new TaskArtifact()
-                        .setGetterSource(cloud.getSlaveUrl())
-                        .setGetterOptions(null)
-                        .setRelativeDest("/local/")
-        );
+        if (shouldDownloadAgentJar()) {
+            TaskArtifact artifact = new TaskArtifact()
+                    .setGetterSource(cloud.getSlaveUrl())
+                    .setRelativeDest("/local/");
+            task.addArtifacts(artifact);
+        }
 
         task.setEnv(envVars);
 
