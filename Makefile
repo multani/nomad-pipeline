@@ -9,6 +9,9 @@ run:
 		-Dhudson.slaves.NodeProvisioner.MARGIN0=0.85 \
 		hpi:run
 
+build:
+	mvn --batch-mode compile verify package
+
 test:
 	mvn clean test jacoco:report
 	@echo "Open target/site/jacoco/index.html"
