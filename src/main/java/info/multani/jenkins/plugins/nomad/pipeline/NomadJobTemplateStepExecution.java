@@ -11,7 +11,6 @@ import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.RandomStringUtils;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -22,7 +21,6 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
 
     private static final long serialVersionUID = -6139090518333729333L;
 
-    private static final transient String NAME_FORMAT = "%s-%s";
 
     @SuppressFBWarnings(value = "SE_TRANSIENT_FIELD_NOT_RESTORED", justification = "not needed on deserialization")
     private final transient NomadJobTemplateStep step;
@@ -53,13 +51,8 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         NomadJobTemplateAction jobTemplateAction = run.getAction(NomadJobTemplateAction.class);
         String parentTemplates = jobTemplateAction != null ? jobTemplateAction.getParentTemplates() : null;
 
-        //Let's generate a random name based on the user specified to make sure that we don't have
-        //issues with concurrent builds, or messing with pre-existing configuration
-        String randString = RandomStringUtils.random(5, "bcdfghjklmnpqrstvwxz0123456789");
-        String name = String.format(NAME_FORMAT, step.getName(), randString);
-
         newTemplate = new NomadJobTemplate();
-        newTemplate.setName(name);
+        newTemplate.generateName(step.getName());
         newTemplate.setRegion(step.getRegion());
         newTemplate.setDatacenters(step.getDatacenters());
         newTemplate.setInstanceCap(step.getInstanceCap());
@@ -73,7 +66,7 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         nomadCloud.addDynamicTemplate(newTemplate);
         getContext().newBodyInvoker().withContext(step).withCallback(new NomadJobTemplateCallback(newTemplate)).start();
 
-        NomadJobTemplateAction.push(run, name);
+        NomadJobTemplateAction.push(run, newTemplate.getName());
         return false;
     }
 

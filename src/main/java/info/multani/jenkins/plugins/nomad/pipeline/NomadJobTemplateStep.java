@@ -26,6 +26,8 @@ public class NomadJobTemplateStep extends Step implements Serializable {
 
     private static final String DEFAULT_CLOUD = "nomad";
 
+    public static final String DEFAULT_AGENT_NAME = "jenkins-worker";
+
     private String cloud = DEFAULT_CLOUD;
 
     private final String label;
@@ -46,7 +48,7 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     @DataBoundConstructor
     public NomadJobTemplateStep(String label, String name) {
         this.label = label;
-        this.name = name == null ? "jenkins-slave" : name;
+        this.name = name == null ? NomadJobTemplateStep.DEFAULT_AGENT_NAME : name;
     }
 
     public String getRegion() {

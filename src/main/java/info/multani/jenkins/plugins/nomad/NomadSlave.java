@@ -18,6 +18,7 @@ import hudson.slaves.CloudRetentionStrategy;
 import hudson.slaves.ComputerLauncher;
 import hudson.slaves.OfflineCause;
 import hudson.slaves.RetentionStrategy;
+import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStep;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -31,7 +32,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jenkinsci.plugins.durabletask.executors.OnceRetentionStrategy;
@@ -46,7 +46,6 @@ public class NomadSlave extends AbstractCloudSlave {
             .getInteger(NomadSlave.class.getName() + ".disconnectionTimeout", 5);
 
     private static final long serialVersionUID = -8642936855413034232L;
-    private static final String DEFAULT_AGENT_PREFIX = "jenkins-agent";
 
     /**
      * The resource bundle reference
@@ -100,16 +99,12 @@ public class NomadSlave extends AbstractCloudSlave {
     }
 
     static String getSlaveName(NomadJobTemplate template) {
-        String randString = RandomStringUtils.random(5, "bcdfghjklmnpqrstvwxz0123456789");
         String name = template.getName();
         if (StringUtils.isEmpty(name)) {
-            return String.format("%s-%s", DEFAULT_AGENT_PREFIX,  randString);
+            template.generateName(NomadJobTemplateStep.DEFAULT_AGENT_NAME);
+            name = template.getName();
         }
-        // no spaces
-        name = name.replaceAll("[ _]", "-").toLowerCase();
-        // keep it under 63 chars (62 is used to account for the '-')
-        name = name.substring(0, Math.min(name.length(), 62 - randString.length()));
-        return String.format("%s-%s", name, randString);
+        return name;
     }
 
     @Override
@@ -143,7 +138,7 @@ public class NomadSlave extends AbstractCloudSlave {
 
     @Override
     protected void _terminate(TaskListener listener) throws IOException, InterruptedException {
-        LOGGER.log(Level.INFO, "Terminating Nomad instance for agent {0}", name);
+        LOGGER.log(Level.INFO, "Terminating Nomad job for agent {0}", name);
 
         Computer computer = toComputer();
         if (computer == null) {

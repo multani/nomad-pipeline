@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.accmod.Restricted;
@@ -38,6 +39,8 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     private static final long serialVersionUID = 1L;
 
     private static final String FALLBACK_ARGUMENTS = "${computer.jnlpmac} ${computer.name}";
+
+    private static final transient String JOB_NAME_FORMAT = "%s-%s";
 
     private static final String DEFAULT_ID = "jenkins/slave-default";
 
@@ -101,6 +104,13 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     public String getName() {
         return name;
+    }
+
+    public void generateName(String stepName) {
+        //Let's generate a random name based on the user specified to make sure that we don't have
+        //issues with concurrent builds, or messing with pre-existing configuration
+        String randString = RandomStringUtils.random(10, "bcdfghjklmnpqrstvwxz0123456789");
+        setName(String.format(JOB_NAME_FORMAT, stepName, randString));
     }
 
     public String getDisplayName() {
