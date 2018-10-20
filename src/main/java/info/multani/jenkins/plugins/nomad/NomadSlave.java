@@ -185,7 +185,7 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         try {
-            LOGGER.log(Level.FINE, "Deregistering job {0} from cloud {0}",
+            LOGGER.log(Level.FINE, "Deregistering job {0} from cloud {1}",
                     new Object[]{name, getCloudName()});
 
             EvaluationResponse response = client.getJobsApi().deregister(name);
