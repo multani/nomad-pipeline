@@ -382,8 +382,7 @@ public class NomadCloud extends Cloud {
 
     @Override
     public boolean canProvision(@CheckForNull Label label) {
-        //return getTemplate(label) != null;
-        return true;
+        return getTemplate(label) != null;
     }
 
     /**
@@ -393,7 +392,7 @@ public class NomadCloud extends Cloud {
      * @return the template
      */
     public NomadJobTemplate getTemplate(@CheckForNull Label label) {
-        for (NomadJobTemplate t : templates) {
+        for (NomadJobTemplate t : getAllTemplates()) {
             if ((label == null && t.getNodeUsageMode() == Node.Mode.NORMAL) || (label != null && label.matches(t.getLabelSet()))) {
                 return t;
             }
@@ -493,7 +492,7 @@ public class NomadCloud extends Cloud {
     }
 
     @Extension
-    public static class JobTemplateSourceImpl extends NomadJobTemplateSource {
+    public static class NomadJobTemplateSourceImpl extends NomadJobTemplateSource {
 
         @Nonnull
         @Override
