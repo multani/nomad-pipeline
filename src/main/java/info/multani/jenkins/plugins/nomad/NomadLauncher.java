@@ -24,7 +24,10 @@
 package info.multani.jenkins.plugins.nomad;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.hashicorp.nomad.apimodel.AllocationListStub;
 import com.hashicorp.nomad.apimodel.Job;
+import com.hashicorp.nomad.apimodel.TaskState;
 import com.hashicorp.nomad.javasdk.ErrorResponseException;
 import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
@@ -35,9 +38,14 @@ import hudson.slaves.JNLPLauncher;
 import hudson.slaves.SlaveComputer;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import static java.util.logging.Level.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -87,7 +95,6 @@ public class NomadLauncher extends JNLPLauncher {
         try {
             NomadApiClient client = cloud.connect();
             Job job = getJobTemplate(slave, unwrappedTemplate);
-
             String jobID = job.getId();
 
             LOGGER.log(Level.FINE, "Creating Nomad job: {0}", jobID);
@@ -95,8 +102,7 @@ public class NomadLauncher extends JNLPLauncher {
             EvaluationResponse evaluation;
             try {
                 evaluation = client.getJobsApi().register(job);
-            }
-            catch (ErrorResponseException exc) {
+            } catch (ErrorResponseException exc) {
                 String msg = String.format("Unable to evaluate Nomad job '%s': %s", jobID, exc.getServerErrorMessage());
                 LOGGER.log(Level.SEVERE, msg, exc);
                 throw new AbortException(msg); // TODO: we should probably abort the build here, but AbortException doesn't do it.
@@ -112,70 +118,97 @@ public class NomadLauncher extends JNLPLauncher {
 
             // We need the job to be running and connected before returning
             // otherwise this method keeps being called multiple times
-//            List<String> validStates = ImmutableList.of("Running");
+            List<String> validStates = ImmutableList.of("running");
 
             int i = 0;
             int j = 100; // wait 600 seconds
 
             // TODO: wait for Job to be running
 //            List<ContainerStatus> containerStatuses = null;
+            String jobStatus = "<unknown>"; // keep the compiler happy
             // wait for Job to be running
             for (; i < j; i++) {
                 LOGGER.log(INFO, "Waiting for job to be scheduled ({1}/{2}): {0}", new Object[]{jobID, i, j});
                 logger.printf("Waiting for job to be scheduled (%2$s/%3$s): %1$s%n", jobID, i, j);
 
                 Thread.sleep(6000);
+                // TODO catch com.hashicorp.nomad.javasdk.ErrorResponseException 404
                 ServerQueryResponse<Job> response = client.getJobsApi().info(jobID);
 
                 if (response == null) { // can exist?
                     throw new IllegalStateException("Job no longer exists: " + jobID);
                 }
 
-                Job jobFound = response.getValue();
-                if (jobFound.getStatus().equals("running")) {
-                    break;
+                job = response.getValue();
+                jobStatus = job.getStatus();
+
+                LOGGER.log(INFO, "Nomad job {0} is: {1}", new Object[]{jobID, jobStatus});
+                logger.printf("Nomad job %1$s is: %2$s%n", jobID, jobStatus);
+
+                ServerQueryResponse<List<AllocationListStub>> r = client.getJobsApi().allocations(jobID);
+
+                class AllocationComparator implements Comparator<AllocationListStub> {
+
+                    @Override
+                    public int compare(AllocationListStub a, AllocationListStub b) {
+                        // Sort by greater CreateIndex first. This should be the
+                        // last allocation created for this Nomad job.
+                        return b.getCreateIndex().compareTo(a.getCreateIndex());
+                    }
                 }
 
-                LOGGER.log(INFO, "Container {0} is: {1}",
-                        new Object[]{jobID, jobFound.getStatus()});
-                logger.printf("Container %1$s is: %2$s%n",
-                        jobID, jobFound.getStatus());
+                // TODO: if the lastAlloc ClientStatus is "failed" already, we can probably shutdown the check earlier.
+                AllocationListStub lastAlloc = r.getValue().stream()
+                        .sorted(new AllocationComparator())
+                        .findFirst()
+                        .get();
 
-//                containerStatuses = job.getStatus().getContainerStatuses();
-//                List<ContainerStatus> terminatedContainers = new ArrayList<>();
-//                Boolean allContainersAreReady = true;
-//                for (ContainerStatus info : containerStatuses) {
-//                    if (info != null) {
-//                        if (info.getState().getWaiting() != null) {
-//                            // Job is waiting for some reason
-//                            LOGGER.log(INFO, "Container is waiting {0} [{2}]: {1}",
-//                                    new Object[]{jobID, info.getState().getWaiting(), info.getName()});
-//                            logger.printf("Container is waiting %1$s [%3$s]: %2$s%n",
-//                                    jobID, info.getState().getWaiting(), info.getName());
-//                            // break;
-//                        }
-//                        if (info.getState().getTerminated() != null) {
-//                            terminatedContainers.add(info);
-//                        } else if (!info.getReady()) {
-//                            allContainersAreReady = false;
-//                        }
-//                    }
-//                }
-//
-//                if (!allContainersAreReady) {
-//                    continue;
-//                }
-//
-//                if (validStates.contains(job.getStatus().getPhase())) {
-//                    break;
-//                }
-//            }
-//            if (!validStates.contains(status)) {
-//                throw new IllegalStateException("Container is not running after " + j + " attempts, status: " + status);
-//            }
+                LOGGER.log(FINE, "Checking status of allocation {0} for Nomad job {1} (status={2})",
+                        new Object[]{lastAlloc.getId(), jobID, lastAlloc.getClientStatus()});
+                logger.printf("Checking status of allocation %1$s for Nomad job %2$s (status=%3$s)%n",
+                        lastAlloc.getId(), jobID, lastAlloc.getClientStatus());
+
+                List<Map.Entry<String, TaskState>> terminatedTasks = new ArrayList<>();
+                Boolean allContainersAreReady = true;
+                for (Map.Entry<String, TaskState> entry : lastAlloc.getTaskStates().entrySet()) {
+                    String taskName = entry.getKey();
+                    TaskState taskState = entry.getValue();
+
+                    if (!taskState.getState().equals("running")) {
+                        // Task is waiting for some reason
+                        LOGGER.log(INFO, "Task is not running {0} [{1}]: {2} (failed={3})",
+                                new Object[]{jobID, taskName, taskState.getState(), taskState.getFailed()});
+                        logger.printf("Task is not running %1$s [%2$s]: %3$s (failed=%4$s)%n",
+                                jobID, taskName, taskState.getState(), taskState.getFailed());
+                        // break;
+                    }
+                    if (taskState.getState().equals("dead") && taskState.getFailed()) {
+                        terminatedTasks.add(entry);
+                    } else if (!taskState.getState().equals("running")) {
+                        allContainersAreReady = false;
+                    }
+                }
+
+                if (!terminatedTasks.isEmpty()) {
+                    List<String> tasks = terminatedTasks.stream()
+                            .map(entry -> entry.getKey())
+                            .collect(Collectors.toList());
+
+                    throw new IllegalStateException("Tasks have failed: " + tasks);
+                }
+
+                if (!allContainersAreReady) {
+                    continue;
+                }
+
+                if (!jobStatus.equals("pending")) {
+                    break;
+                }
             }
 
-            String status = job.getStatus();
+            if (!validStates.contains(jobStatus)) {
+                throw new IllegalStateException("Nomad job " + jobID + " is not running after " + j + " attempts, status: " + jobStatus);
+            }
 
             j = unwrappedTemplate.getSlaveConnectTimeout();
 
@@ -192,7 +225,7 @@ public class NomadLauncher extends JNLPLauncher {
                 Thread.sleep(1000);
             }
             if (!slave.getComputer().isOnline()) {
-                throw new IllegalStateException("Agent is not connected after " + j + " attempts, status: " + status);
+                throw new IllegalStateException("Agent is not connected after " + j + " attempts, status: " + jobStatus);
             }
             computer.setAcceptingTasks(true);
         } catch (Throwable ex) {
