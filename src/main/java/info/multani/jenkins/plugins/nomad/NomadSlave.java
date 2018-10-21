@@ -12,6 +12,8 @@ import hudson.model.Executor;
 import hudson.model.Node;
 import hudson.model.Queue;
 import hudson.model.TaskListener;
+import hudson.remoting.Engine;
+import hudson.remoting.VirtualChannel;
 import hudson.slaves.AbstractCloudSlave;
 import hudson.slaves.Cloud;
 import hudson.slaves.CloudRetentionStrategy;
@@ -32,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
+import jenkins.security.MasterToSlaveCallable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jenkinsci.plugins.durabletask.executors.OnceRetentionStrategy;
@@ -140,12 +143,41 @@ public class NomadSlave extends AbstractCloudSlave {
     protected void _terminate(TaskListener listener) throws IOException, InterruptedException {
         LOGGER.log(Level.INFO, "Terminating Nomad job for agent {0}", name);
 
+        NomadCloud cloud;
+        try {
+            cloud = getNomadCloud();
+        } catch (IllegalStateException e) {
+            String msg = String.format("Unable to terminate agent %s. Cloud may have been removed. There may be leftover resources on the Nomad cluster.", name);
+            e.printStackTrace(listener.fatalError(msg));
+            LOGGER.log(Level.SEVERE, msg);
+            return;
+        }
+        NomadApiClient client;
+        try {
+            client = cloud.connect();
+        } catch (UnrecoverableKeyException | CertificateEncodingException | NoSuchAlgorithmException
+                | KeyStoreException e) {
+            String msg = String.format("Failed to connect to cloud %s", getCloudName());
+            e.printStackTrace(listener.fatalError(msg));
+            LOGGER.log(Level.SEVERE, msg);
+            return;
+        }
+
+        // TODO: check the job status and the job retention policy to determine
+        // if the job needs to be stopped or not.
+
         Computer computer = toComputer();
         if (computer == null) {
             String msg = String.format("Computer for agent is null: %s", name);
             LOGGER.log(Level.SEVERE, msg);
             listener.fatalError(msg);
             return;
+        }
+
+        // Tell the slave to stop JNLP reconnects.
+        VirtualChannel ch = computer.getChannel();
+        if (ch != null) {
+            ch.call(new SlaveDisconnector());
         }
 
         OfflineCause offlineCause = OfflineCause.create(new Localizable(HOLDER, "offline"));
@@ -165,43 +197,20 @@ public class NomadSlave extends AbstractCloudSlave {
             listener.fatalError(msg);
             return;
         }
-        NomadCloud cloud;
+
+        deleteJob(listener, client);
+
+        String msg = String.format("Disconnected computer %s", name);
+        LOGGER.log(Level.INFO, msg);
+        listener.getLogger().println(msg);
+    }
+
+    private void deleteJob(TaskListener listener, NomadApiClient client) throws IOException {
+        EvaluationResponse response;
+        LOGGER.log(Level.FINE, "Deregistering job {0} from cloud {1}",
+                new Object[]{name, getCloudName()});
         try {
-            cloud = getNomadCloud();
-        } catch (IllegalStateException e) {
-            String msg = String.format("Unable to terminate agent %s. Cloud may have been removed. There may be leftover resources on the Nomad cluster.", name);
-            e.printStackTrace(listener.fatalError(msg));
-            LOGGER.log(Level.SEVERE, String.format(msg));
-            return;
-        }
-        NomadApiClient client;
-        try {
-            client = cloud.connect();
-        } catch (UnrecoverableKeyException | CertificateEncodingException | NoSuchAlgorithmException
-                | KeyStoreException e) {
-            String msg = String.format("Failed to connect to cloud %s", getCloudName());
-            e.printStackTrace(listener.fatalError(msg));
-            return;
-        }
-
-        try {
-            LOGGER.log(Level.FINE, "Deregistering job {0} from cloud {1}",
-                    new Object[]{name, getCloudName()});
-
-            EvaluationResponse response = client.getJobsApi().deregister(name);
-
-            LOGGER.log(Level.FINE, "Deregistered {0} using evaluation ID {1}",
-                    new Object[]{name, response.getValue()});
-
-            boolean deleted = response.getHttpResponse().getStatusLine().getStatusCode() == 200;
-
-            if (!deleted) {
-                String msg = String.format("Failed to delete job for agent %s: HTTP %s",
-                        name, response.getHttpResponse().getStatusLine().getStatusCode());
-                LOGGER.log(Level.WARNING, msg);
-                listener.error(msg);
-                return;
-            }
+            response = client.getJobsApi().deregister(name);
         } catch (NomadException e) {
             String msg = String.format("Failed to delete job for agent %s: %s", name,
                     e.getMessage());
@@ -210,10 +219,22 @@ public class NomadSlave extends AbstractCloudSlave {
             return;
         }
 
+        LOGGER.log(Level.FINE, "Deregistered {0} using evaluation ID {1}",
+                new Object[]{name, response.getValue()});
+
+        boolean deleted = response.getHttpResponse().getStatusLine().getStatusCode() == 200;
+
+        if (!deleted) {
+            String msg = String.format("Failed to delete job for agent %s: HTTP %s",
+                    name, response.getHttpResponse().getStatusLine().getStatusCode());
+            LOGGER.log(Level.WARNING, msg);
+            listener.error(msg);
+            return;
+        }
+
         String msg = String.format("Terminated Nomad job for agent %s", name);
         LOGGER.log(Level.INFO, msg);
         listener.getLogger().println(msg);
-        LOGGER.log(Level.INFO, "Disconnected computer {0}", name);
     }
 
     @Override
@@ -364,6 +385,26 @@ public class NomadSlave extends AbstractCloudSlave {
         @Override
         public boolean isInstantiable() {
             return false;
+        }
+    }
+
+    private static class SlaveDisconnector extends MasterToSlaveCallable<Void, IOException> {
+
+        private static final long serialVersionUID = 8683427258340193283L;
+
+        private static final Logger LOGGER = Logger.getLogger(SlaveDisconnector.class.getName());
+
+        @Override
+        public Void call() throws IOException {
+            Engine e = Engine.current();
+            // No engine, do nothing.
+            if (e == null) {
+                return null;
+            }
+            // Tell the slave JNLP agent to not attempt further reconnects.
+            e.setNoReconnect(true);
+            LOGGER.log(Level.INFO, "Disabled slave engine reconnects.");
+            return null;
         }
 
     }
