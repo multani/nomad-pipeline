@@ -310,13 +310,15 @@ public class NomadCloud extends Cloud {
             List<NodeProvisioner.PlannedNode> r = new ArrayList<>();
 
             for (NomadJobTemplate t : getTemplatesFor(label)) {
-                LOGGER.log(Level.INFO, "Template: {0}", t.getDisplayName());
+                LOGGER.log(Level.INFO, "Template: {0}: {1}", new Object[] { label, t.getDisplayName() });
                 for (int i = 1; i <= toBeProvisioned; i++) {
                     if (!addProvisionedSlave(t, label)) {
                         break;
                     }
                     r.add(PlannedNodeBuilderFactory.createInstance().cloud(this).template(t).label(label).build());
                 }
+                LOGGER.log(Level.FINEST, "Planned Nomad agents for template \"{0}\": {1}",
+                        new Object[] { t.getDisplayName(), r.size() });
                 if (r.size() > 0) {
                     // Already found a matching template
                     return r;
