@@ -301,30 +301,29 @@ public class NomadCloud extends Cloud {
 
     @Override
     public synchronized Collection<NodeProvisioner.PlannedNode> provision(@CheckForNull final Label label, final int excessWorkload) {
+        List<NodeProvisioner.PlannedNode> toProvision = new ArrayList<>();
+
         try {
             Set<String> allInProvisioning = InProvisioning.getAllInProvisioning(label);
-            LOGGER.log(Level.FINE, "In provisioning : {0}", allInProvisioning);
+            LOGGER.log(Level.FINE, "In provisioning: {0}", allInProvisioning);
             int toBeProvisioned = Math.max(0, excessWorkload - allInProvisioning.size());
             LOGGER.log(Level.INFO, "Excess workload after pending Nomad nodes: {0}", toBeProvisioned);
 
-            List<NodeProvisioner.PlannedNode> r = new ArrayList<>();
-
             for (NomadJobTemplate t : getTemplatesFor(label)) {
-                LOGGER.log(Level.INFO, "Template: {0}: {1}", new Object[] { label, t.getDisplayName() });
+                LOGGER.log(Level.INFO, "Template: {0}: {1}", new Object[]{label, t.getDisplayName()});
                 for (int i = 1; i <= toBeProvisioned; i++) {
                     if (!addProvisionedSlave(t, label)) {
                         break;
                     }
-                    r.add(PlannedNodeBuilderFactory.createInstance().cloud(this).template(t).label(label).build());
+                    toProvision.add(PlannedNodeBuilderFactory.createInstance().cloud(this).template(t).label(label).build());
                 }
                 LOGGER.log(Level.FINEST, "Planned Nomad agents for template \"{0}\": {1}",
-                        new Object[] { t.getDisplayName(), r.size() });
-                if (r.size() > 0) {
+                        new Object[]{t.getDisplayName(), toProvision.size()});
+                if (toProvision.size() > 0) {
                     // Already found a matching template
-                    return r;
+                    break;
                 }
             }
-            return r;
         } catch (NomadException e) {
             Throwable cause = e.getCause();
             if (cause instanceof SocketTimeoutException || cause instanceof ConnectException || cause instanceof UnknownHostException) {
@@ -339,7 +338,7 @@ public class NomadCloud extends Cloud {
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Failed to count the # of live instances on Nomad", e);
         }
-        return Collections.emptyList();
+        return toProvision;
     }
 
     /**
