@@ -31,6 +31,7 @@ import com.hashicorp.nomad.apimodel.TaskState;
 import com.hashicorp.nomad.javasdk.ErrorResponseException;
 import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
+import com.hashicorp.nomad.javasdk.NomadException;
 import com.hashicorp.nomad.javasdk.ServerQueryResponse;
 import hudson.AbortException;
 import hudson.model.TaskListener;
@@ -133,20 +134,33 @@ public class NomadLauncher extends JNLPLauncher {
                 logger.printf("Waiting for job to be scheduled (%2$s/%3$s): %1$s%n", jobID, i, j);
 
                 Thread.sleep(6000);
-                // TODO catch com.hashicorp.nomad.javasdk.ErrorResponseException 404
-                ServerQueryResponse<Job> response = client.getJobsApi().info(jobID);
 
-                if (response == null) { // can exist?
-                    throw new IllegalStateException("Job no longer exists: " + jobID);
+                try {
+                    ServerQueryResponse<Job> response;
+                    response = client.getJobsApi().info(jobID);
+                    job = response.getValue();
+                } catch (ErrorResponseException ex) {
+                    throw new IllegalStateException("Unable to query Nomad job " + jobID + ": " + ex, ex);
                 }
 
-                job = response.getValue();
                 jobStatus = job.getStatus();
 
                 LOGGER.log(INFO, "Nomad job {0} is: {1}", new Object[]{jobID, jobStatus});
                 logger.printf("Nomad job %1$s is: %2$s%n", jobID, jobStatus);
 
-                ServerQueryResponse<List<AllocationListStub>> r = client.getJobsApi().allocations(jobID);
+                List<AllocationListStub> allocations;
+                try {
+                    ServerQueryResponse<List<AllocationListStub>> response;
+                    response = client.getJobsApi().allocations(jobID);
+                    allocations = response.getValue();
+                } catch (ErrorResponseException ex) {
+                    throw new IllegalStateException("Unable to find allocations for Nomad job " + jobID + ": " + ex, ex);
+                }
+
+                if (allocations.isEmpty()) {
+                    LOGGER.log(FINE, "No allocations yet for for Nomad job {}", jobID);
+                    continue;
+                }
 
                 class AllocationComparator implements Comparator<AllocationListStub> {
 
@@ -159,7 +173,7 @@ public class NomadLauncher extends JNLPLauncher {
                 }
 
                 // TODO: if the lastAlloc ClientStatus is "failed" already, we can probably shutdown the check earlier.
-                AllocationListStub lastAlloc = r.getValue().stream()
+                AllocationListStub lastAlloc = allocations.stream()
                         .sorted(new AllocationComparator())
                         .findFirst()
                         .get();
