@@ -1,7 +1,13 @@
 all: run
 
 run:
-	mvn hpi:run -Djetty.consoleForceReload=false -Djava.util.logging.config.file=debug-plugin-logging.properties
+	mvn \
+		-Djetty.consoleForceReload=false \
+		-Djava.util.logging.config.file=debug-plugin-logging.properties \
+		-Dhudson.slaves.NodeProvisioner.initialDelay=0 \
+		-Dhudson.slaves.NodeProvisioner.MARGIN=50 \
+		-Dhudson.slaves.NodeProvisioner.MARGIN0=0.85 \
+		hpi:run
 
 test:
 	mvn clean test jacoco:report
