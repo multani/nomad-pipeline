@@ -390,7 +390,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     @Override
     public String toString() {
         return "NomadJobTemplate{" +
-                (name == null ? "" : ", name='" + name + '\'') +
+                (name == null ? "" : "name='" + name + '\'') +
                 (image == null ? "" : ", image='" + image + '\'') +
                 (command == null ? "" : ", command='" + command + '\'') +
                 (args == null ? "" : ", args='" + args + '\'') +

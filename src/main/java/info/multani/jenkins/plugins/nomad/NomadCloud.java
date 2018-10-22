@@ -285,17 +285,12 @@ public class NomadCloud extends Cloud {
      *
      * @return Nomad client.
      */
-    @SuppressFBWarnings({"IS2_INCONSISTENT_SYNC", "DC_DOUBLECHECK"})
     public NomadApiClient connect() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException,
             IOException, CertificateEncodingException {
-
-        LOGGER.log(Level.FINE, "Building connection to Nomad {0} URL {1}",
-                new String[]{getDisplayName(), serverUrl});
         NomadApiConfiguration config = new NomadApiConfiguration.Builder()
                 .setAddress(serverUrl)
                 .build();
         client = new NomadApiClient(config);
-        LOGGER.log(Level.FINE, "Connected to Nomad {0} URL {1}", new String[]{getDisplayName(), serverUrl});
         return client;
     }
 

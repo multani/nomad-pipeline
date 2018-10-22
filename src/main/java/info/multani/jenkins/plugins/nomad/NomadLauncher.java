@@ -85,7 +85,8 @@ public class NomadLauncher extends JNLPLauncher {
             throw new IllegalStateException("Node has been removed, cannot launch " + computer.getName());
         }
         if (launched) {
-            LOGGER.log(INFO, "Agent has already been launched, activating: {}", slave.getNodeName());
+            LOGGER.log(INFO, "Agent has already been launched, activating: {0}",
+                    slave.getNodeName());
             computer.setAcceptingTasks(true);
             return;
         }
