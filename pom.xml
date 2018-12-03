@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <groupId>io.jenkins.plugins</groupId>
-    <artifactId>jenkins-nomad-plugin</artifactId>
+    <artifactId>nomad-pipeline</artifactId>
     <version>0.0.3-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <properties>
@@ -21,8 +21,8 @@
              ~ stapler-plugin.version: The Stapler Maven plugin version required by the plugin.
         -->
     </properties>
-    <name>Jenkins Nomad Plugin</name>
-    <description>Jenkins Nomad Plugin</description>
+    <name>Nomad Pipeline</name>
+    <description>Jenkins plugin to configure job to run in the Nomad cluster scheduler</description>
     <!-- The default licence for Jenkins OSS Plugins is MIT. Substitute for the applicable one if needed. -->
     <licenses>
         <license>
