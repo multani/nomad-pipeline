@@ -109,7 +109,7 @@ nomadJobTemplate(
 * Specify the Docker image to run your job in your job definition
 * Adjust the resources needed in your job definition
 * Configure environment variables for your whole job
-* Automatically download the Jenkins agent from the Jenkins master
+* Optionally, automatically download the Jenkins agent from the Jenkins master
 
 Limitations:
 
@@ -121,6 +121,24 @@ Limitations:
   from the Jenkins master.
 
 
+## List of settings
+
+TODO: complete me!
+
+
+### `taskTemplate`
+
+* `downloadAgentJar`: default to `false`. If set, download the slave agent from
+  the Jenkins master at `/jnlpJars/slave.jar` into `/local/slave.jar`, prior to
+  start the Nomad job.
+
+  You can then start the worker using the following command:
+  ```
+  java -jar /local/slave.jar -jnlpUrl $JENKINS_JNLP_URL -secret $JENKINS_SECRET'
+  ```
+
+
+
 ## Migrating from [Nomad Plugin](https://wiki.jenkins.io/display/JENKINS/Nomad+Plugin)
 
 There's another [Jenkins plugin for
@@ -130,6 +148,9 @@ different approach and doesn't support pipeline jobs defintion.
 You can still use the same Docker image as you were using with the other
 plugin with a few adjustements:
 
+* The other plugin was downloading an agent `jar` file directly from the Jenkins
+  master. This is *not done* automatically by default so you need to set
+  `downloadAgentJar` to `true` to download it into `/local/slave.jar`.
 * The other plugin was starting the Jenkins agent on behalf of the Docker image.
 
   You will now need to start this agent yourself by setting the right command
@@ -143,6 +164,9 @@ nomadJobTemplate(
       taskTemplate(
         name: 'jnlp',
         image: 'your/image', // Your previous Docker image
+        // Download the slave agent from the Jenkins master at
+        // http://jenkins-master/jnlpJars/slave.jar
+        downloadAgentJar: true,
         command: 'sh',
         args: [
           '-c',
@@ -180,4 +204,3 @@ Easy way:
 * wait for Jenkins to start and connect on http://localhost:8080/jenkins/
 * create a new pipeline job with the code from `test-config/test.Jenkinsfile`
 * configure Jenkins, add a new Cloud Provider and set the Server URL to http://localhost:4646
-* execute the job!
