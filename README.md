@@ -129,7 +129,14 @@ Limitations:
   completed by a random hash to prevent job name collision.
 * `label`: the Jenkins node label to associate the new worker to
 * `taskGroups`: a list of `taskTemplate`
-
+* `region`
+* `datacenters`
+* `envVars`
+* `instanceCap`
+* `idleMinutes`
+* `slaveConnectTimeout`
+* `nodeUsageMode`
+* `workingDir`
 
 ### `taskTemplate`
 
@@ -150,6 +157,10 @@ Limitations:
   ```
   java -jar /local/slave.jar -jnlpUrl $JENKINS_JNLP_URL -secret $JENKINS_SECRET'
   ```
+* `workingDir`
+* `command`
+* `args`
+
 
 ### `envVar`
 
