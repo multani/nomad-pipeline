@@ -123,38 +123,38 @@ Limitations:
 
 ## List of settings
 
+### `nomadJobTemplate`
 
-* `nomadJobTemplate`:
-
-  * `name`: xxx
-  * `label`: xxx
-  * `taskGroups`: a list of `taskTemplate`:
-
-    `taskTemplate`:
-
-    * `name`: 'jnlp',
-    * `image`: 'jenkins/jnlp-slave:alpine',
-    * `resourcesMemory`: 2048,
-    * `resourcesCPU`: 1000,
-    * `envVars`: a list of `envVar`:
-
-      `envVar`:
-
-      * `key`: xxx
-      * `value`: xxx
+* `name`: a prefix to start the Nomad job name with. It will automatically be
+  completed by a random hash to prevent job name collision.
+* `label`: the Jenkins node label to associate the new worker to
+* `taskGroups`: a list of `taskTemplate`
 
 
 ### `taskTemplate`
 
+* `name`: the name of the task run by Nomad. This has to be set to `jnlp` for
+  now.
+* `image`: the [Docker image to run with Nomad](https://www.nomadproject.io/docs/drivers/docker.html#image)
+* `resourcesMemory`: the [amount of memory to reserve for the job](https://www.nomadproject.io/docs/job-specification/resources.html#memory-1)
+* `resourcesCPU`: the [amount of CPU to reserve for the
+  job](https://www.nomadproject.io/docs/job-specification/resources.html#cpu)
+* `envVars`: a [list of environment variables to export into the task run by
+  Nomad](https://www.nomadproject.io/docs/job-specification/env.html).
+  This is a list of `envVar` objects.
 * `downloadAgentJar`: default to `false`. If set, download the slave agent from
-  the Jenkins master at `/jnlpJars/slave.jar` into `/local/slave.jar`, prior to
-  start the Nomad job.
+  the Jenkins master at `http://JENKINS_MASTER/jnlpJars/slave.jar` into
+  `/local/slave.jar`, prior to start the Nomad job.
 
   You can then start the worker using the following command:
   ```
   java -jar /local/slave.jar -jnlpUrl $JENKINS_JNLP_URL -secret $JENKINS_SECRET'
   ```
 
+### `envVar`
+
+* `key`: the name of the environment variable to export into the Nomad job
+* `value`: the value of the environment variable. This needs to be a string.
 
 
 ## Migrating from [Nomad Plugin](https://wiki.jenkins.io/display/JENKINS/Nomad+Plugin)
