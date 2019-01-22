@@ -123,7 +123,25 @@ Limitations:
 
 ## List of settings
 
-TODO: complete me!
+
+* `nomadJobTemplate`:
+
+  * `name`: xxx
+  * `label`: xxx
+  * `taskGroups`: a list of `taskTemplate`:
+
+    `taskTemplate`:
+
+    * `name`: 'jnlp',
+    * `image`: 'jenkins/jnlp-slave:alpine',
+    * `resourcesMemory`: 2048,
+    * `resourcesCPU`: 1000,
+    * `envVars`: a list of `envVar`:
+
+      `envVar`:
+
+      * `key`: xxx
+      * `value`: xxx
 
 
 ### `taskTemplate`
