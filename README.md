@@ -1,11 +1,9 @@
-# Nomad Pipeline plugin for Jenkins
-
-<aside class="warning">
 **This is a very early release of this plugin!**
 
 There are still plenty of bugs a non-implemented features that you may depend
 on!
-</aside>
+
+# Nomad Pipeline plugin for Jenkins
 
 This is a plugin for Jenkins that runs Jenkins job into the Nomad scheduler, and
 allow the configuration of the Nomad jobs from Jenkins pipelines.
@@ -111,14 +109,18 @@ nomadJobTemplate(
 * Configure environment variables for your whole job
 * Optionally, automatically download the Jenkins agent from the Jenkins master
 
-Limitations:
+Current limitations:
 
 * This is a very early version!
-* Although it's possible to define multiple tasks, this has not been tested yet
+* Although it's possible to define multiple tasks within a job, this has not
+  been tested yet
 * Although it's possible to define multiple Nomad jobs in the same Jenkins
   pipeline, this has not been tested yet.
 * It's currently not possible to configure the agent to receive SSH connection
   from the Jenkins master.
+* It's not possible to use the plugin using a declarative `Jenkinsfile`
+  configuration file (see #2)
+* Look at [the issues](https://github.com/multani/nomad-pipeline/issues)!
 
 
 ## List of settings
@@ -204,3 +206,21 @@ Easy way:
 * wait for Jenkins to start and connect on http://localhost:8080/jenkins/
 * create a new pipeline job with the code from `test-config/test.Jenkinsfile`
 * configure Jenkins, add a new Cloud Provider and set the Server URL to http://localhost:4646
+
+
+# See also
+
+This plugin is heavily based on the
+[kubernetes-plugin](https://github.com/jenkinsci/kubernetes-plugin) - it actually
+started as a fork of the Kubernetes code, replaced by calls to the Nomad API.
+
+You may also want to have a look at the
+[nomad-plugin](https://github.com/jenkinsci/nomad-plugin/):
+
+* `nomad-pipeline` allows to define how to run a Jenkins worker directly from a
+  `Jenkinsfile` build file, instead of referring to an external definition
+  (configured in the Jenkins master). This give much finer grained opportunities
+  to control the environment in which the build runs at the expense of
+  preventing to have long-running Jenkins worker.
+* https://github.com/jenkinsci/nomad-plugin/issues/20 is the initial issue which
+  prompted for the creation of `nomad-pipeline`.
