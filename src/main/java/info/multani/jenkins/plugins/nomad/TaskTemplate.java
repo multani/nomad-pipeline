@@ -188,8 +188,6 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
 
         envVars.putAll(globalEnvVars);
 
-        envVars.put("HOME", this.getWorkingDir());
-
         if (this.getEnvVars() != null) {
             this.getEnvVars().forEach(item
                     -> envVars.put(item.getKey(), item.getValue())
