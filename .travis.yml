@@ -11,7 +11,7 @@ deploy:
   provider: releases
   api_key:
     secure: CbPBcaHTXaiXtKO+1DTdRQdPSJEYr2uDXEIif9JfEbV/gXlDxYzJEQEJ1jhkmoFgRuLwEEQyql9VYFIESbR/6wz8rN4XDFzdyHJNhksi3W3DI8iG8tQfyNldo9hzypFs4+9GnfYDMoPmsaGP/WpVMsXvn1rmmYvE6s87RgY3l5JKJ9k+VODkPqRCOFrG02gULMncwFHavD0bRjvr2nZUDHVfMOwWS37q9Phikx/O+18FVRGfAHmfZiO6SUL3l+L4nPP5ugGIc1h0IBMzQyQkiUJRjC7H6LGM53DcNdIognRhw6qpHoq3UegZVJrTjp3W5wZHFApt5bRTb7GVN9M7llnRpNQX5+of6rgNiEl/Oo+mABMqHqTyencUS85dF2i14VyBJ9ENktvQNAnB8NQBlJA/VzIHlMlMVVpn5o8fw69kLiZOrnvzp0Mh4Yk5mXLD1hFassuf90jPwen9c+mnfMqXZUiUpTUiSxGANsWMdWRdtrXy1HmO8D6w4CZZCjF2M98r8MAAXOB0hWQJvJY7NF/gcIr4mI+pP9OOLylNkxQohUCwKQ6Zw9ebclJ0aPqATnIhx61cefKD0L8IJDQJlSyqU63pMo9+piW13WF38cRbboO4nBzyU1ZbhlSkSh1wwHiZtdSrqOXx/KLiKzQVyDcc8k/UC/7tiUXgID7lffo=
-  file: target/jenkins-nomad-plugin.hpi
+  file: target/nomad-pipeline.hpi
   skip_cleanup: true
   on:
     repo: multani/nomad-pipeline
