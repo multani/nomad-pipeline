@@ -5,6 +5,8 @@ on!
 
 # Nomad Pipeline plugin for Jenkins
 
+[![Build Status](https://travis-ci.org/multani/nomad-pipeline.svg?branch=master)](https://travis-ci.org/multani/nomad-pipeline)
+
 This is a plugin for Jenkins that runs Jenkins job into the Nomad scheduler, and
 allow the configuration of the Nomad jobs from Jenkins pipelines.
 
