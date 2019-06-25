@@ -1,8 +1,10 @@
 package info.multani.jenkins.plugins.nomad;
 
+import com.cloudbees.plugins.credentials.CredentialsMatchers;
+import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
+import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
-import com.hashicorp.nomad.javasdk.NomadApiConfiguration;
 import com.hashicorp.nomad.javasdk.NomadException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
@@ -10,18 +12,17 @@ import hudson.Util;
 import hudson.model.Descriptor;
 import hudson.model.Label;
 import hudson.model.Node;
+import hudson.model.Item;
+import hudson.security.ACL;
 import hudson.slaves.Cloud;
 import hudson.slaves.NodeProvisioner;
 import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateMap;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,6 +37,8 @@ import javax.annotation.Nonnull;
 import jenkins.model.Jenkins;
 import jenkins.model.JenkinsLocationConfiguration;
 import org.apache.commons.lang.StringUtils;
+import org.jenkinsci.plugins.plaincredentials.StringCredentials;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -67,6 +70,7 @@ public class NomadCloud extends Cloud {
     @Nonnull
     private List<NomadJobTemplate> templates = new ArrayList<>();
     private String serverUrl;
+    private String credentialsId;
 
     private String region;
 
@@ -149,6 +153,15 @@ public class NomadCloud extends Cloud {
     @DataBoundSetter
     public void setServerUrl(@Nonnull String serverUrl) {
         this.serverUrl = serverUrl;
+    }
+
+    public String getCredentialsId() {
+        return serverUrl;
+    }
+
+    @DataBoundSetter
+    public void setCredentialsId(String credentialsId) {
+        this.credentialsId = credentialsId;
     }
 
     public String getRegion() {
@@ -285,12 +298,9 @@ public class NomadCloud extends Cloud {
      *
      * @return Nomad client.
      */
-    public NomadApiClient connect() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException,
-            IOException, CertificateEncodingException {
-        NomadApiConfiguration config = new NomadApiConfiguration.Builder()
-                .setAddress(serverUrl)
-                .build();
-        client = new NomadApiClient(config);
+    public NomadApiClient connect() throws IOException {
+        client = new NomadClientFactory(serverUrl, credentialsId)
+                .createClient();
         return client;
     }
 
@@ -454,6 +464,7 @@ public class NomadCloud extends Cloud {
 
         public FormValidation doTestConnection(@QueryParameter String name,
                 @QueryParameter String serverUrl,
+                @QueryParameter String credentialsId,
                 @QueryParameter int connectionTimeout,
                 @QueryParameter int readTimeout) throws Exception {
 
@@ -462,10 +473,8 @@ public class NomadCloud extends Cloud {
             }
 
             try {
-                NomadApiConfiguration config = new NomadApiConfiguration.Builder()
-                        .setAddress(serverUrl)
-                        .build();
-                NomadApiClient client = new NomadApiClient(config);
+                NomadApiClient client = new NomadClientFactory(serverUrl, credentialsId)
+                        .createClient();
 
                 // test listing jobs
                 client.getJobsApi().list();
@@ -479,6 +488,20 @@ public class NomadCloud extends Cloud {
                 LOGGER.log(Level.FINE, String.format("Error testing connection %s", serverUrl), e);
                 return FormValidation.error("Error testing connection %s: %s", serverUrl, e.getMessage());
             }
+        }
+
+        public ListBoxModel doFillCredentialsIdItems(@CheckForNull @AncestorInPath Item context, @QueryParameter String serverUrl) {
+            Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+
+            return new StandardListBoxModel()
+                    .includeEmptyValue()
+                    .includeMatchingAs(
+                            ACL.SYSTEM,
+                            context,
+                            StringCredentials.class,
+                            URIRequirementBuilder.fromUri(serverUrl).build(),
+                            CredentialsMatchers.instanceOf(StringCredentials.class)
+                    );
         }
     }
 
