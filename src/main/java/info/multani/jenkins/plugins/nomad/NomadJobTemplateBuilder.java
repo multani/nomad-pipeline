@@ -125,7 +125,7 @@ public class NomadJobTemplateBuilder {
 
         Task task = taskTemplate.build(slave, new HashMap<>(env));
         taskGroup.addTasks(task);
-        
+
         RestartPolicy restartPolicy = new RestartPolicy()
                 .setMode("fail")
                 .setAttempts(0);

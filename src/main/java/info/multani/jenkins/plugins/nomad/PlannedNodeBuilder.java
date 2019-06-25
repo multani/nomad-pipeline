@@ -4,10 +4,12 @@ import hudson.model.Label;
 import hudson.slaves.NodeProvisioner;
 
 /**
- * A builder of {@link hudson.slaves.NodeProvisioner.PlannedNode} implementations for Nomad.
- * Can be subclassed to provide alternative implementations of {@link hudson.slaves.NodeProvisioner.PlannedNode}.
+ * A builder of {@link hudson.slaves.NodeProvisioner.PlannedNode}
+ * implementations for Nomad. Can be subclassed to provide alternative
+ * implementations of {@link hudson.slaves.NodeProvisioner.PlannedNode}.
  */
 public abstract class PlannedNodeBuilder {
+
     private NomadCloud cloud;
     private NomadJobTemplate template;
     private Label label;
@@ -15,6 +17,7 @@ public abstract class PlannedNodeBuilder {
 
     /**
      * Returns the {@link NomadCloud}.
+     *
      * @return the {@link NomadCloud}.
      */
     public NomadCloud getCloud() {
@@ -23,6 +26,7 @@ public abstract class PlannedNodeBuilder {
 
     /**
      * Returns the {@link NomadJobTemplate}.
+     *
      * @return
      */
     public NomadJobTemplate getTemplate() {
@@ -74,8 +78,11 @@ public abstract class PlannedNodeBuilder {
     }
 
     /**
-     * Builds the {@link hudson.slaves.NodeProvisioner.PlannedNode} instance based on the given inputs.
-     * @return a {@link hudson.slaves.NodeProvisioner.PlannedNode} configured from this builder.
+     * Builds the {@link hudson.slaves.NodeProvisioner.PlannedNode} instance
+     * based on the given inputs.
+     *
+     * @return a {@link hudson.slaves.NodeProvisioner.PlannedNode} configured
+     * from this builder.
      */
     public abstract NodeProvisioner.PlannedNode build();
 }

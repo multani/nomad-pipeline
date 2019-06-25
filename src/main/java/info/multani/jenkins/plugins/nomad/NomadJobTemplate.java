@@ -146,15 +146,16 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
         }
     }
 //
+
     public int getInstanceCap() {
         return instanceCap;
     }
 
     public void setSlaveConnectTimeout(int slaveConnectTimeout) {
         if (slaveConnectTimeout <= 0) {
-            LOGGER.log(Level.WARNING, "Agent -> Jenkins connection timeout " +
-                    "cannot be <= 0. Falling back to the default value: " +
-                    DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT);
+            LOGGER.log(Level.WARNING, "Agent -> Jenkins connection timeout "
+                    + "cannot be <= 0. Falling back to the default value: "
+                    + DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT);
             this.slaveConnectTimeout = DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
         } else {
             this.slaveConnectTimeout = slaveConnectTimeout;
@@ -162,8 +163,9 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     public int getSlaveConnectTimeout() {
-        if (slaveConnectTimeout == 0)
+        if (slaveConnectTimeout == 0) {
             return DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT;
+        }
         return slaveConnectTimeout;
     }
 
@@ -228,7 +230,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     public Map<String, String> getLabelsMap() {
         Set<LabelAtom> labelSet = getLabelSet();
-        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String> builder();
+        ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String>builder();
         if (!labelSet.isEmpty()) {
             labelSet.forEach((label) -> {
                 builder.put(label == null ? DEFAULT_ID : "jenkins/" + label.getName(), "true");
@@ -282,12 +284,12 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
     }
 
     @DataBoundSetter
-    public void setNodeProperties(List<ToolLocationNodeProperty> nodeProperties){
+    public void setNodeProperties(List<ToolLocationNodeProperty> nodeProperties) {
         this.nodeProperties = nodeProperties;
     }
 
     @Nonnull
-    public List<ToolLocationNodeProperty> getNodeProperties(){
+    public List<ToolLocationNodeProperty> getNodeProperties() {
         if (nodeProperties == null) {
             return Collections.emptyList();
         }
@@ -328,6 +330,7 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     /**
      * Build a Job object from a JobTemplate
+     *
      * @param slave
      * @return
      */
@@ -389,21 +392,21 @@ public class NomadJobTemplate extends AbstractDescribableImpl<NomadJobTemplate> 
 
     @Override
     public String toString() {
-        return "NomadJobTemplate{" +
-                (name == null ? "" : "name='" + name + '\'') +
-                (image == null ? "" : ", image='" + image + '\'') +
-                (command == null ? "" : ", command='" + command + '\'') +
-                (args == null ? "" : ", args='" + args + '\'') +
-                (instanceCap == Integer.MAX_VALUE ? "" : ", instanceCap=" + instanceCap) +
-                (slaveConnectTimeout == DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT ? "" : ", slaveConnectTimeout=" + slaveConnectTimeout) +
-                (idleMinutes == 0 ? "" : ", idleMinutes=" + idleMinutes) +
-                (label == null ? "" : ", label='" + label + '\'') +
-                (nodeUsageMode == null ? "" : ", nodeUsageMode=" + nodeUsageMode) +
-                (resourcesCPU == null ? "" : ", resourcesCpu='" + resourcesCPU + '\'') +
-                (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
-                (taskGroups == null || taskGroups.isEmpty() ? "" : ", taskGroups=" + taskGroups) +
-                (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
-                (nodeProperties == null || nodeProperties.isEmpty() ? "" : ", nodeProperties=" + nodeProperties) +
-                '}';
+        return "NomadJobTemplate{"
+                + (name == null ? "" : "name='" + name + '\'')
+                + (image == null ? "" : ", image='" + image + '\'')
+                + (command == null ? "" : ", command='" + command + '\'')
+                + (args == null ? "" : ", args='" + args + '\'')
+                + (instanceCap == Integer.MAX_VALUE ? "" : ", instanceCap=" + instanceCap)
+                + (slaveConnectTimeout == DEFAULT_SLAVE_JENKINS_CONNECTION_TIMEOUT ? "" : ", slaveConnectTimeout=" + slaveConnectTimeout)
+                + (idleMinutes == 0 ? "" : ", idleMinutes=" + idleMinutes)
+                + (label == null ? "" : ", label='" + label + '\'')
+                + (nodeUsageMode == null ? "" : ", nodeUsageMode=" + nodeUsageMode)
+                + (resourcesCPU == null ? "" : ", resourcesCpu='" + resourcesCPU + '\'')
+                + (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'')
+                + (taskGroups == null || taskGroups.isEmpty() ? "" : ", taskGroups=" + taskGroups)
+                + (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars)
+                + (nodeProperties == null || nodeProperties.isEmpty() ? "" : ", nodeProperties=" + nodeProperties)
+                + '}';
     }
 }

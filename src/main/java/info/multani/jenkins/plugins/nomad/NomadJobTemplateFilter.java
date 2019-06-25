@@ -12,8 +12,10 @@ import javax.annotation.Nonnull;
  * Filters a job template according to criteria.
  */
 public abstract class NomadJobTemplateFilter implements ExtensionPoint {
+
     /**
      * Returns a list of all implementations of {@link NomadJobTemplateFilter}.
+     *
      * @return a list of all implementations of {@link NomadJobTemplateFilter}.
      */
     public static ExtensionList<NomadJobTemplateFilter> all() {
@@ -23,7 +25,8 @@ public abstract class NomadJobTemplateFilter implements ExtensionPoint {
     /**
      * Pass the given job templates list into all filters implementations.
      *
-     * @param cloud The cloud instance the job templates are getting considered for
+     * @param cloud The cloud instance the job templates are getting considered
+     * for
      * @param jobTemplates The initial list of job templates
      * @param label The label that was requested for provisioning
      * @return The job template list after filtering
@@ -48,10 +51,12 @@ public abstract class NomadJobTemplateFilter implements ExtensionPoint {
     /**
      * Transforms a job template definition.
      *
-     * @param cloud The {@link NomadCloud} instance the {@link NomadJobTemplate} instances will be scheduled into.
+     * @param cloud The {@link NomadCloud} instance the {@link NomadJobTemplate}
+     * instances will be scheduled into.
      * @param jobTemplate The input job template to process.
      * @param label The label that was requested for provisioning
-     * @return A new job template after transformation. It can be null if the filter denies access to the given job template.
+     * @return A new job template after transformation. It can be null if the
+     * filter denies access to the given job template.
      */
     @CheckForNull
     protected abstract NomadJobTemplate transform(@Nonnull NomadCloud cloud, @Nonnull NomadJobTemplate jobTemplate, @CheckForNull Label label);

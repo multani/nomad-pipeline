@@ -31,7 +31,6 @@ import com.hashicorp.nomad.apimodel.TaskState;
 import com.hashicorp.nomad.javasdk.ErrorResponseException;
 import com.hashicorp.nomad.javasdk.EvaluationResponse;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
-import com.hashicorp.nomad.javasdk.NomadException;
 import com.hashicorp.nomad.javasdk.ServerQueryResponse;
 import hudson.AbortException;
 import hudson.model.TaskListener;

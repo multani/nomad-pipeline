@@ -161,8 +161,8 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         this.resourcesMemory = resourcesMemory;
     }
 
-    public Map<String,Object> getAsArgs() {
-        Map<String,Object> argMap = new TreeMap<>();
+    public Map<String, Object> getAsArgs() {
+        Map<String, Object> argMap = new TreeMap<>();
         argMap.put("name", name);
         return argMap;
     }
@@ -237,15 +237,15 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
 
     @Override
     public String toString() {
-        return "TaskTemplate{" +
-                (name == null ? "" : "name='" + name + '\'') +
-                (image == null ? "" : ", image='" + image + '\'') +
-                (workingDir == null ? "" : ", workingDir='" + workingDir + '\'') +
-                (command == null ? "" : ", command='" + command + '\'') +
-                (args == null ? "" : ", args='" + args + '\'') +
-                (resourcesCPU == null ? "" : ", resourcesCPU='" + resourcesCPU + '\'') +
-                (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'') +
-                (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars) +
-                '}';
+        return "TaskTemplate{"
+                + (name == null ? "" : "name='" + name + '\'')
+                + (image == null ? "" : ", image='" + image + '\'')
+                + (workingDir == null ? "" : ", workingDir='" + workingDir + '\'')
+                + (command == null ? "" : ", command='" + command + '\'')
+                + (args == null ? "" : ", args='" + args + '\'')
+                + (resourcesCPU == null ? "" : ", resourcesCPU='" + resourcesCPU + '\'')
+                + (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'')
+                + (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars)
+                + '}';
     }
 }

@@ -12,11 +12,14 @@ import javax.annotation.Nonnull;
  * Collects the Nomad agents currently in provisioning.
  */
 public abstract class InProvisioning implements ExtensionPoint {
+
     /**
-     * Returns the agents names in provisioning according to all implementations of this extension point for the given label.
+     * Returns the agents names in provisioning according to all implementations
+     * of this extension point for the given label.
      *
      * @param label the {@link Label} being checked.
-     * @return the agents names in provisioning according to all implementations of this extension point for the given label.
+     * @return the agents names in provisioning according to all implementations
+     * of this extension point for the given label.
      */
     @Nonnull
     public static Set<String> getAllInProvisioning(@CheckForNull Label label) {

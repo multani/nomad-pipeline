@@ -1,12 +1,10 @@
 package info.multani.jenkins.plugins.nomad;
 
-
 import com.google.common.collect.ImmutableMap;
 import com.hashicorp.nomad.javasdk.NomadApiClient;
 import com.hashicorp.nomad.javasdk.NomadApiConfiguration;
 import com.hashicorp.nomad.javasdk.NomadException;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.Descriptor;
@@ -27,7 +25,6 @@ import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,8 +43,8 @@ import org.kohsuke.stapler.QueryParameter;
 /**
  * Nomad cloud provider.
  *
- * Starts Jenkins agents in a Nomad cluster using defined Docker templates for each
- * label.
+ * Starts Jenkins agents in a Nomad cluster using defined Docker templates for
+ * each label.
  */
 public class NomadCloud extends Cloud {
 
@@ -57,7 +54,9 @@ public class NomadCloud extends Cloud {
 
     public static final String JNLP_NAME = "jnlp";
 
-    /** label for all jobs started by the plugin */
+    /**
+     * label for all jobs started by the plugin
+     */
     public static final Map<String, String> DEFAULT_JOB_LABELS = ImmutableMap.of("jenkins", "slave");
 
     /**
@@ -93,9 +92,9 @@ public class NomadCloud extends Cloud {
     }
 
     /**
-     * Copy constructor. Allows to create copies of the original Nomad
-     * cloud. Since it's a singleton by design, this method also allows
-     * specifying a new name.
+     * Copy constructor. Allows to create copies of the original Nomad cloud.
+     * Since it's a singleton by design, this method also allows specifying a
+     * new name.
      *
      * @param name Name of the cloud to be created
      * @param source Source Nomad cloud implementation
@@ -127,9 +126,11 @@ public class NomadCloud extends Cloud {
     }
 
     /**
-     * Returns all Nomad job templates for this cloud including the dynamic ones.
+     * Returns all Nomad job templates for this cloud including the dynamic
+     * ones.
      *
-     * @return all Nomad job templates for this cloud including the dynamic ones.
+     * @return all Nomad job templates for this cloud including the dynamic
+     * ones.
      */
     @Nonnull
     public List<NomadJobTemplate> getAllTemplates() {
@@ -192,9 +193,8 @@ public class NomadCloud extends Cloud {
      * Returns Jenkins URL to be used by agents launched by this cloud. Always
      * ends with a trailing slash.
      *
-     * Uses in order:
-     * * cloud configuration
-     * * environment variable <b>NOMAD_JENKINS_URL</b>
+     * Uses in order: * cloud configuration * environment variable
+     * <b>NOMAD_JENKINS_URL</b>
      * * Jenkins Location URL
      *
      * @return Jenkins URL to be used by agents launched by this cloud. Always
@@ -264,8 +264,8 @@ public class NomadCloud extends Cloud {
     /**
      * Labels for all jobs started by the plugin
      */
-     public Map<String, String> getLabels() {
-         return labels == null || labels.isEmpty() ? DEFAULT_JOB_LABELS : labels;
+    public Map<String, String> getLabels() {
+        return labels == null || labels.isEmpty() ? DEFAULT_JOB_LABELS : labels;
     }
 
     public void setLabels(Map<String, String> labels) {

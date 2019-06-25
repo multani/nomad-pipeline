@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class NomadComputer extends AbstractCloudComputer<NomadSlave> {
+
     private static final Logger LOGGER = Logger.getLogger(NomadComputer.class.getName());
 
     public NomadComputer(NomadSlave slave) {

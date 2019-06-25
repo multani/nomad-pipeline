@@ -64,13 +64,13 @@ public class NomadSlave extends AbstractCloudSlave {
     }
 
     protected NomadSlave(String name, NomadJobTemplate template, String nodeDescription, String cloudName, String labelStr,
-                           ComputerLauncher computerLauncher, RetentionStrategy rs)
+            ComputerLauncher computerLauncher, RetentionStrategy rs)
             throws Descriptor.FormException, IOException {
         super(name,
                 nodeDescription,
                 null, // TODO: remoteFs
                 1,
-//                template.getNodeUsageMode() != null ? template.getNodeUsageMode() : TODO
+                //                template.getNodeUsageMode() != null ? template.getNodeUsageMode() : TODO
                 Node.Mode.NORMAL,
                 labelStr == null ? null : labelStr,
                 computerLauncher,
@@ -88,8 +88,10 @@ public class NomadSlave extends AbstractCloudSlave {
 
     /**
      * Returns the cloud instance which created this agent.
+     *
      * @return the cloud instance which created this agent.
-     * @throws IllegalStateException if the cloud doesn't exist anymore, or is not a {@link NomadCloud}.
+     * @throws IllegalStateException if the cloud doesn't exist anymore, or is
+     * not a {@link NomadCloud}.
      */
     @Nonnull
     public NomadCloud getNomadCloud() {
@@ -165,7 +167,6 @@ public class NomadSlave extends AbstractCloudSlave {
 
         // TODO: check the job status and the job retention policy to determine
         // if the job needs to be stopped or not.
-
         Computer computer = toComputer();
         if (computer == null) {
             String msg = String.format("Computer for agent is null: %s", name);
@@ -244,13 +245,21 @@ public class NomadSlave extends AbstractCloudSlave {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
 
         NomadSlave that = (NomadSlave) o;
 
-        if (cloudName != null ? !cloudName.equals(that.cloudName) : that.cloudName != null) return false;
+        if (cloudName != null ? !cloudName.equals(that.cloudName) : that.cloudName != null) {
+            return false;
+        }
         return template != null ? template.equals(that.template) : that.template == null;
     }
 
@@ -264,6 +273,7 @@ public class NomadSlave extends AbstractCloudSlave {
 
     /**
      * Returns a new {@link Builder} instance.
+     *
      * @return a new {@link Builder} instance.
      */
     public static Builder builder() {
@@ -274,6 +284,7 @@ public class NomadSlave extends AbstractCloudSlave {
      * Builds a {@link NomadSlave} instance.
      */
     public static class Builder {
+
         private String name;
         private String nodeDescription;
         private NomadJobTemplate jobTemplate;
@@ -292,7 +303,8 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         /**
-         * @param nodeDescription The node description of the future {@link NomadSlave}
+         * @param nodeDescription The node description of the future
+         * {@link NomadSlave}
          * @return the current instance for method chaining
          */
         public Builder nodeDescription(String nodeDescription) {
@@ -301,7 +313,8 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         /**
-         * @param jobTemplate The job template the future {@link NomadSlave} has been created from
+         * @param jobTemplate The job template the future {@link NomadSlave} has
+         * been created from
          * @return the current instance for method chaining
          */
         public Builder jobTemplate(NomadJobTemplate jobTemplate) {
@@ -310,7 +323,8 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         /**
-         * @param cloud The cloud that is provisioning the {@link NomadSlave} instance.
+         * @param cloud The cloud that is provisioning the {@link NomadSlave}
+         * instance.
          * @return the current instance for method chaining
          */
         public Builder cloud(NomadCloud cloud) {
@@ -328,7 +342,8 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         /**
-         * @param computerLauncher The computer launcher to use to launch the {@link NomadSlave} instance.
+         * @param computerLauncher The computer launcher to use to launch the
+         * {@link NomadSlave} instance.
          * @return the current instance for method chaining
          */
         public Builder computerLauncher(ComputerLauncher computerLauncher) {
@@ -337,7 +352,8 @@ public class NomadSlave extends AbstractCloudSlave {
         }
 
         /**
-         * @param retentionStrategy The retention strategy to use for the {@link NomadSlave} instance.
+         * @param retentionStrategy The retention strategy to use for the
+         * {@link NomadSlave} instance.
          * @return the current instance for method chaining
          */
         public Builder retentionStrategy(RetentionStrategy retentionStrategy) {
@@ -355,6 +371,7 @@ public class NomadSlave extends AbstractCloudSlave {
 
         /**
          * Builds the resulting {@link NomadSlave} instance.
+         *
          * @return an initialized {@link NomadSlave} instance.
          * @throws IOException
          * @throws Descriptor.FormException
@@ -372,7 +389,6 @@ public class NomadSlave extends AbstractCloudSlave {
                     retentionStrategy == null ? determineRetentionStrategy() : retentionStrategy);
         }
     }
-
 
     @Extension
     public static final class DescriptorImpl extends SlaveDescriptor {

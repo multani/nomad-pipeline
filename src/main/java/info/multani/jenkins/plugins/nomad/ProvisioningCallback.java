@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package info.multani.jenkins.plugins.nomad;
 
 import hudson.model.Node;
@@ -49,8 +48,8 @@ class ProvisioningCallback implements Callable<Node> {
     public Node call() throws Exception {
         return NomadSlave
                 .builder()
-                    .jobTemplate(t) //cloud.getUnwrappedTemplate(t))
-                    .cloud(cloud)
+                .jobTemplate(t) //cloud.getUnwrappedTemplate(t))
+                .cloud(cloud)
                 .build();
     }
 

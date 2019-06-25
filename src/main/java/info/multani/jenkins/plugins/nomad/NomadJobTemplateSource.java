@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
  * A source of Nomad job templates.
  */
 public abstract class NomadJobTemplateSource implements ExtensionPoint {
+
     public static List<NomadJobTemplate> getAll(@Nonnull NomadCloud cloud) {
         return ExtensionList.lookup(NomadJobTemplateSource.class)
                 .stream()
@@ -21,7 +22,9 @@ public abstract class NomadJobTemplateSource implements ExtensionPoint {
 
     /**
      * The list of {@link NomadJobTemplate} contributed by this implementation.
-     * @return The list of {@link NomadJobTemplate} contributed by this implementation.
+     *
+     * @return The list of {@link NomadJobTemplate} contributed by this
+     * implementation.
      * @param cloud
      */
     @Nonnull
