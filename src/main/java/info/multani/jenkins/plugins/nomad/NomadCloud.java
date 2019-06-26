@@ -109,6 +109,7 @@ public class NomadCloud extends Cloud {
         this.templates.addAll(source.templates);
         this.serverUrl = source.serverUrl;
         this.jenkinsUrl = source.jenkinsUrl;
+        this.credentialsId = source.credentialsId;
         this.jenkinsTunnel = source.jenkinsTunnel;
         this.containerCap = source.containerCap;
         this.retentionTimeout = source.retentionTimeout;
@@ -156,7 +157,7 @@ public class NomadCloud extends Cloud {
     }
 
     public String getCredentialsId() {
-        return serverUrl;
+        return credentialsId;
     }
 
     @DataBoundSetter
