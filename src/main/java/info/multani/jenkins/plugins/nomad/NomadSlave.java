@@ -22,10 +22,6 @@ import hudson.slaves.OfflineCause;
 import hudson.slaves.RetentionStrategy;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStep;
 import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -157,8 +153,7 @@ public class NomadSlave extends AbstractCloudSlave {
         NomadApiClient client;
         try {
             client = cloud.connect();
-        } catch (UnrecoverableKeyException | CertificateEncodingException | NoSuchAlgorithmException
-                | KeyStoreException e) {
+        } catch (Exception e) {
             String msg = String.format("Failed to connect to cloud %s", getCloudName());
             e.printStackTrace(listener.fatalError(msg));
             LOGGER.log(Level.SEVERE, msg);

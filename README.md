@@ -55,6 +55,27 @@ You will need to set:
 
 You will then be ready to configure and start a new Jenkins job!
 
+### Authentication Token
+
+If your Nomad cluster has ACLs enabled, you can configure the plugin to
+authenticate using a dedicated Nomad token.
+
+* The minimum policy needed by the authenticated persona once connected is:
+
+  ```hcl
+  namespace "default" {
+    capabilities = ["list-jobs", "read-job", "submit-job"]
+  }
+  ```
+
+* Once the token has been created and associated with this policy, it can be
+  saved as a new `Secret text` credentials in Jenkins. The credentials can
+  optionaly be associated to the domain of your Nomad cluster.
+
+* Finally, in the plugin configuration panel in *Jenkins* → *Manage Jenkins* →
+  *Configure System*, select the correct credentials in the *Nomad Token* select
+  box.
+
 
 ## Jenkins jobs configuration
 

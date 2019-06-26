@@ -9,6 +9,10 @@
         <f:textbox/>
     </f:entry>
 
+    <f:entry title="${%Nomad Token}" field="credentialsId">
+        <c:select context="${serverUrl}"/>
+    </f:entry>
+
     <f:entry title="${%Region}" field="region">
         <f:textbox/>
     </f:entry>
@@ -17,7 +21,7 @@
         <f:textbox/>
     </f:entry>
 
-    <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="name,serverUrl,credentialsId,serverCertificate,skipTlsVerify" />
+    <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="name,serverUrl,credentialsId" />
 
     <f:entry title="${%Jenkins URL}" field="jenkinsUrl">
         <f:textbox />
