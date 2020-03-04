@@ -153,6 +153,43 @@ TODO: complete me!
 
 ### `taskTemplate`
 
+* `name`: name of Nomad task group to run. It specifies value for
+  `TaskGroups/Name` in Nomad Job definition.
+* `image`: image identifier to use for the job. Specifies value for
+  `TaskGroups/Tasks/Config/image` in Nomad Job definition.
+
+  The value undergoes variable names expansion. Jenkins environment variables
+  can be specified like this:
+  ```groovy
+  image: 'img-repo:5003/repo/my-image:${env.BRANCH_NAME}_${env.BUILD_ID}'
+  ```
+
+  You can also specify container environment variables:
+  ```groovy
+  taskGroups: [
+    taskTemplate(
+      name: 'my-task-grp',
+      image: 'img-repo:5003/repo/my-image:${IMAGE_VERSION}'
+    )
+  ],
+  envVars: [
+      envVar(key: 'IMAGE_VERSION', value: '0.1')
+  ]
+  ```
+* `resourcesMemory`: memory resources allocated for the job. Specifies value
+  for `TaskGroups/Tasks/Resources/MemoryMB` in Nomad Job definition.
+* `resourcesCPU`: cpu resources allocated for the job. Specifies value for
+  `TaskGroups/Tasks/Resources/CPU` in Nomad Job definition.
+* `command`: command to execute then running the container. Specifies value
+  for `TaskGroups/Tasks/Config/command` in Nomad Job definition.
+
+  The value undergoes the same variable names expansion as in case of `image`
+  setting.
+* `args`: arguments to pass to command then running the container. Specifies
+  value for TaskGroups/Tasks/Config/args in Nomad Job definition.
+
+  Each argument list entry undergoes the same variable names expansion as in
+  case of `image` setting.
 * `downloadAgentJar`: default to `false`. If set, download the slave agent from
   the Jenkins master at `/jnlpJars/slave.jar` into `/local/slave.jar`, prior to
   start the Nomad job.
