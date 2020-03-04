@@ -12,7 +12,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -98,6 +100,16 @@ public class NomadJobTemplateStep extends Step implements Serializable {
         this.taskGroups = taskGroups;
     }
 
+    public List<TaskTemplate> buildExecutionTaskGroups(Map<String, String> runEnvVars) {
+        if (this.taskGroups == null) {
+            return null;
+        }
+
+        return this.taskGroups.stream()
+            .map(tg -> tg.buildExecutionTaskTemplate(runEnvVars))
+            .collect(Collectors.toList());
+    }
+
     public List<EnvVar> getEnvVars() {
         return (List<EnvVar>) (envVars == null ? Collections.emptyList() : envVars);
     }
@@ -150,7 +162,7 @@ public class NomadJobTemplateStep extends Step implements Serializable {
     public void setNodeUsageMode(String nodeUsageMode) {
         this.nodeUsageMode = Node.Mode.valueOf(nodeUsageMode);
     }
-    
+
     public String getWorkingDir() {
         return workingDir;
     }

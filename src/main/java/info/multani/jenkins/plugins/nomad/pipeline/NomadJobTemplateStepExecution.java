@@ -5,11 +5,13 @@ import com.hashicorp.nomad.javasdk.NomadApiClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.AbortException;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.slaves.Cloud;
 import info.multani.jenkins.plugins.nomad.NomadCloud;
 import info.multani.jenkins.plugins.nomad.NomadJobTemplate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
 import jenkins.model.Jenkins;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepExecutionImpl;
 import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
@@ -51,6 +53,9 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         NomadJobTemplateAction jobTemplateAction = run.getAction(NomadJobTemplateAction.class);
         String parentTemplates = jobTemplateAction != null ? jobTemplateAction.getParentTemplates() : null;
 
+        TaskListener taskListener = getContext().get(TaskListener.class);
+        Map<String, String> runEnvVars = run.getEnvironment(taskListener);
+
         newTemplate = new NomadJobTemplate();
         newTemplate.generateName(step.getName());
         newTemplate.setRegion(step.getRegion());
@@ -60,7 +65,7 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
         newTemplate.setSlaveConnectTimeout(step.getSlaveConnectTimeout());
         newTemplate.setLabel(step.getLabel());
         newTemplate.setEnvVars(step.getEnvVars());
-        newTemplate.setTaskGroups(step.getTaskGroups());
+        newTemplate.setTaskGroups(step.buildExecutionTaskGroups(runEnvVars));
         newTemplate.setNodeUsageMode(step.getNodeUsageMode());
 
         nomadCloud.addDynamicTemplate(newTemplate);
@@ -120,13 +125,13 @@ public class NomadJobTemplateStepExecution extends AbstractStepExecutionImpl {
                 NomadCloud nomadCloud = (NomadCloud) cloud;
                 nomadCloud.removeDynamicTemplate(jobTemplate);
                 NomadApiClient client = nomadCloud.connect();
-                
+
                 LOGGER.log(Level.FINE, "Deregistering job {0} from cloud {0}",
                         new Object[]{jobTemplate.getName(), cloud.name});
                 EvaluationResponse response = client.getJobsApi().deregister(jobTemplate.getName());
                 LOGGER.log(Level.FINE, "Deregistered {0} using evaluation ID {1}",
                         new Object[]{jobTemplate.getName(), response.getValue()});
-                
+
                 boolean deleted = response.getHttpResponse().getStatusLine().getStatusCode() == 200;
                 if (!deleted) {
                     LOGGER.log(Level.WARNING, "Failed to deregister job {0}: HTTP {1}",
