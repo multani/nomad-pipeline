@@ -153,18 +153,22 @@ TODO: complete me!
 
 ### `taskTemplate`
 
-* `name`: name of Nomad task group to run. It specifies value for
-  `TaskGroups/Name` in Nomad Job definition.
-* `image`: image identifier to use for the job. Specifies value for
-  `TaskGroups/Tasks/Config/image` in Nomad Job definition.
+This specifies the values for the Nomad job that will be executed:
+
+* `name`: [name of Nomad task
+  group](https://nomadproject.io/docs/job-specification/group/) to run.
+
+* `image`: [Docker image identifier](https://nomadproject.io/docs/drivers/docker/#inlinecode-image-16) to start.
 
   The value undergoes variable names expansion. Jenkins environment variables
   can be specified like this:
+
   ```groovy
   image: 'img-repo:5003/repo/my-image:${env.BRANCH_NAME}_${env.BUILD_ID}'
   ```
 
   You can also specify container environment variables:
+
   ```groovy
   taskGroups: [
     taskTemplate(
@@ -176,25 +180,35 @@ TODO: complete me!
       envVar(key: 'IMAGE_VERSION', value: '0.1')
   ]
   ```
-* `resourcesMemory`: memory resources allocated for the job. Specifies value
-  for `TaskGroups/Tasks/Resources/MemoryMB` in Nomad Job definition.
-* `resourcesCPU`: cpu resources allocated for the job. Specifies value for
-  `TaskGroups/Tasks/Resources/CPU` in Nomad Job definition.
-* `command`: command to execute then running the container. Specifies value
-  for `TaskGroups/Tasks/Config/command` in Nomad Job definition.
 
-  The value undergoes the same variable names expansion as in case of `image`
-  setting.
-* `args`: arguments to pass to command then running the container. Specifies
-  value for TaskGroups/Tasks/Config/args in Nomad Job definition.
+* `resourcesMemory`: [memory
+  resources](https://nomadproject.io/docs/job-specification/resources/#inlinecode-memory-4)
+  allocated for that task.
 
-  Each argument list entry undergoes the same variable names expansion as in
-  case of `image` setting.
+* `resourcesCPU`: [CPU
+  resources](https://nomadproject.io/docs/job-specification/resources/#inlinecode-cpu-7)
+  allocated for that task.
+
+* `command`: [command to
+  execute](https://nomadproject.io/docs/drivers/docker/#inlinecode-command-9)
+  when running the Docker container.
+
+  The value undergoes the same variable names expansion as in the case of the
+  `image` setting.
+
+* `args`: [arguments to pass to the
+  command](https://nomadproject.io/docs/drivers/docker/#inlinecode-args-13)
+  running the Docker container.
+
+  Each argument list entry undergoes the same variable names expansion as in the
+  case of the `image` setting.
+
 * `downloadAgentJar`: default to `false`. If set, download the slave agent from
   the Jenkins master at `/jnlpJars/slave.jar` into `/local/slave.jar`, prior to
   start the Nomad job.
 
   You can then start the worker using the following command:
+
   ```
   java -jar /local/slave.jar -jnlpUrl $JENKINS_JNLP_URL -secret $JENKINS_SECRET'
   ```
