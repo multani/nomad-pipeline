@@ -8,6 +8,7 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.DescriptorVisibilityFilter;
+import static hudson.Util.replaceMacro;
 import static info.multani.jenkins.plugins.nomad.NomadCloud.JNLP_NAME;
 import static info.multani.jenkins.plugins.nomad.NomadJobTemplateBuilder.substituteEnv;
 import info.multani.jenkins.plugins.nomad.model.EnvVar;
@@ -174,6 +175,33 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
     @DataBoundSetter
     public void setDownloadAgentJar(boolean downloadAgentJar) {
         this.downloadAgentJar = downloadAgentJar;
+    }
+
+    public TaskTemplate buildExecutionTaskTemplate(Map<String, String> runEnvVars) {
+        final Map<String, String> envVars = runEnvVars.entrySet().stream().collect(Collectors.toMap(
+            ent -> "env." + ent.getKey(),
+            ent -> ent.getValue()
+        ));
+
+
+        TaskTemplate oth = new TaskTemplate(
+            this.getName(),
+            replaceMacro(this.getImage(), envVars),
+            replaceMacro(this.getCommand(), envVars),
+            this.getArgs().stream().map(arg -> replaceMacro(arg, envVars)).collect(Collectors.toList())
+        );
+
+        oth.setWorkingDir(this.getWorkingDir());
+        oth.setEnvVars(
+            this.getEnvVars().stream()
+            .map(ev -> new EnvVar(ev.getKey(), replaceMacro(ev.getValue(), envVars)))
+            .collect(Collectors.toList())
+        );
+        oth.setResourcesCPU(this.getResourcesCPU());
+        oth.setResourcesMemory(this.getResourceMemory());
+        oth.setDownloadAgentJar(this.shouldDownloadAgentJar());
+
+        return oth;
     }
 
     public Task build(NomadSlave slave, Map<String, String> globalEnvVars) {
