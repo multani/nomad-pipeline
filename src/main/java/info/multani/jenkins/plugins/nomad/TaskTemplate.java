@@ -12,6 +12,7 @@ import static hudson.Util.replaceMacro;
 import static info.multani.jenkins.plugins.nomad.NomadCloud.JNLP_NAME;
 import static info.multani.jenkins.plugins.nomad.NomadJobTemplateBuilder.substituteEnv;
 import info.multani.jenkins.plugins.nomad.model.EnvVar;
+import info.multani.jenkins.plugins.nomad.model.Auth;
 import info.multani.jenkins.plugins.nomad.pipeline.NomadJobTemplateStepExecution;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
 
     private final List<EnvVar> envVars = new ArrayList<>();
 
+    private Auth auth;
+
     private boolean downloadAgentJar = false;
 
     private static final String DEFAULT_JNLP_IMAGE = System
@@ -71,12 +74,13 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         this.image = image;
     }
 
-    public TaskTemplate(String name, String image, String command, List<String> args) {
+    public TaskTemplate(String name, String image, String command, List<String> args, Auth auth) {
         Preconditions.checkArgument(!StringUtils.isBlank(image));
         this.name = name;
         this.image = image;
         this.command = command;
         this.args = args;
+        this.auth = auth;
     }
 
     public static TaskTemplate defaultTask() {
@@ -144,6 +148,15 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         this.envVars.addAll(envVars);
     }
 
+    public Auth getAuth() {
+      return auth;
+    }
+
+    @DataBoundSetter
+    public void setAuth(Auth auth) {
+      this.auth = auth;
+    }
+
     public Integer getResourcesCPU() {
         return resourcesCPU;
     }
@@ -188,7 +201,8 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
             this.getName(),
             replaceMacro(this.getImage(), envVars),
             replaceMacro(this.getCommand(), envVars),
-            this.getArgs().stream().map(arg -> replaceMacro(arg, envVars)).collect(Collectors.toList())
+            this.getArgs().stream().map(arg -> replaceMacro(arg, envVars)).collect(Collectors.toList()),
+            this.getAuth()
         );
 
         oth.setWorkingDir(this.getWorkingDir());
@@ -229,6 +243,20 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
         task.addConfig("command", substituteEnv(this.getCommand()));
         task.addConfig("args", arguments);
         task.addConfig("network_mode", "host");
+        if (auth != null) {
+          Map<String, Object> authMap = new HashMap<>();
+          if (auth.getUsername() != "") {
+            authMap.put("username", substituteEnv(auth.getUsername()));
+          }
+          if (auth.getPassword() != "") {
+            authMap.put("password", substituteEnv(auth.getPassword()));
+          }
+          if (auth.getServerAddress() != "") {
+            authMap.put("server_address", substituteEnv(auth.getServerAddress()));
+          }
+
+          task.addConfig("auth", authMap);
+        }
 
         if (shouldDownloadAgentJar()) {
             TaskArtifact artifact = new TaskArtifact()
@@ -271,6 +299,7 @@ public class TaskTemplate extends AbstractDescribableImpl<TaskTemplate> implemen
                 + (workingDir == null ? "" : ", workingDir='" + workingDir + '\'')
                 + (command == null ? "" : ", command='" + command + '\'')
                 + (args == null ? "" : ", args='" + args + '\'')
+                + (auth == null ? "" : ", auth='" + auth + '\'')
                 + (resourcesCPU == null ? "" : ", resourcesCPU='" + resourcesCPU + '\'')
                 + (resourcesMemory == null ? "" : ", resourcesMemory='" + resourcesMemory + '\'')
                 + (envVars == null || envVars.isEmpty() ? "" : ", envVars=" + envVars)
