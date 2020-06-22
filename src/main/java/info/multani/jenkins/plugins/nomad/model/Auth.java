@@ -70,6 +70,7 @@ public class Auth extends AbstractDescribableImpl<Auth>
     public void setServerAddress(String value) {
         this.serverAddress = value;
     }
+
     @Override
     public String toString() {
         return "Auth[username=" + getUsername() + ", password=" + getPassword() + ", serverAddress" + getServerAddress()  + "]";

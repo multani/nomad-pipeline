@@ -215,10 +215,10 @@ This specifies the values for the Nomad job that will be executed:
   ```
 
 * `auth`: Provide [authentication](https://www.nomadproject.io/docs/drivers/docker/#auth)
-for a private docker repository.
+  for a private Docker repository.
 
-  auth undergoes the same variable names expansion as in the
-  case of the `image` setting.
+  `auth` undergoes the same variable names expansion as in the case of the
+  `image` setting.
 
 
 ## Migrating from [Nomad Plugin](https://wiki.jenkins.io/display/JENKINS/Nomad+Plugin)
