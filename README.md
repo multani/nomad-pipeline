@@ -114,6 +114,7 @@ nomadJobTemplate(
             envVar(key: 'my-super-var', value: '1234'),
             envVar(key: 'OTHER_VAR', value: 'foobar'),
         ],
+        auth: auth(username: 'bob', password: '1234', serverAddress: 'my-private-repo:15432')
     )
   ]
 ) {
@@ -213,6 +214,11 @@ This specifies the values for the Nomad job that will be executed:
   java -jar /local/slave.jar -jnlpUrl $JENKINS_JNLP_URL -secret $JENKINS_SECRET'
   ```
 
+* `auth`: Provide [authentication](https://www.nomadproject.io/docs/drivers/docker/#auth)
+  for a private Docker repository.
+
+  `auth` undergoes the same variable names expansion as in the case of the
+  `image` setting.
 
 
 ## Migrating from [Nomad Plugin](https://wiki.jenkins.io/display/JENKINS/Nomad+Plugin)
